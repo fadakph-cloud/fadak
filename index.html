@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هوش مصنوعی چاپ و تبلیغات فدک</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 20px 24px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .header h1 { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+  .header p { color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+  .header .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; font-size: 0.7rem;
+    padding: 3px 10px; border-radius: 20px; margin-top: 6px;
+  }
+
+  .chat-box {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 20px;
+    height: 460px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    scroll-behavior: smooth;
+  }
+
+  .chat-box::-webkit-scrollbar { width: 5px; }
+  .chat-box::-webkit-scrollbar-track { background: transparent; }
+  .chat-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+  .msg { display: flex; gap: 10px; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.user { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .msg.bot .avatar { background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+  .msg.user .avatar { background: linear-gradient(135deg, #f093fb, #f5576c); box-shadow: 0 4px 12px rgba(245,87,108,0.4); }
+
+  .bubble {
+    max-width: 75%; padding: 12px 16px; border-radius: 16px;
+    font-size: 0.88rem; line-height: 1.7;
+  }
+  .msg.bot .bubble {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #f0f0f0; border-top-right-radius: 4px;
+  }
+  .msg.user .bubble {
+    background: linear-gradient(135deg, rgba(102,126,234,0.5), rgba(118,75,162,0.5));
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff; border-top-left-radius: 4px;
+  }
+
+  .bubble table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.82rem; }
+  .bubble table th, .bubble table td {
+    border: 1px solid rgba(255,255,255,0.2); padding: 6px 10px; text-align: center;
+  }
+  .bubble table th { background: rgba(102,126,234,0.3); color: #fff; font-weight: 600; }
+  .bubble table tr:nth-child(even) td { background: rgba(255,255,255,0.05); }
+
+  .bubble .price-highlight {
+    background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+    border: 1px solid rgba(102,126,234,0.4);
+    border-radius: 10px; padding: 10px 14px; margin: 8px 0;
+  }
+  .bubble .tip {
+    background: rgba(255,193,7,0.15); border: 1px solid rgba(255,193,7,0.3);
+    border-radius: 8px; padding: 8px 12px; margin-top: 8px;
+    font-size: 0.82rem; color: #ffd54f;
+  }
+  .bubble .warn {
+    background: rgba(255,87,87,0.15); border: 1px solid rgba(255,87,87,0.3);
+    border-radius: 8px; padding: 8px 12px; margin-top: 8px;
+    font-size: 0.82rem; color: #ff8a80;
+  }
+
+  .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0; }
+  .qr-btn {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.85); padding: 7px 14px; border-radius: 20px;
+    font-size: 0.8rem; cursor: pointer; font-family: 'Vazirmatn', sans-serif;
+    transition: all 0.2s; backdrop-filter: blur(10px);
+  }
+  .qr-btn:hover {
+    background: rgba(102,126,234,0.4); border-color: rgba(102,126,234,0.6);
+    color: #fff; transform: translateY(-1px);
+  }
+
+  .input-area {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
+    padding: 14px 16px; display: flex; gap: 10px; align-items: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  #userInput {
+    flex: 1; background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+    padding: 10px 14px; color: #fff; font-family: 'Vazirmatn', sans-serif;
+    font-size: 0.88rem; outline: none; transition: border-color 0.2s; resize: none;
+  }
+  #userInput::placeholder { color: rgba(255,255,255,0.4); }
+  #userInput:focus { border-color: rgba(102,126,234,0.6); }
+
+  #sendBtn {
+    background: linear-gradient(135deg, #667eea, #764ba2); border: none;
+    border-radius: 12px; width: 44px; height: 44px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; box-shadow: 0 4px 12px rgba(102,126,234,0.4); flex-shrink: 0;
+  }
+  #sendBtn:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(102,126,234,0.5); }
+  #sendBtn svg { width: 20px; height: 20px; fill: white; }
+
+  .typing-indicator { display: flex; gap: 10px; align-items: center; }
+  .dots {
+    display: flex; gap: 4px; padding: 12px 16px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px; border-top-right-radius: 4px;
+  }
+  .dot {
+    width: 7px; height: 7px; background: rgba(255,255,255,0.5);
+    border-radius: 50%; animation: bounce 1.2s infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+
+  .contact-bar {
+    background: rgba(255,255,255,0.05); backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+    padding: 12px 20px; display: flex; justify-content: center;
+    gap: 20px; flex-wrap: wrap;
+  }
+  .contact-bar a {
+    color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.78rem;
+    display: flex; align-items: center; gap: 5px; transition: color 0.2s;
+  }
+  .contact-bar a:hover { color: #fff; }
+
+  .step-form {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 12px 14px; margin-top: 8px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .step-form select, .step-form input[type=number] {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px; padding: 8px 12px; color: #fff;
+    font-family: 'Vazirmatn', sans-serif; font-size: 0.85rem;
+    outline: none; width: 100%; cursor: pointer;
+  }
+  .step-form input[type=number]::placeholder { color: rgba(255,255,255,0.4); }
+  .step-form select option { background: #302b63; color: #fff; }
+  .step-form label {
+    color: rgba(255,255,255,0.7); font-size: 0.82rem;
+    margin-bottom: 2px; display: block;
+  }
+
+  .calc-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2); border: none;
+    border-radius: 10px; padding: 9px 18px; color: white;
+    font-family: 'Vazirmatn', sans-serif; font-size: 0.85rem;
+    cursor: pointer; font-weight: 600; transition: all 0.2s; margin-top: 4px;
+  }
+  .calc-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .result-box {
+    background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+    border: 1px solid rgba(102,126,234,0.4); border-radius: 10px;
+    padding: 12px 14px; margin-top: 6px; color: #e0e0ff;
+    font-size: 0.85rem; line-height: 1.8; display: none;
+  }
+  .result-box.show { display: block; animation: fadeIn 0.3s ease; }
+
+  .input-row { display: flex; gap: 8px; }
+  .input-row > div { flex: 1; }
+
+  @media (max-width: 600px) {
+    .bubble { max-width: 88%; }
+    .header h1 { font-size: 1.1rem; }
+    .chat-box { height: 380px; }
+    .input-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>🖨️ چاپ و تبلیغات فدک</h1>
+    <p>پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع</p>
+    <span class="badge">✨ دستیار هوش مصنوعی</span>
+  </div>
+
+  <div class="chat-box" id="chatBox"></div>
+
+  <div class="input-area">
+    <textarea id="userInput" rows="1" placeholder="سوال خود را بنویسید..."></textarea>
+    <button id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+
+  <div class="contact-bar">
+    <a href="tel:09301499659">📞 ۰۹۳۰۱۴۹۹۶۵۹</a>
+    <a href="#">📱 ایتا · روبیکا · بله</a>
+    <a href="#">🕐 ۱۰ الی ۲۰</a>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const FADAK = {
+  phone: "09301499659",
+  address: "پرند، فاز ۲، بلوار جمهوری، طبقه همکف مسجد جامع",
+  workHours: "۱۰ الی ۲۰",
+  payment: "کارت به کارت — تسویه کامل قبل از چاپ",
+
+  banner: {
+    normal: 350000,
+    good: 400000,
+    widths: [100, 120, 150, 200, 250, 300],
+    delivery: { normal: "۱ روز کاری", wide: "۲ روز کاری", wideNote: "عرض ۳۰۰ سانتی‌متر" }
+  },
+
+  sublimation: {
+    carpet: { A4: 500000, A3: 700000 },
+    mug: {
+      "ماگ معمولی": 400000,
+      "ماگ حرارتی": 500000,
+      "ماگ سفید دسته قلبی": 450000,
+      "ماگ حرارتی دسته قلبی": 550000
+    },
+    boxPrice: 50000
+  },
+
+  risograph: { price: 1850000, design: 250000, delivery: "۱ روز کاری" },
+
+  tractTahrir80: {
+    name: "تراکت تحریر ۸۰ گرم",
+    delivery: "۷ روز کاری", fastDelivery: "۷۲ ساعت",
+    fastPrice: 200000, designPrice: 350000, noFastFor5000: true,
+    yekro: {
+      500:  { A6: 1300000, A5: 2350000, A4: 4320000 },
+      1000: { A6: 1600000, A5: 2950000, A4: 5850000 },
+      5000: { A6: 4470000, A5: 8021000, A4: 17200000 }
+    },
+    doro: {
+      500:  { A6: 1950000, A5: 3550000, A4: 7150000 },
+      1000: { A6: 2450000, A5: 4400000, A4: 8780000 },
+      5000: { A6: 5500000, A5: 11000000, A4: 21990000 }
+    }
+  },
+
+  tractGlasseh135: {
+    name: "تراکت گلاسه ۱۳۵ گرم",
+    delivery: "۷ روز کاری", fastDelivery: "۷۲ ساعت",
+    fastPrice: 200000, designPrice: 350000, noFastFor5000: true,
+    yekro: {
+      500:  { A6: 1400000, A5: 2560000, A4: 4750000 },
+      1000: { A6: 1800000, A5: 3300000, A4: 6600000 },
+      5000: { A6: 5500000, A5: 10875000, A4: 21750000 }
+    },
+    doro: {
+      500:  { A6: 2100000, A5: 3770000, A4: 7515000 },
+      1000: { A6: 2590000, A5: 4780000, A4: 9550000 },
+      5000: { A6: 6470000, A5: 12950000, A4: 25890000 }
+    }
+  },
+
+  businessCard: {
+    "سلفون دورتیز (مات/براق)": { size:"۴.۸×۸.۵ سانتی‌متر", prices:{500:1200000,1000:1600000}, design:300000, fast:150000, noFast:false },
+    "سلفون دورگرد (مات/براق)": { size:"۶×۹ سانتی‌متر", prices:{500:1650000,1000:2200000}, design:300000, fast:150000, noFast:false },
+    "لمینت براق مربع":          { size:"۶×۶ سانتی‌متر", prices:{1000:2250000}, design:300000, fast:null, fastDelivery:"۱۰ روز — فوری ندارد", noFast:true },
+    "لمینت برجسته مستطیلی دورگرد": { size:"۶×۹ سانتی‌متر", prices:{500:3000000,1000:3820000}, design:300000, fast:150000, noFast:false },
+    "لمینت براق":               { size:"۶×۹ سانتی‌متر", prices:{500:2360000,1000:3410000}, design:300000, fast:150000, noFast:false },
+    "لمینت مات":                { size:"۶×۹ سانتی‌متر", prices:{1000:4200000}, design:300000, fast:150000, noFast:false },
+    "سلفون مربع دو رو دورگرد (مات/براق)": { size:"۶×۶ سانتی‌متر", prices:{1000:1550000}, design:300000, fast:100000, noFast:false },
+    "لمینت براق دایره":         { size:"۵.۵×۵.۵ سانتی‌متر", prices:{1000:2584000}, design:300000, fast:null, fastDelivery:"فوری ندارد", noFast:true },
+    "سلفون مات مخملی":          { size:"۶×۹ سانتی‌متر", prices:{1000:3100000}, design:300000, fast:null, fastDelivery:"فوری ندارد", noFast:true }
+  },
+
+  label: {
+    "لیبل بدون روکش (پیشنهاد نمی‌شود)": { size:"۴.۸×۸.۵", prices:{1000:1350000}, design:250000, fast:120000, noFast:false },
+    "لیبل یووی (پیشنهاد می‌شود)":        { size:"۴.۸×۸.۵", prices:{1000:1600000}, design:250000, fast:120000, noFast:false },
+    "لیبل یووی قالبدار":                 { size:"۴.۸×۸.۵", prices:{1000:2200000}, design:300000, fast:null, fastDelivery:"۱۰ روز — فوری ندارد", noFast:true },
+    "لیبل شیشه‌ای":                      { size:"۴.۸×۸.۵", prices:{1000:5100000}, design:250000, fast:null, fastDelivery:"۱۰ روز — فوری ندارد", noFast:true }
+  },
+
+  letterhead: {
+    "تحریر ۸۰ گرم":  { delivery:"۷ روز کاری", fast:150000, design:300000, hasFast:true,  prices:{1000:{A6:2380000,A5:3900000,A4:7910000}} },
+    "تحریر ۱۲۰ گرم": { delivery:"۸ روز کاری", design:300000, hasFast:false, prices:{1000:{A5:5260000,A4:10500000}} }
+  },
+
+  photo: { "6 قطعه": 180000, "12 قطعه": 230000 }
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmt(n) { return n.toLocaleString('fa-IR') + ' تومان'; }
+
+function addMsg(html, isUser = false) {
+  const cb = document.getElementById('chatBox');
+  const div = document.createElement('div');
+  div.className = `msg ${isUser ? 'user' : 'bot'}`;
+  div.innerHTML = `<div class="avatar">${isUser ? '👤' : '🤖'}</div><div class="bubble">${html}</div>`;
+  cb.appendChild(div);
+  cb.scrollTop = cb.scrollHeight;
+}
+
+function showTyping() {
+  const cb = document.getElementById('chatBox');
+  const div = document.createElement('div');
+  div.className = 'typing-indicator'; div.id = 'typing';
+  div.innerHTML = `<div class="avatar" style="background:linear-gradient(135deg,#667eea,#764ba2);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;">🤖</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  cb.appendChild(div);
+  cb.scrollTop = cb.scrollHeight;
+}
+
+function removeTyping() { const t = document.getElementById('typing'); if(t) t.remove(); }
+
+function quickReplies(items) {
+  return `<div class="quick-replies">${items.map(i=>`<button class="qr-btn" onclick="handleQuick('${i}')">${i}</button>`).join('')}</div>`;
+}
+
+// ============================================================
+// BANNER CALCULATOR
+// ============================================================
+function bannerCalcHTML() {
+  return `
+    <div class="step-form" id="bannerCalc">
+      <div>
+        <label>عرض بنر (سانتی‌متر):</label>
+        <select id="bn_width">
+          <option value="100">عرض ۱۰۰ سانتی‌متر</option>
+          <option value="120">عرض ۱۲۰ سانتی‌متر</option>
+          <option value="150">عرض ۱۵۰ سانتی‌متر</option>
+          <option value="200">عرض ۲۰۰ سانتی‌متر</option>
+          <option value="250">عرض ۲۵۰ سانتی‌متر</option>
+          <option value="300">عرض ۳۰۰ سانتی‌متر ⚠️ (۲ روز کاری)</option>
+        </select>
+      </div>
+      <div>
+        <label>طول بنر (سانتی‌متر):</label>
+        <input type="number" id="bn_length" placeholder="مثال: ۲۰۰" min="1">
+      </div>
+      <div>
+        <label>نوع چاپ:</label>
+        <select id="bn_quality">
+          <option value="normal">چاپ معمولی — ${fmt(FADAK.banner.normal)} هر متر مربع</option>
+          <option value="good">چاپ خوب (کیفیت بالا) — ${fmt(FADAK.banner.good)} هر متر مربع</option>
+        </select>
+      </div>
+      <button class="calc-btn" onclick="calcBanner()">محاسبه قیمت بنر</button>
+      <div class="result-box" id="bannerResult"></div>
+    </div>
+  `;
+}
+
+function calcBanner() {
+  const width  = parseInt(document.getElementById('bn_width').value);
+  const length = parseFloat(document.getElementById('bn_length').value);
+  const quality = document.getElementById('bn_quality').value;
+
+  if (!length || length <= 0) {
+    const r = document.getElementById('bannerResult');
+    r.innerHTML = '⚠️ لطفاً طول بنر را وارد کنید.';
+    r.classList.add('show'); return;
+  }
+
+  const pricePerMeter = quality === 'normal' ? FADAK.banner.normal : FADAK.banner.good;
+  const areaCm2 = width * length;
+  const areaM2  = areaCm2 / 10000;
+  const billableArea = Math.max(areaM2, 1);
+  const total = Math.round(billableArea * pricePerMeter);
+
+  const isWide  = width === 300;
+  const delivery = isWide ? '۲ روز کاری' : '۱ روز کاری';
+
+  let html = `
+    📐 ابعاد: <strong>${width} × ${length} سانتی‌متر</strong><br>
+    📏 مساحت واقعی: <strong>${areaM2.toFixed(2)} متر مربع</strong><br>
+    📦 مساحت قابل محاسبه: <strong>${billableArea.toFixed(2)} متر مربع</strong><br>
+    💵 نرخ: <strong>${fmt(pricePerMeter)}</strong> هر متر مربع<br>
+    <strong>💰 قیمت نهایی: ${fmt(total)}</strong><br>
+    🕐 زمان تحویل: <strong>${delivery}</strong>
+  `;
+
+  if (areaM2 < 1) {
+    html += `<br><div class="tip">⚠️ مساحت کمتر از ۱ متر مربع است — هزینه ۱ متر کامل محاسبه شد.</div>`;
+  }
+  if (isWide) {
+    html += `<br><div class="warn">⚠️ عرض ۳۰۰ سانتی‌متر نیاز به <strong>۲ روز کاری</strong> برای آماده‌سازی دارد.</div>`;
+  }
+
+  const r = document.getElementById('bannerResult');
+  r.innerHTML = html;
+  r.classList.add('show');
+}
+
+// ============================================================
+// SUBLIMATION CALCULATOR
+// ============================================================
+function sublimationHTML() {
+  const mugs = Object.keys(FADAK.sublimation.mug);
+  return `
+    <div class="step-form" id="subCalc">
+      <div>
+        <label>نوع محصول سابلیمیشن:</label>
+        <select id="sub_type" onchange="toggleSubOptions()">
+          <option value="carpet">چاپ فرش</option>
+          <option value="mug">چاپ لیوان (ماگ)</option>
+        </select>
+      </div>
+
+      <div id="sub_carpet_opts">
+        <label>سایز فرش:</label>
+        <select id="sub_carpet_size">
+          <option value="A4">A4 — ${fmt(FADAK.sublimation.carpet.A4)}</option>
+          <option value="A3">A3 — ${fmt(FADAK.sublimation.carpet.A3)}</option>
+        </select>
+      </div>
+
+      <div id="sub_mug_opts" style="display:none; flex-direction:column; gap:8px;">
+        <label>نوع ماگ:</label>
+        <select id="sub_mug_type">
+          ${mugs.map(m=>`<option value="${m}">${m} — ${fmt(FADAK.sublimation.mug[m])}</option>`).join('')}
+        </select>
+        <label>تعداد:</label>
+        <input type="number" id="sub_mug_qty" placeholder="تعداد ماگ" min="1" value="1">
+        <label>جعبه لازم دارید؟ (هر عدد ${fmt(FADAK.sublimation.boxPrice)})</label>
+        <select id="sub_box">
+          <option value="no">خیر</option>
+          <option value="yes">بله</option>
+        </select>
+      </div>
+
+      <button class="calc-btn" onclick="calcSublimation()">محاسبه قیمت</button>
+      <div class="result-box" id="subResult"></div>
+    </div>
+  `;
+}
+
+function toggleSubOptions() {
+  const type = document.getElementById('sub_type').value;
+  document.getElementById('sub_carpet_opts').style.display = type === 'carpet' ? 'block' : 'none';
+  document.getElementById('sub_mug_opts').style.display    = type === 'mug'    ? 'flex'  : 'none';
+}
+
+function calcSublimation() {
+  const type = document.getElementById('sub_type').value;
+  const r = document.getElementById('subResult');
+
+  if (type === 'carpet') {
+    const size = document.getElementById('sub_carpet_size').value;
+    const price = FADAK.sublimation.carpet[size];
+    r.innerHTML = `🎨 چاپ فرش سایز <strong>${size}</strong><br><strong>💰 قیمت: ${fmt(price)}</strong>`;
+  } else {
+    const mugType = document.getElementById('sub_mug_type').value;
+    const qty     = parseInt(document.getElementById('sub_mug_qty').value) || 1;
+    const box     = document.getElementById('sub_box').value;
+    const basePrice = FADAK.sublimation.mug[mugType];
+    let total = basePrice * qty;
+    let html = `☕ ${mugType} × ${qty.toLocaleString('fa-IR')} عدد<br>`;
+    html += `📦 چاپ: ${fmt(basePrice)} × ${qty} = ${fmt(basePrice * qty)}<br>`;
+    if (box === 'yes') {
+      const boxTotal = FADAK.sublimation.boxPrice * qty;
+      total += boxTotal;
+      html += `📫 جعبه: ${fmt(FADAK.sublimation.boxPrice)} × ${qty} = ${fmt(boxTotal)}<br>`;
+    }
+    html += `<strong>💰 مجموع: ${fmt(total)}</strong>`;
+    r.innerHTML = html;
+  }
+
+  r.classList.add('show');
+}
+
+// ============================================================
+// TRACT CALCULATOR
+// ============================================================
+function tractCalcHTML() {
+  return `
+    <div class="step-form" id="tractCalc">
+      <div>
+        <label>نوع کاغذ:</label>
+        <select id="tc_paper">
+          <option value="tahrir">تحریر ۸۰ گرم</option>
+          <option value="glasseh">گلاسه ۱۳۵ گرم</option>
+        </select>
+      </div>
+      <div>
+        <label>نوع چاپ:</label>
+        <select id="tc_side">
+          <option value="yekro">یک‌رو</option>
+          <option value="doro">دو‌رو</option>
+        </select>
+      </div>
+      <div>
+        <label>سایز:</label>
+        <select id="tc_size">
+          <option value="A6">A6</option>
+          <option value="A5">A5</option>
+          <option value="A4">A4</option>
+        </select>
+      </div>
+      <div>
+        <label>تیراژ:</label>
+        <select id="tc_qty" onchange="updateTractFast()">
+          <option value="500">۵۰۰ عدد</option>
+          <option value="1000">۱۰۰۰ عدد</option>
+          <option value="5000">۵۰۰۰ عدد</option>
+        </select>
+      </div>
+      <div>
+        <label>طراحی لازم دارید؟</label>
+        <select id="tc_design">
+          <option value="no">خیر</option>
+          <option value="yes">بله (+۳۵۰,۰۰۰ تومان)</option>
+        </select>
+      </div>
+      <div>
+        <label>نوع تحویل:</label>
+        <select id="tc_fast">
+          <option value="normal">عادی (۷ روز کاری)</option>
+          <option value="fast">فوری ۷۲ ساعته (+۲۰۰,۰۰۰ تومان)</option>
+        </select>
+      </div>
+      <button class="calc-btn" onclick="calcTract()">محاسبه قیمت</button>
+      <div class="result-box" id="tractResult"></div>
+    </div>
+  `;
+}
+
+function updateTractFast() {
+  const qty = document.getElementById('tc_qty').value;
+  const fastSel = document.getElementById('tc_fast');
+  if (qty === '5000') {
+    fastSel.options[1].disabled = true;
+    fastSel.options[1].text = 'فوری — برای ۵۰۰۰ عدد موجود نیست';
+    fastSel.value = 'normal';
+  } else {
+    fastSel.options[1].disabled = false;
+    fastSel.options[1].text = 'فوری ۷۲ ساعته (+۲۰۰,۰۰۰ تومان)';
+  }
+}
+
+function calcTract() {
+  const paper  = document.getElementById('tc_paper').value;
+  const side   = document.getElementById('tc_side').value;
+  const size   = document.getElementById('tc_size').value;
+  const qty    = parseInt(document.getElementById('tc_qty').value);
+  const design = document.getElementById('tc_design').value;
+  const fast   = document.getElementById('tc_fast').value;
+
+  const data = paper === 'tahrir' ? FADAK.tractTahrir80 : FADAK.tractGlasseh135;
+  const base = data[side][qty][size];
+  let total = base;
+  let breakdown = `📦 چاپ پایه: ${fmt(base)}<br>`;
+
+  if (design === 'yes') { total += data.designPrice; breakdown += `✏️ طراحی: ${fmt(data.designPrice)}<br>`; }
+  if (fast === 'fast')  { total += data.fastPrice;   breakdown += `⚡ فوری: ${fmt(data.fastPrice)}<br>`; }
+
+  breakdown += `<strong>💰 مجموع: ${fmt(total)}</strong>`;
+  breakdown += `<br><span style="color:#a5d6a7;font-size:0.8rem">هر عدد: ${fmt(Math.round(total/qty))}</span>`;
+
+  if (qty === 1000) {
+    const p5000    = data[side][5000][size];
+    const perU1000 = Math.round(base/1000);
+    const perU5000 = Math.round(p5000/5000);
+    breakdown += `<br><div class="tip">💡 با ۵۰۰۰ عدد، قیمت کل ${fmt(p5000)} — هر عدد ${fmt(perU5000)} بجای ${fmt(perU1000)}. صرفه‌جویی: ${fmt((perU1000-perU5000)*5000)}</div>`;
+  }
+
+  breakdown += `<br>🕐 زمان تحویل: ${fast === 'fast' ? data.fastDelivery : data.delivery}`;
+  const r = document.getElementById('tractResult');
+  r.innerHTML = breakdown; r.classList.add('show');
+}
+
+// ============================================================
+// BUSINESS CARD CALCULATOR
+// ============================================================
+function bcCalcHTML() {
+  const types = Object.keys(FADAK.businessCard);
+  return `
+    <div class="step-form" id="bcCalc">
+      <div>
+        <label>نوع کارت ویزیت:</label>
+        <select id="bc_type" onchange="updateBCQty()">
+          ${types.map(t=>`<option value="${t}">${t}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label>تیراژ:</label>
+        <select id="bc_qty" onchange="updateBCFast()">
+          <option value="500">۵۰۰ عدد</option>
+          <option value="1000">۱۰۰۰ عدد</option>
+        </select>
+      </div>
+      <div>
+        <label>طراحی:</label>
+        <select id="bc_design">
+          <option value="no">خیر</option>
+          <option value="yes">بله (+۳۰۰,۰۰۰ تومان)</option>
+        </select>
+      </div>
+      <div>
+        <label>تحویل:</label>
+        <select id="bc_fast">
+          <option value="normal">عادی</option>
+          <option value="fast">فوری</option>
+        </select>
+      </div>
+      <button class="calc-btn" onclick="calcBC()">محاسبه قیمت</button>
+      <div class="result-box" id="bcResult"></div>
+    </div>
+  `;
+}
+
+function updateBCQty() {
+  const type = document.getElementById('bc_type').value;
+  const card = FADAK.businessCard[type];
+  const qtyEl = document.getElementById('bc_qty');
+  qtyEl.innerHTML = '';
+  Object.keys(card.prices).forEach(q => {
+    const opt = document.createElement('option');
+    opt.value = q; opt.text = `${parseInt(q).toLocaleString('fa-IR')} عدد`;
+    qtyEl.appendChild(opt);
+  });
+  updateBCFast();
+}
+
+function updateBCFast() {
+  const type = document.getElementById('bc_type').value;
+  const card = FADAK.businessCard[type];
+  const fastEl = document.getElementById('bc_fast');
+  if (fastEl.options[1]) {
+    fastEl.options[1].disabled = card.noFast;
+    fastEl.options[1].text = card.noFast
+      ? `فوری — ${card.fastDelivery || 'ندارد'}`
+      : `فوری (+${fmt(card.fast)})`;
+    if (card.noFast) fastEl.value = 'normal';
+  }
+}
+
+function calcBC() {
+  const type   = document.getElementById('bc_type').value;
+  const qty    = parseInt(document.getElementById('bc_qty').value);
+  const design = document.getElementById('bc_design').value;
+  const fast   = document.getElementById('bc_fast').value;
+  const card   = FADAK.businessCard[type];
+
+  if (!card.prices[qty]) {
+    const r = document.getElementById('bcResult');
+    r.innerHTML = '⚠️ این تیراژ برای این نوع کارت موجود نیست.';
+    r.classList.add('show'); return;
+  }
+
+  let total = card.prices[qty];
+  let html  = `📦 ${type}: ${fmt(card.prices[qty])}<br>📐 سایز: ${card.size}<br>`;
+  if (design === 'yes') { total += card.design; html += `✏️ طراحی: ${fmt(card.design)}<br>`; }
+  if (fast === 'fast' && !card.noFast && card.fast) { total += card.fast; html += `⚡ فوری: ${fmt(card.fast)}<br>`; }
+  html += `<strong>💰 مجموع: ${fmt(total)}</strong>`;
+  html += `<br><span style="color:#a5d6a7;font-size:0.8rem">هر عدد: ${fmt(Math.round(total/qty))}</span>`;
+  html += `<br>🕐 زمان: ${(fast==='fast'&&!card.noFast) ? (card.fastDelivery||'۷۲ ساعت') : '۷ روز کاری'}`;
+
+  const r = document.getElementById('bcResult');
+  r.innerHTML = html; r.classList.add('show');
+}
+
+// ============================================================
+// RESPONSE ENGINE
+// ============================================================
+function getResponse(input) {
+  const q = input.trim().toLowerCase();
+
+  if (/سلام|درود|خوبی|چطور|هستی|hello|hi/.test(q)) {
+    return { html: `سلام! 👋 خوش اومدید به <strong>چاپ و تبلیغات فدک</strong>.<br>
+      می‌تونم درباره قیمت، خدمات و سفارش راهنماییتون کنم.
+      ${quickReplies(['قیمت بنر','قیمت تراکت','قیمت کارت ویزیت','چاپ سابلیمیشن','خدمات ما','آدرس و تماس'])}`, delay: 600 };
+  }
+
+  // BANNER
+  if (/بنر/.test(q)) {
+    return { html: `🖼️ <strong>محاسبه قیمت بنر</strong><br>
+      عرض و طول مورد نظر رو وارد کنید تا قیمت دقیق حساب بشه:<br><br>
+      ${bannerCalcHTML()}`, delay: 600 };
+  }
+
+  // SUBLIMATION
+  if (/سابلیمیشن|فرش|ماگ|لیوان|حرارتی/.test(q)) {
+    return { html: `🎨 <strong>چاپ سابلیمیشن</strong><br>
+      محصول مورد نظر رو انتخاب کنید:<br><br>
+      ${sublimationHTML()}`, delay: 600 };
+  }
+
+  // RISOGRAPH
+  if (/ریسو/.test(q)) {
+    return { html: `🖨️ <strong>چاپ ریسو</strong><br><br>
+      <div class="price-highlight">
+        📄 تراکت سیاه‌وسفید — سایز A5 — تیراژ ۱۰۰۰ عدد<br>
+        💰 چاپ: ${fmt(FADAK.risograph.price)}<br>
+        ✏️ طراحی: ${fmt(FADAK.risograph.design)}<br>
+        🕐 تحویل: ${FADAK.risograph.delivery}
+      </div>
+      ${quickReplies(['قیمت تراکت افست','خدمات دیگر'])}`, delay: 700 };
+  }
+
+  // TRACT
+  if (/تراکت/.test(q)) {
+    return { html: `📄 <strong>محاسبه قیمت تراکت</strong><br>
+      گزینه‌های مورد نظر رو انتخاب کنید:<br><br>
+      ${tractCalcHTML()}`, delay: 600 };
+  }
+
+  // BUSINESS CARD
+  if (/کارت ویزیت|کارت‌ویزیت/.test(q)) {
+    return { html: `🎴 <strong>محاسبه قیمت کارت ویزیت</strong><br><br>
+      ${bcCalcHTML()}`, delay: 600, afterRender: () => { updateBCQty(); } };
+  }
+
+  // LETTERHEAD
+  if (/سربرگ/.test(q)) {
+    return { html: `📋 <strong>قیمت سربرگ — تیراژ ۱۰۰۰ عدد</strong><br><br>
+      <table>
+        <tr><th>کاغذ</th><th>A6</th><th>A5</th><th>A4</th><th>تحویل</th></tr>
+        <tr><td>تحریر ۸۰ گرم</td><td>${fmt(2380000)}</td><td>${fmt(3900000)}</td><td>${fmt(7910000)}</td><td>۷ روز</td></tr>
+        <tr><td>تحریر ۱۲۰ گرم</td><td>—</td><td>${fmt(5260000)}</td><td>${fmt(10500000)}</td><td>۸ روز</td></tr>
+      </table>
+      <div class="tip">✏️ طراحی: +۳۰۰,۰۰۰ &nbsp;|&nbsp; ⚡ فوری (فقط ۸۰ گرم): +۱۵۰,۰۰۰</div>
+      <div class="warn">سربرگ ۱۲۰ گرم چاپ فوری ندارد.</div>
+      ${quickReplies(['سفارش سربرگ','خدمات دیگر'])}`, delay: 700 };
+  }
+
+  // LABEL
+  if (/لیبل|برچسب/.test(q)) {
+    return { html: `🏷️ <strong>قیمت لیبل / برچسب — تیراژ ۱۰۰۰ عدد</strong><br>سایز: ۴.۸×۸.۵ سانتی‌متر<br><br>
+      <table>
+        <tr><th>نوع</th><th>قیمت</th><th>فوری</th></tr>
+        <tr><td>بدون روکش ⚠️</td><td>${fmt(1350000)}</td><td>+${fmt(120000)}</td></tr>
+        <tr><td>یووی ✅ پیشنهادی</td><td>${fmt(1600000)}</td><td>+${fmt(120000)}</td></tr>
+        <tr><td>یووی قالبدار</td><td>${fmt(2200000)}</td><td>ندارد (۱۰ روز)</td></tr>
+        <tr><td>شیشه‌ای</td><td>${fmt(5100000)}</td><td>ندارد (۱۰ روز)</td></tr>
+      </table>
+      <div class="tip">💡 لیبل یووی بهترین انتخاب است.</div>
+      ${quickReplies(['سفارش لیبل','خدمات دیگر'])}`, delay: 700 };
+  }
+
+  // PHOTO
+  if (/عکس|پرسنل/.test(q)) {
+    return { html: `📸 <strong>عکس پرسنلی ۴×۳</strong><br><br>
+      <div class="price-highlight">
+        🟢 ۶ قطعه: ${fmt(180000)}<br>
+        🔵 ۱۲ قطعه: ${fmt(230000)}
+      </div>
+      <div class="tip">📱 عکاسی با موبایل + بهبود با AI</div>
+      ${quickReplies(['خدمات دیگر','آدرس'])}`, delay: 600 };
+  }
+
+  // DELIVERY
+  if (/زمان|تحویل|چند روز|مدت/.test(q)) {
+    return { html: `🕐 <strong>زمان تحویل</strong><br><br>
+      <table>
+        <tr><th>خدمت</th><th>عادی</th><th>فوری</th></tr>
+        <tr><td>بنر (تا عرض ۲۵۰)</td><td>۱ روز</td><td>—</td></tr>
+        <tr><td>بنر عرض ۳۰۰</td><td>۲ روز</td><td>—</td></tr>
+        <tr><td>ریسو</td><td>۱ روز</td><td>—</td></tr>
+        <tr><td>تراکت افست</td><td>۷ روز</td><td>۷۲ ساعت (+۲۰۰,۰۰۰)</td></tr>
+        <tr><td>کارت ویزیت</td><td>۷ روز</td><td>۷۲ ساعت (+۱۵۰,۰۰۰)</td></tr>
+        <tr><td>سربرگ ۸۰ گرم</td><td>۷ روز</td><td>۷۲ ساعت (+۱۵۰,۰۰۰)</td></tr>
+        <tr><td>سربرگ ۱۲۰ گرم</td><td>۸ روز</td><td>ندارد</td></tr>
+      </table>
+      ${quickReplies(['چاپ فوری','قیمت تراکت','قیمت بنر'])}`, delay: 600 };
+  }
+
+  // DISCOUNT
+  if (/تخفیف|صرفه|ارزان/.test(q)) {
+    const d = FADAK.tractTahrir80;
+    const p1 = d.yekro[1000].A5, p5 = d.yekro[5000].A5;
+    const pu1 = Math.round(p1/1000), pu5 = Math.round(p5/5000);
+    return { html: `💡 <strong>صرفه‌جویی با تیراژ بالاتر</strong><br>مثال: تراکت تحریر A5 یکرو:<br><br>
+      <table>
+        <tr><th>تیراژ</th><th>قیمت کل</th><th>هر عدد</th></tr>
+        <tr><td>۱۰۰۰</td><td>${fmt(p1)}</td><td>${fmt(pu1)}</td></tr>
+        <tr><td>۵۰۰۰</td><td>${fmt(p5)}</td><td>${fmt(pu5)}</td></tr>
+      </table>
+      <div class="tip">🎯 بجای ۵ بار سفارش ۱۰۰۰ تایی (${fmt(p1*5)}) فقط ${fmt(p5)} — صرفه‌جویی: ${fmt((pu1-pu5)*5000)}</div>
+      ${quickReplies(['محاسبه تراکت','خدمات دیگر'])}`, delay: 700 };
+  }
+
+  // CONTACT
+  if (/آدرس|تماس|کجا|ساعت|شماره|تلفن|ایتا|روبیکا|بله/.test(q)) {
+    return { html: `📍 <strong>اطلاعات تماس فدک</strong><br><br>
+      <div class="price-highlight">
+        🏢 ${FADAK.address}<br>
+        📞 ${FADAK.phone}<br>
+        📱 ایتا · روبیکا · بله: ${FADAK.phone}<br>
+        🕐 ساعت کاری: ${FADAK.workHours}
+      </div>
+      <div class="tip">💳 ${FADAK.payment}</div>
+      ${quickReplies(['سفارش آنلاین','خدمات ما'])}`, delay: 500 };
+  }
+
+  // ORDER
+  if (/سفارش|فایل|ارسال|پرداخت/.test(q)) {
+    return { html: `📦 <strong>روش سفارش</strong><br><br>
+      ۱. پیام در ایتا، روبیکا یا بله به <strong>${FADAK.phone}</strong><br>
+      ۲. ارسال فایل طراحی<br>
+      ۳. پرداخت کارت به کارت<br><br>
+      <div class="warn">⚠️ تسویه کامل قبل از چاپ الزامی است.</div>
+      <div class="tip">✅ اولویت ما: ایتا</div>
+      ${quickReplies(['آدرس فدک','زمان تحویل'])}`, delay: 600 };
+  }
+
+  // SERVICES
+  if (/خدمات|چه چاپ|چه کار/.test(q)) {
+    return { html: `🖨️ <strong>خدمات فدک</strong><br><br>
+      ✅ چاپ بنر (معمولی و خوب)<br>
+      ✅ چاپ ریسو سیاه‌وسفید<br>
+      ✅ تراکت افست (تحریر / گلاسه)<br>
+      ✅ کارت ویزیت (انواع)<br>
+      ✅ سربرگ<br>
+      ✅ لیبل و برچسب<br>
+      ✅ چاپ سابلیمیشن (فرش و ماگ)<br>
+      ✅ عکس پرسنلی<br>
+      ✅ طراحی گرافیک<br><br>
+      <div class="tip">⭐ تخصص: چاپ بنر فوری با کیفیت بالا</div>
+      ${quickReplies(['قیمت بنر','قیمت تراکت','چاپ سابلیمیشن','تماس'])}`, delay: 700 };
+  }
+
+  // FAST
+  if (/فوری|سریع|عجله|زود/.test(q)) {
+    return { html: `⚡ <strong>چاپ فوری</strong><br><br>
+      <table>
+        <tr><th>محصول</th><th>هزینه فوری</th></tr>
+        <tr><td>تراکت افست (تا ۱۰۰۰)</td><td>+${fmt(200000)}</td></tr>
+        <tr><td>کارت ویزیت</td><td>+${fmt(150000)}</td></tr>
+        <tr><td>سربرگ ۸۰ گرم</td><td>+${fmt(150000)}</td></tr>
+        <tr><td>لیبل یووی</td><td>+${fmt(120000)}</td></tr>
+        <tr><td>بنر (همیشه ۱ روز)</td><td>—</td></tr>
+      </table>
+      <div class="warn">❌ تراکت ۵۰۰۰ عدد، سربرگ ۱۲۰ گرم و برخی کارت‌ها فوری ندارند.</div>
+      ${quickReplies(['قیمت تراکت','قیمت بنر'])}`, delay: 700 };
+  }
+
+  // DEFAULT
+  return { html: `ممنون از پیامتون 🙏<br>لطفاً یکی از موارد زیر رو انتخاب کنید:
+    ${quickReplies(['قیمت بنر','قیمت تراکت','قیمت کارت ویزیت','قیمت سربرگ','قیمت لیبل','چاپ سابلیمیشن','زمان تحویل','چاپ فوری','آدرس و تماس','تخفیف'])}`, delay: 400 };
+}
+
+// ============================================================
+// SEND / INIT
+// ============================================================
+function handleQuick(text) { sendMessage(text); }
+
+function sendMessage(textOverride) {
+  const input = document.getElementById('userInput');
+  const text  = textOverride || input.value.trim();
+  if (!text) return;
+  addMsg(text, true);
+  if (!textOverride) input.value = '';
+  showTyping();
+  const res = getResponse(text);
+  setTimeout(() => {
+    removeTyping();
+    addMsg(res.html);
+    if (res.afterRender) setTimeout(res.afterRender, 100);
+  }, res.delay || 600);
+}
+
+document.getElementById('userInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+document.getElementById('userInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    showTyping();
+    setTimeout(() => {
+      removeTyping();
+      addMsg(`سلام و خوش اومدید! 👋<br>
+        من دستیار هوشمند <strong>چاپ و تبلیغات فدک</strong> هستم.<br>
+        می‌تونم قیمت، زمان تحویل و هر سوالی درباره چاپ رو جواب بدم.
+        ${quickReplies(['قیمت بنر','قیمت تراکت','قیمت کارت ویزیت','چاپ سابلیمیشن','خدمات ما','آدرس و تماس'])}`);
+    }, 1000);
+  }, 300);
+});
+</script>
+</body>
+</html>

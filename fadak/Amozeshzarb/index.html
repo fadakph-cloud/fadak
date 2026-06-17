@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>یادآموز - برنامه آموزشی</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --primary: #6C63FF;
+    --secondary: #FF6584;
+    --accent: #43E97B;
+    --warning: #FFD93D;
+    --danger: #FF6B6B;
+    --bg: #F0F4FF;
+    --card: #FFFFFF;
+    --text: #2D3748;
+    --shadow: 0 8px 32px rgba(108,99,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    direction: rtl;
+  }
+
+  /* ===== SPLASH SCREEN ===== */
+  #splash {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(135deg, #6C63FF 0%, #FF6584 50%, #43E97B 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 0.8s ease;
+  }
+  #splash .logo { font-size: 5rem; animation: bounce 1s infinite alternate; }
+  #splash h1 { color: #fff; font-size: 2.2rem; font-weight: 900; margin-top: 16px; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  #splash p { color: rgba(255,255,255,0.85); font-size: 1rem; margin-top: 8px; }
+  #splash .loader { margin-top: 40px; width: 60px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; overflow: hidden; }
+  #splash .loader-bar { height: 100%; background: #fff; border-radius: 3px; animation: load 2s ease forwards; }
+
+  @keyframes load { from { width: 0 } to { width: 100% } }
+  @keyframes bounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-10px) scale(1.1); } }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    background: linear-gradient(135deg, #6C63FF, #8B5CF6);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.4);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .app-header h1 { color: #fff; font-size: 1.3rem; font-weight: 800; }
+  .score-badge {
+    background: rgba(255,255,255,0.2);
+    color: #fff; padding: 6px 14px;
+    border-radius: 20px; font-size: 0.9rem; font-weight: 700;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ===== PAGES ===== */
+  .page { display: none; padding: 20px; padding-bottom: 100px; min-height: calc(100vh - 60px); }
+  .page.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== HOME PAGE ===== */
+  .home-hero {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 24px; padding: 30px 20px;
+    text-align: center; color: #fff; margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .home-hero .emoji { font-size: 3.5rem; display: block; margin-bottom: 12px; animation: bounce 2s infinite alternate; }
+  .home-hero h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; }
+  .home-hero p { font-size: 0.95rem; opacity: 0.9; line-height: 1.6; }
+
+  .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .menu-card {
+    border-radius: 20px; padding: 24px 16px;
+    text-align: center; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    border: none; outline: none;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .menu-card:active { transform: scale(0.95); }
+  .menu-card .icon { font-size: 3rem; }
+  .menu-card .title { font-size: 1rem; font-weight: 800; color: #fff; }
+  .menu-card .subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.85); line-height: 1.4; }
+  .card-1 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+  .card-2 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .card-3 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+  .card-4 { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+  /* ===== SECTION TITLES ===== */
+  .section-title {
+    font-size: 1.4rem; font-weight: 800; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .back-btn {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 12px;
+    padding: 10px 18px; font-size: 0.9rem; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    margin-bottom: 20px; transition: transform 0.2s;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+  }
+  .back-btn:active { transform: scale(0.95); }
+
+  /* ===== MULTIPLICATION ===== */
+  .tab-bar {
+    display: flex; gap: 10px; margin-bottom: 20px;
+    background: #E2E8F0; border-radius: 16px; padding: 4px;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px; border: none; background: transparent;
+    border-radius: 12px; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; color: #718096;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+  }
+  .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(108,99,255,0.4); }
+
+  .table-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .num-select-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff; border: none; border-radius: 14px;
+    padding: 16px 8px; font-size: 1.3rem; font-weight: 800;
+    cursor: pointer; transition: transform 0.15s;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    direction: ltr;
+  }
+  .num-select-btn:active { transform: scale(0.9); }
+  .num-select-btn.selected { background: linear-gradient(135deg, #f093fb, #f5576c); }
+
+  /* ===== QUIZ AREA ===== */
+  .quiz-card {
+    background: var(--card); border-radius: 24px;
+    padding: 28px 20px; box-shadow: var(--shadow);
+    text-align: center; margin-bottom: 20px;
+  }
+  .quiz-progress {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  }
+  .progress-bar { flex: 1; height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #43e97b, #38f9d7); border-radius: 4px; transition: width 0.4s ease; }
+  .progress-text { font-size: 0.8rem; color: #718096; font-weight: 600; white-space: nowrap; direction: ltr; }
+
+  .question-text {
+    font-size: 2rem; font-weight: 900; color: var(--primary);
+    margin: 20px 0; direction: ltr;
+  }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .option-btn {
+    background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+    border: 2px solid #E2E8F0; border-radius: 16px;
+    padding: 18px 10px; font-size: 1.4rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    direction: ltr; color: var(--text);
+  }
+  .option-btn:active { transform: scale(0.95); }
+  .option-btn.correct { background: linear-gradient(135deg, #43e97b, #38f9d7); border-color: #43e97b; color: #fff; transform: scale(1.05); }
+  .option-btn.wrong { background: linear-gradient(135deg, #ff6b6b, #ee5a24); border-color: #ff6b6b; color: #fff; animation: shake 0.4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+  .feedback-msg {
+    padding: 14px; border-radius: 14px; font-size: 1rem; font-weight: 700;
+    margin-top: 16px; display: none;
+  }
+  .feedback-msg.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback-msg.success { background: #C6F6D5; color: #276749; }
+  .feedback-msg.error { background: #FED7D7; color: #9B2C2C; }
+
+  /* ===== STARS ===== */
+  .stars-row { display: flex; justify-content: center; gap: 4px; margin: 10px 0; }
+  .star { font-size: 1.8rem; transition: all 0.3s; opacity: 0.3; }
+  .star.lit { opacity: 1; animation: starPop 0.4s ease; }
+  @keyframes starPop { 0%{transform:scale(0)} 70%{transform:scale(1.3)} 100%{transform:scale(1)} }
+
+  /* ===== RESULT SCREEN ===== */
+  .result-card {
+    background: var(--card); border-radius: 24px;
+    padding: 36px 24px; box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .result-emoji { font-size: 5rem; display: block; margin-bottom: 16px; animation: bounce 1s infinite alternate; }
+  .result-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+  .result-score { font-size: 3rem; font-weight: 900; color: var(--primary); direction: ltr; }
+  .result-msg { color: #718096; margin: 12px 0 24px; line-height: 1.6; }
+  .action-btn {
+    background: linear-gradient(135deg, #6C63FF, #8B5CF6);
+    color: #fff; border: none; border-radius: 16px;
+    padding: 16px 32px; font-size: 1.1rem; font-weight: 800;
+    cursor: pointer; width: 100%; margin-bottom: 12px;
+    transition: transform 0.2s; box-shadow: 0 6px 20px rgba(108,99,255,0.4);
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+  }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn.secondary { background: linear-gradient(135deg, #718096, #4A5568); box-shadow: none; }
+
+  /* ===== TEACH SECTION ===== */
+  .teach-card {
+    background: var(--card); border-radius: 20px;
+    padding: 20px; margin-bottom: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .teach-card h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: var(--primary); }
+  .teach-card p { line-height: 2; font-size: 0.95rem; color: #4A5568; }
+  .example-box {
+    background: linear-gradient(135deg, #667eea20, #764ba220);
+    border-right: 4px solid var(--primary);
+    border-radius: 12px; padding: 14px; margin: 12px 0;
+    font-size: 1.1rem; font-weight: 700; direction: ltr; text-align: center;
+  }
+  .visual-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; justify-content: center; }
+  .apple { font-size: 1.8rem; animation: bounce 1.5s infinite alternate; }
+
+  /* ===== GENERAL KNOWLEDGE ===== */
+  .level-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .level-btn {
+    border: none; border-radius: 16px; padding: 20px 8px;
+    font-size: 0.95rem; font-weight: 800; cursor: pointer;
+    transition: transform 0.15s; font-family: 'Vazirmatn', Tahoma, sans-serif;
+    color: #fff;
+  }
+  .level-btn:active { transform: scale(0.93); }
+  .level-easy { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+  .level-medium { background: linear-gradient(135deg, #fa709a, #fee140); }
+  .level-hard { background: linear-gradient(135deg, #f093fb, #f5576c); }
+  .level-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+
+  /* ===== INTELLIGENCE GAME ===== */
+  .pattern-display {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 20px; padding: 24px; text-align: center;
+    margin-bottom: 20px; box-shadow: var(--shadow);
+  }
+  .pattern-nums {
+    font-size: 1.8rem; font-weight: 900; color: #fff;
+    letter-spacing: 4px; direction: ltr; margin-bottom: 8px;
+  }
+  .pattern-hint { color: rgba(255,255,255,0.8); font-size: 0.85rem; }
+
+  /* ===== ABOUT ===== */
+  .about-header {
+    background: linear-gradient(135deg, #fa709a, #fee140);
+    border-radius: 24px; padding: 30px 20px; text-align: center;
+    margin-bottom: 20px; color: #fff;
+  }
+  .about-header .logo { font-size: 4rem; display: block; margin-bottom: 12px; }
+  .about-header h2 { font-size: 1.5rem; font-weight: 900; }
+  .about-header p { opacity: 0.9; margin-top: 6px; }
+
+  .info-card {
+    background: var(--card); border-radius: 20px;
+    padding: 0; margin-bottom: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08); overflow: hidden;
+  }
+  .info-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px; border-bottom: 1px solid #f0f0f0;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .info-content { flex: 1; }
+  .info-label { font-size: 0.75rem; color: #718096; font-weight: 600; margin-bottom: 2px; }
+  .info-value { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+  .phone-link {
+    color: var(--primary); text-decoration: none;
+    font-weight: 800; direction: ltr; display: inline-block;
+  }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #fff; border-top: 1px solid #E2E8F0;
+    display: flex; z-index: 200;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .nav-btn {
+    flex: 1; padding: 10px 4px; border: none; background: transparent;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; transition: all 0.2s; font-family: 'Vazirmatn', Tahoma, sans-serif;
+  }
+  .nav-btn .nav-icon { font-size: 1.5rem; }
+  .nav-btn .nav-label { font-size: 0.65rem; font-weight: 700; color: #A0AEC0; }
+  .nav-btn.active .nav-label { color: var(--primary); }
+  .nav-btn.active .nav-icon { animation: navPop 0.3s ease; }
+  @keyframes navPop { 0%{transform:scale(0.8)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+
+  /* ===== CONFETTI ===== */
+  .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 500; }
+  .confetti-piece {
+    position: absolute; width: 10px; height: 10px; border-radius: 2px;
+    animation: confettiFall 1.5s ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ===== UTILS ===== */
+  .text-center { text-align: center; }
+  .mt-16 { margin-top: 16px; }
+  .hidden { display: none !important; }
+  .divider { height: 1px; background: #E2E8F0; margin: 16px 0; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #EBF4FF; color: var(--primary);
+    padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <span class="logo">📚</span>
+  <h1>یادآموز</h1>
+  <p>یاد بگیر، بازی کن، رشد کن!</p>
+  <div class="loader"><div class="loader-bar"></div></div>
+</div>
+
+<!-- CONFETTI CONTAINER -->
+<div class="confetti-container" id="confetti"></div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <h1>📚 یادآموز</h1>
+  <div class="score-badge">⭐ <span id="total-score">0</span></div>
+</header>
+
+<!-- PAGE: HOME -->
+<div id="page-home" class="page active">
+  <div class="home-hero">
+    <span class="emoji">🌟</span>
+    <h2>خوش اومدی!</h2>
+    <p>یاد بگیر، بازی کن و ستاره جمع کن!<br>یک بخش رو انتخاب کن و شروع کن 🚀</p>
+    <div class="stars-row mt-16" id="home-stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      <span class="star">⭐</span><span class="star">⭐</span>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <button class="menu-card card-1" onclick="showPage('page-mult')">
+      <span class="icon">✖️</span>
+      <span class="title">ضرب و تقسیم</span>
+      <span class="subtitle">یاد بگیر و آزمون بده!</span>
+    </button>
+    <button class="menu-card card-2" onclick="showPage('page-gk')">
+      <span class="icon">🌍</span>
+      <span class="title">اطلاعات عمومی</span>
+      <span class="subtitle">چقدر می‌دونی؟</span>
+    </button>
+    <button class="menu-card card-3" onclick="showPage('page-iq')">
+      <span class="icon">🧠</span>
+      <span class="title">بازی هوش</span>
+      <span class="subtitle">الگوها رو کشف کن!</span>
+    </button>
+    <button class="menu-card card-4" onclick="showPage('page-about')">
+      <span class="icon">ℹ️</span>
+      <span class="title">درباره ما</span>
+      <span class="subtitle">اطلاعات تماس</span>
+    </button>
+  </div>
+</div>
+
+<!-- PAGE: MULTIPLICATION -->
+<div id="page-mult" class="page">
+  <button class="back-btn" onclick="showPage('page-home')">← برگشت</button>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchMultTab('teach')">📖 آموزش</button>
+    <button class="tab-btn" onclick="switchMultTab('quiz')">📝 آزمون ضرب</button>
+    <button class="tab-btn" onclick="switchMultTab('divquiz')">➗ آزمون تقسیم</button>
+  </div>
+
+  <!-- TEACH TAB -->
+  <div id="tab-teach">
+    <div class="teach-card">
+      <h3>🍎 ضرب یعنی چی؟</h3>
+      <p>ضرب یعنی <strong>جمع کردن یک عدد چند بار!</strong></p>
+      <div class="example-box">3 × 4 = 4 + 4 + 4 = 12</div>
+      <p>یعنی چهار تا سه‌تایی:</p>
+      <div class="visual-row">
+        <span class="apple">🍎</span><span class="apple">🍎</span><span class="apple">🍎</span>
+        <span style="font-size:1.5rem;align-self:center;">|</span>
+        <span class="apple">🍎</span><span class="apple">🍎</span><span class="apple">🍎</span>
+        <span style="font-size:1.5rem;align-self:center;">|</span>
+        <span class="apple">🍎</span><span class="apple">🍎</span><span class="apple">🍎</span>
+        <span style="font-size:1.5rem;align-self:center;">|</span>
+        <span class="apple">🍎</span><span class="apple">🍎</span><span class="apple">🍎</span>
+      </div>
+      <p style="text-align:center; font-weight:800; color:var(--primary); direction:ltr;">= 12 سیب 🎉</p>
+    </div>
+
+    <div class="teach-card">
+      <h3>➗ تقسیم یعنی چی؟</h3>
+      <p>تقسیم یعنی <strong>تقسیم کردن چیزی بین چند نفر به طور مساوی!</strong></p>
+      <div class="example-box">12 ÷ 4 = 3</div>
+      <p>یعنی ۱۲ سیب را بین ۴ نفر تقسیم می‌کنیم و هر کدوم ۳ تا می‌گیرن.</p>
+      <div class="visual-row">
+        <span>👦🍎🍎🍎</span>
+        <span>👧🍎🍎🍎</span>
+        <span>👦🍎🍎🍎</span>
+        <span>👧🍎🍎🍎</span>
+      </div>
+    </div>
+
+    <div class="teach-card">
+      <h3>💡 ترفند جدول</h3>
+      <p>ضرب و تقسیم برعکس همن!</p>
+      <div class="example-box">3 × 4 = 12 ← 12 ÷ 4 = 3</div>
+      <p>اگه جدول ضرب رو بدونی، تقسیم هم راحته! 💪</p>
+    </div>
+  </div>
+
+  <!-- QUIZ TABS (Mult & Div share same UI) -->
+  <div id="tab-quiz" class="hidden">
+    <div id="mult-select">
+      <p style="font-weight:700; margin-bottom:12px; font-size:1rem;">جدول ضرب کدوم عدد رو می‌خوای؟</p>
+      <div class="table-grid" id="mult-num-grid"></div>
+    </div>
+    <div id="mult-quiz-area" class="hidden"></div>
+  </div>
+
+  <div id="tab-divquiz" class="hidden">
+    <div id="div-select">
+      <p style="font-weight:700; margin-bottom:12px; font-size:1rem;">تقسیم بر کدوم عدد رو می‌خوای؟</p>
+      <div class="table-grid" id="div-num-grid"></div>
+    </div>
+    <div id="div-quiz-area" class="hidden"></div>
+  </div>
+</div>
+
+<!-- PAGE: GENERAL KNOWLEDGE -->
+<div id="page-gk" class="page">
+  <button class="back-btn" onclick="showPage('page-home')">← برگشت</button>
+  <div class="section-title">🌍 اطلاعات عمومی</div>
+
+  <div id="gk-level-select">
+    <div class="home-hero" style="background:linear-gradient(135deg,#4facfe,#00f2fe); margin-bottom:24px;">
+      <span style="font-size:3rem; display:block; margin-bottom:10px;">🎯</span>
+      <h2>سطح مورد نظرت رو انتخاب کن</h2>
+    </div>
+    <div class="level-grid">
+      <button class="level-btn level-easy" onclick="startGK('easy')">
+        <span class="level-icon">😊</span>آسان
+      </button>
+      <button class="level-btn level-medium" onclick="startGK('medium')">
+        <span class="level-icon">🤔</span>متوسط
+      </button>
+      <button class="level-btn level-hard" onclick="startGK('hard')">
+        <span class="level-icon">🔥</span>سخت
+      </button>
+    </div>
+  </div>
+
+  <div id="gk-quiz-area" class="hidden"></div>
+</div>
+
+<!-- PAGE: IQ GAME -->
+<div id="page-iq" class="page">
+  <button class="back-btn" onclick="showPage('page-home')">← برگشت</button>
+  <div class="section-title">🧠 بازی هوش</div>
+
+  <div id="iq-intro">
+    <div class="home-hero" style="background:linear-gradient(135deg,#43e97b,#38f9d7); margin-bottom:24px;">
+      <span style="font-size:3rem; display:block; margin-bottom:10px;">🔢</span>
+      <h2>الگوهای عددی</h2>
+      <p>عدد بعدی الگو رو پیدا کن!<br>مخصوص سنین ۱۰ تا ۱۴ سال</p>
+    </div>
+    <button class="action-btn" onclick="startIQ()">شروع بازی هوش 🚀</button>
+  </div>
+
+  <div id="iq-quiz-area" class="hidden"></div>
+</div>
+
+<!-- PAGE: ABOUT -->
+<div id="page-about" class="page">
+  <button class="back-btn" onclick="showPage('page-home')">← برگشت</button>
+
+  <div class="about-header">
+    <span class="logo">🖨️</span>
+    <h2>چاپ و تبلیغات فدک</h2>
+    <p>حامی برنامه یادآموز</p>
+  </div>
+
+  <div class="info-card">
+    <div class="info-row">
+      <span class="info-icon">👨‍💻</span>
+      <div class="info-content">
+        <div class="info-label">طراحی شده توسط</div>
+        <div class="info-value">محمدرضا جباری</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-icon">🏢</span>
+      <div class="info-content">
+        <div class="info-label">حامی برنامه</div>
+        <div class="info-value">چاپ و تبلیغات فدک</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-icon">🛠️</span>
+      <div class="info-content">
+        <div class="info-label">خدمات</div>
+        <div class="info-value">انجام خدمات سیمی و منگنه کتاب برای دانش‌آموزان عزیز</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-icon">📍</span>
+      <div class="info-content">
+        <div class="info-label">آدرس</div>
+        <div class="info-value">پرند، فاز ۲، بلوار جمهوری، طبقه همکف مسجد جامع - چاپ فدک</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-icon">📞</span>
+      <div class="info-content">
+        <div class="info-label">تلفن تماس</div>
+        <div class="info-value">
+          <a href="tel:09301499659" class="phone-link">09301499659</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="teach-card" style="text-align:center; background:linear-gradient(135deg,#667eea15,#764ba215);">
+    <div style="font-size:2.5rem; margin-bottom:10px;">📚</div>
+    <h3 style="color:var(--primary); margin-bottom:8px;">درباره برنامه یادآموز</h3>
+    <p style="color:#4A5568; line-height:1.8; font-size:0.9rem;">
+      این برنامه با هدف آموزش سرگرم‌کننده و تعاملی برای دانش‌آموزان ۷ تا ۱۴ سال طراحی شده است.
+      با یادآموز یاد بگیر، بازی کن و هر روز رشد کن! 🌟
+    </p>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showPage('page-home')" id="nav-home">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">خانه</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('page-mult')" id="nav-mult">
+    <span class="nav-icon">✖️</span>
+    <span class="nav-label">ضرب</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('page-gk')" id="nav-gk">
+    <span class="nav-icon">🌍</span>
+    <span class="nav-label">اطلاعات</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('page-iq')" id="nav-iq">
+    <span class="nav-icon">🧠</span>
+    <span class="nav-label">هوش</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('page-about')" id="nav-about">
+    <span class="nav-icon">ℹ️</span>
+    <span class="nav-label">درباره ما</span>
+  </button>
+</nav>
+
+<script>
+// ===== SPLASH =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash');
+    splash.style.opacity = '0';
+    setTimeout(() => splash.style.display = 'none', 800);
+    updateHomeStars();
+  }, 2200);
+});
+
+// ===== GLOBAL STATE =====
+let totalScore = 0;
+
+function addScore(pts) {
+  totalScore += pts;
+  document.getElementById('total-score').textContent = totalScore;
+  updateHomeStars();
+}
+
+function updateHomeStars() {
+  const stars = document.querySelectorAll('#home-stars .star');
+  const lit = Math.min(5, Math.floor(totalScore / 3));
+  stars.forEach((s, i) => s.classList.toggle('lit', i < lit));
+}
+
+// ===== PAGE NAVIGATION =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map = {
+    'page-home': 'nav-home',
+    'page-mult': 'nav-mult',
+    'page-gk': 'nav-gk',
+    'page-iq': 'nav-iq',
+    'page-about': 'nav-about'
+  };
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (map[id]) document.getElementById(map[id]).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ===== MULT TABS =====
+function switchMultTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.remove('active'));
+  const tabs = ['teach', 'quiz', 'divquiz'];
+  const idx = tabs.indexOf(tab);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  document.getElementById('tab-teach').classList.toggle('hidden', tab !== 'teach');
+  document.getElementById('tab-quiz').classList.toggle('hidden', tab !== 'quiz');
+  document.getElementById('tab-divquiz').classList.toggle('hidden', tab !== 'divquiz');
+}
+
+// ===== NUMBER SELECTION GRIDS =====
+(function buildGrids() {
+  const mg = document.getElementById('mult-num-grid');
+  const dg = document.getElementById('div-num-grid');
+  for (let i = 1; i <= 9; i++) {
+    const mb = document.createElement('button');
+    mb.className = 'num-select-btn'; mb.textContent = i;
+    mb.onclick = () => startMultQuiz(i, 'mult');
+    mg.appendChild(mb);
+    const db = document.createElement('button');
+    db.className = 'num-select-btn'; db.textContent = i;
+    db.onclick = () => startMultQuiz(i, 'div');
+    dg.appendChild(db);
+  }
+})();
+
+// ===== QUIZ ENGINE (Mult & Div) =====
+let multState = {};
+
+function startMultQuiz(num, type) {
+  const questions = [];
+  for (let i = 1; i <= 9; i++) {
+    if (type === 'mult') {
+      const ans = num * i;
+      questions.push({ q: `${num} × ${i} = ?`, answer: ans, type: 'mult' });
+    } else {
+      const product = num * i;
+      questions.push({ q: `${product} ÷ ${num} = ?`, answer: i, type: 'div' });
+    }
+  }
+  shuffle(questions);
+  multState = { questions, current: 0, correct: 0, total: questions.length, num, type, answered: false };
+
+  const area = type === 'mult' ? 'mult-quiz-area' : 'div-quiz-area';
+  const sel = type === 'mult' ? 'mult-select' : 'div-select';
+  document.getElementById(sel).classList.add('hidden');
+  document.getElementById(area).classList.remove('hidden');
+  renderMultQ(area);
+}
+
+function renderMultQ(areaId) {
+  const area = document.getElementById(areaId);
+  const state = multState;
+  if (state.current >= state.total) {
+    showMultResult(areaId, state);
+    return;
+  }
+  const q = state.questions[state.current];
+  const opts = generateOpts(q.answer, 1, 81);
+  area.innerHTML = `
+    <div class="quiz-progress">
+      <div class="progress-bar"><div class="progress-fill" style="width:${(state.current/state.total)*100}%"></div></div>
+      <span class="progress-text">${state.current+1}/${state.total}</span>
+    </div>
+    <div class="quiz-card">
+      <div class="stars-row" id="qstars">${'⭐'.repeat(state.correct).split('').map(s=>`<span class="star lit">${s}</span>`).join('')}${'⭐'.repeat(Math.max(0,5-state.correct)).split('').map(s=>`<span class="star">${s}</span>`).join('')}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${opts.map(o=>`<button class="option-btn" onclick="checkMultAns(this,${o},${q.answer},'${areaId}')">${o}</button>`).join('')}
+      </div>
+      <div class="feedback-msg" id="feedback"></div>
+    </div>`;
+  state.answered = false;
+}
+
+function checkMultAns(btn, selected, correct, areaId) {
+  if (multState.answered) return;
+  multState.answered = true;
+  const fb = document.getElementById('feedback');
+  if (selected === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '🎉 آفرین! عالیه!';
+    fb.className = 'feedback-msg show success';
+    multState.correct++;
+    addScore(1);
+    triggerConfetti();
+    playSound(true);
+    setTimeout(() => { multState.current++; renderMultQ(areaId); }, 1200);
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = '❌ دوباره تلاش کن! جواب درست: ' + correct;
+    fb.className = 'feedback-msg show error';
+    playSound(false);
+    setTimeout(() => { multState.answered = false; btn.classList.remove('wrong'); fb.className='feedback-msg'; }, 1800);
+  }
+}
+
+function showMultResult(areaId, state) {
+  const pct = Math.round((state.correct / state.total) * 100);
+  const emoji = pct >= 80 ? '🏆' : pct >= 50 ? '😊' : '💪';
+  const msg = pct >= 80 ? 'عالی بودی! یه ستاره‌ای!' : pct >= 50 ? 'خوب بود! بیشتر تمرین کن!' : 'نگران نباش، دوباره امتحان کن!';
+  const sel = state.type === 'mult' ? 'mult-select' : 'div-select';
+  document.getElementById(areaId).innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">${emoji}</span>
+      <div class="result-title">نتیجه آزمون</div>
+      <div class="result-score">${state.correct} / ${state.total}</div>
+      <p class="result-msg">${msg}</p>
+      <button class="action-btn" onclick="startMultQuiz(${state.num},'${state.type}')">دوباره بازی کن 🔄</button>
+      <button class="action-btn secondary" onclick="document.getElementById('${sel}').classList.remove('hidden'); document.getElementById('${areaId}').classList.add('hidden')">انتخاب عدد دیگه 🔢</button>
+    </div>`;
+  if (pct >= 80) triggerConfetti();
+}
+
+// ===== GENERAL KNOWLEDGE =====
+const gkData = {
+  easy: [
+    { q: 'پایتخت ایران کدام شهر است؟', opts: ['تهران','مشهد','اصفهان','شیراز'], a: 0 },
+    { q: 'عدد ۱۰۰ چند رقمی است؟', opts: ['۱','۲','۳','۴'], a: 2 },
+    { q: 'کدام حیوان شیر می‌دهد؟', opts: ['مرغ','گاو','ماهی','عقاب'], a: 1 },
+    { q: 'فصلی که در آن برف می‌بارد معمولاً کدام است؟', opts: ['بهار','تابستان','پاییز','زمستان'], a: 3 },
+    { q: 'رنگ آسمان در روز صاف چیست؟', opts: ['سبز','قرمز','آبی','زرد'], a: 2 },
+    { q: '۵ × ۵ چند می‌شود؟', opts: ['۱۰','۲۰','۲۵','۳۰'], a: 2 },
+    { q: 'کدام یک میوه است؟', opts: ['هویج','سیب','پیاز','سیب‌زمینی'], a: 1 },
+    { q: 'خورشید چه رنگی دارد؟', opts: ['آبی','سفید/زرد','سبز','بنفش'], a: 1 },
+    { q: 'در یک هفته چند روز وجود دارد؟', opts: ['۵','۶','۷','۸'], a: 2 },
+    { q: 'کدام حیوان در دریا زندگی می‌کند؟', opts: ['شیر','فیل','دلفین','گرگ'], a: 2 },
+  ],
+  medium: [
+    { q: 'زبان رسمی ایران کدام است؟', opts: ['عربی','ترکی','فارسی','کردی'], a: 2 },
+    { q: 'کدام سیاره به خورشید نزدیک‌تر است؟', opts: ['زمین','مریخ','عطارد','زهره'], a: 2 },
+    { q: 'بزرگ‌ترین اقیانوس جهان کدام است؟', opts: ['اطلس','هند','آرام','منجمد'], a: 2 },
+    { q: 'فرمول آب چیست؟', opts: ['CO2','H2O','NaCl','O2'], a: 1 },
+    { q: 'کدام کشور پرجمعیت‌ترین کشور جهان است؟', opts: ['آمریکا','هند','چین','روسیه'], a: 1 },
+    { q: 'قله دماوند در کدام استان قرار دارد؟', opts: ['تهران','اصفهان','مازندران','فارس'], a: 2 },
+    { q: 'کدام رنگ در رنگین‌کمان وجود ندارد؟', opts: ['قرمز','صورتی','آبی','سبز'], a: 1 },
+    { q: 'مربع چند ضلع دارد؟', opts: ['۳','۴','۵','۶'], a: 1 },
+    { q: 'کدام گاز بیشترین درصد هوا را دارد؟', opts: ['اکسیژن','ازن','نیتروژن','CO2'], a: 2 },
+    { q: 'قلب انسان در کجای بدن قرار دارد؟', opts: ['شکم','سینه','گردن','سر'], a: 1 },
+  ],
+  hard: [
+    { q: 'عمیق‌ترین دریاچه جهان کدام است؟', opts: ['بایکال','ویکتوریا','کاسپین','سوپریور'], a: 0 },
+    { q: 'کدام دانشمند نظریه نسبیت را مطرح کرد؟', opts: ['نیوتن','انیشتین','داروین','گالیله'], a: 1 },
+    { q: 'عدد پی (π) تقریباً چقدر است؟', opts: ['2.14','3.14','4.13','3.41'], a: 1 },
+    { q: 'کدام کشور بیشترین مدال طلا را در المپیک دارد؟', opts: ['روسیه','چین','آلمان','آمریکا'], a: 3 },
+    { q: 'ژن‌ها در کدام بخش سلول قرار دارند؟', opts: ['غشا','میتوکندری','هسته','ریبوزوم'], a: 2 },
+    { q: 'نزدیک‌ترین ستاره به زمین (غیر از خورشید) کدام است؟', opts: ['وگا','پروکسیما','زمرد','دنب'], a: 1 },
+    { q: 'کدام عنصر بیشترین درصد پوسته زمین را دارد؟', opts: ['آلومینیم','آهن','اکسیژن','سیلیکون'], a: 2 },
+    { q: 'مثلث متساوی‌الاضلاع چند زاویه مساوی دارد؟', opts: ['۱','۲','۳','۰'], a: 2 },
+    { q: 'کدام اختراع مربوط به گراهام بل است؟', opts: ['تلویزیون','تلفن','رادیو','برق'], a: 1 },
+    { q: 'سرعت نور تقریباً چند کیلومتر بر ثانیه است؟', opts: ['100,000','300,000','500,000','1,000,000'], a: 1 },
+  ]
+};
+
+let gkState = {};
+
+function startGK(level) {
+  const qs = shuffle([...gkData[level]]);
+  gkState = { questions: qs, current: 0, correct: 0, total: qs.length, level, answered: false };
+  document.getElementById('gk-level-select').classList.add('hidden');
+  document.getElementById('gk-quiz-area').classList.remove('hidden');
+  renderGKQ();
+}
+
+function renderGKQ() {
+  const area = document.getElementById('gk-quiz-area');
+  const s = gkState;
+  if (s.current >= s.total) { showGKResult(); return; }
+  const q = s.questions[s.current];
+  const levelNames = { easy: '😊 آسان', medium: '🤔 متوسط', hard: '🔥 سخت' };
+  area.innerHTML = `
+    <div class="quiz-progress">
+      <div class="progress-bar"><div class="progress-fill" style="width:${(s.current/s.total)*100}%"></div></div>
+      <span class="progress-text">${s.current+1}/${s.total}</span>
+    </div>
+    <div style="text-align:center; margin-bottom:10px;"><span class="chip">${levelNames[s.level]}</span></div>
+    <div class="quiz-card">
+      <div style="font-size:0.85rem; color:#718096; margin-bottom:10px;">سوال ${s.current+1}</div>
+      <div style="font-size:1.1rem; font-weight:800; line-height:1.7; margin:10px 0 20px;">${q.q}</div>
+      <div class="options-grid">
+        ${q.opts.map((o,i)=>`<button class="option-btn" style="font-size:0.9rem;" onclick="checkGKAns(this,${i},${q.a})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback-msg" id="gk-feedback"></div>
+    </div>`;
+  s.answered = false;
+}
+
+function checkGKAns(btn, sel, correct) {
+  if (gkState.answered) return;
+  gkState.answered = true;
+  const fb = document.getElementById('gk-feedback');
+  if (sel === correct) {
+    btn.classList.add('correct');
+    fb.textContent = '🎉 درسته! آفرین!';
+    fb.className = 'feedback-msg show success';
+    gkState.correct++;
+    addScore(2);
+    triggerConfetti();
+    playSound(true);
+    setTimeout(() => { gkState.current++; renderGKQ(); }, 1200);
+  } else {
+    btn.classList.add('wrong');
+    const correctText = gkState.questions[gkState.current].opts[correct];
+    fb.textContent = `❌ اشتباه! جواب درست: ${correctText}`;
+    fb.className = 'feedback-msg show error';
+    playSound(false);
+    setTimeout(() => { gkState.answered = false; btn.classList.remove('wrong'); fb.className='feedback-msg'; }, 2000);
+  }
+}
+
+function showGKResult() {
+  const s = gkState;
+  const pct = Math.round((s.correct / s.total) * 100);
+  const emoji = pct >= 80 ? '🏆' : pct >= 50 ? '🌟' : '💪';
+  document.getElementById('gk-quiz-area').innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">${emoji}</span>
+      <div class="result-title">نتیجه آزمون</div>
+      <div class="result-score">${s.correct} / ${s.total}</div>
+      <div style="font-size:1.5rem; color:var(--warning); direction:ltr; margin:8px 0;">${'⭐'.repeat(Math.round(pct/20))}</div>
+      <p class="result-msg">${pct}% پاسخ درست دادی!</p>
+      <button class="action-btn" onclick="startGK('${s.level}')">دوباره بازی کن 🔄</button>
+      <button class="action-btn secondary" onclick="document.getElementById('gk-level-select').classList.remove('hidden'); document.getElementById('gk-quiz-area').classList.add('hidden')">تغییر سطح 🎯</button>
+    </div>`;
+  if (pct >= 80) triggerConfetti();
+}
+
+// ===== IQ GAME =====
+const iqPatterns = [
+  { seq: [2,4,6,8], next: 10, rule: 'هر بار ۲ اضافه می‌شود', opts: [8,9,10,12] },
+  { seq: [1,3,5,7], next: 9, rule: 'اعداد فرد', opts: [8,9,11,10] },
+  { seq: [3,6,9,12], next: 15, rule: 'هر بار ۳ اضافه می‌شود', opts: [13,14,15,16] },
+  { seq: [2,4,8,16], next: 32, rule: 'هر بار ۲ برابر می‌شود', opts: [18,24,32,36] },
+  { seq: [1,4,9,16], next: 25, rule: 'مجذور اعداد: ۱²، ۲²، ۳²...', opts: [20,24,25,26] },
+  { seq: [5,10,15,20], next: 25, rule: 'هر بار ۵ اضافه می‌شود', opts: [22,23,25,30] },
+  { seq: [100,90,80,70], next: 60, rule: 'هر بار ۱۰ کم می‌شود', opts: [55,60,65,70] },
+  { seq: [1,1,2,3,5], next: 8, rule: 'دنباله فیبوناچی', opts: [6,7,8,9] },
+  { seq: [4,8,12,16], next: 20, rule: 'جدول ۴', opts: [18,19,20,22] },
+  { seq: [64,32,16,8], next: 4, rule: 'هر بار نصف می‌شود', opts: [2,4,6,8] },
+  { seq: [1,2,4,7,11], next: 16, rule: 'فاصله‌ها: ۱،۲،۳،۴،۵', opts: [14,15,16,17] },
+  { seq: [10,20,30,40], next: 50, rule: 'هر بار ۱۰ اضافه می‌شود', opts: [45,48,50,55] },
+  { seq: [3,9,27,81], next: 243, rule: 'هر بار ۳ برابر می‌شود', opts: [162,200,243,300] },
+  { seq: [7,14,21,28], next: 35, rule: 'جدول ۷', opts: [30,33,35,42] },
+  { seq: [2,3,5,7,11], next: 13, rule: 'اعداد اول', opts: [12,13,14,15] },
+];
+
+let iqState = {};
+
+function startIQ() {
+  document.getElementById('iq-intro').classList.add('hidden');
+  document.getElementById('iq-quiz-area').classList.remove('hidden');
+  const qs = shuffle([...iqPatterns]).slice(0, 8);
+  iqState = { questions: qs, current: 0, correct: 0, total: qs.length, answered: false };
+  renderIQQ();
+}
+
+function renderIQQ() {
+  const area = document.getElementById('iq-quiz-area');
+  const s = iqState;
+  if (s.current >= s.total) { showIQResult(); return; }
+  const q = s.questions[s.current];
+  const shuffledOpts = shuffle([...q.opts]);
+  area.innerHTML = `
+    <div class="quiz-progress">
+      <div class="progress-bar"><div class="progress-fill" style="width:${(s.current/s.total)*100}%"></div></div>
+      <span class="progress-text">${s.current+1}/${s.total}</span>
+    </div>
+    <div class="pattern-display">
+      <div class="pattern-hint">الگو را پیدا کن!</div>
+      <div class="pattern-nums">${q.seq.join(' , ')} , ?</div>
+      <div class="pattern-hint">عدد بعدی چیست؟</div>
+    </div>
+    <div class="quiz-card">
+      <div style="font-weight:700; margin-bottom:16px;">گزینه درست را انتخاب کن:</div>
+      <div class="options-grid">
+        ${shuffledOpts.map(o=>`<button class="option-btn" onclick="checkIQAns(this,${o},${q.next},'${q.rule}')">${o}</button>`).join('')}
+      </div>
+      <div class="feedback-msg" id="iq-feedback"></div>
+    </div>`;
+  s.answered = false;
+}
+
+function checkIQAns(btn, sel, correct, rule) {
+  if (iqState.answered) return;
+  iqState.answered = true;
+  const fb = document.getElementById('iq-feedback');
+  if (sel === correct) {
+    btn.classList.add('correct');
+    fb.innerHTML = `🎉 درسته! <br><small>قانون: ${rule}</small>`;
+    fb.className = 'feedback-msg show success';
+    iqState.correct++;
+    addScore(3);
+    triggerConfetti();
+    playSound(true);
+    setTimeout(() => { iqState.current++; renderIQQ(); }, 1500);
+  } else {
+    btn.classList.add('wrong');
+    fb.innerHTML = `❌ اشتباه! جواب: <strong>${correct}</strong><br><small>قانون: ${rule}</small>`;
+    fb.className = 'feedback-msg show error';
+    playSound(false);
+    setTimeout(() => { iqState.answered = false; btn.classList.remove('wrong'); fb.className='feedback-msg'; }, 2200);
+  }
+}
+
+function showIQResult() {
+  const s = iqState;
+  const pct = Math.round((s.correct / s.total) * 100);
+  const emoji = pct >= 80 ? '🧠🏆' : pct >= 50 ? '🧠🌟' : '🧠💪';
+  document.getElementById('iq-quiz-area').innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">${emoji}</span>
+      <div class="result-title">نتیجه بازی هوش</div>
+      <div class="result-score">${s.correct} / ${s.total}</div>
+      <div style="font-size:1.5rem; color:var(--warning); direction:ltr; margin:8px 0;">${'⭐'.repeat(Math.round(pct/20))}</div>
+      <p class="result-msg">${pct >= 80 ? 'فوق‌العاده‌ای! نبوغ داری! 🧠' : pct >= 50 ? 'خوب بود! یه کم بیشتر تمرین کن!' : 'ادامه بده، قوی‌تر می‌شی! 💪'}</p>
+      <button class="action-btn" onclick="startIQ()">دوباره بازی کن 🔄</button>
+      <button class="action-btn secondary" onclick="document.getElementById('iq-intro').classList.remove('hidden'); document.getElementById('iq-quiz-area').classList.add('hidden')">برگشت 🏠</button>
+    </div>`;
+  if (pct >= 80) triggerConfetti();
+}
+
+// ===== UTILITIES =====
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function generateOpts(correct, min, max) {
+  const opts = new Set([correct]);
+  while (opts.size < 4) {
+    const offset = Math.floor(Math.random() * 15) - 7;
+    const val = correct + offset;
+    if (val >= min && val <= max && val !== correct) opts.add(val);
+  }
+  return shuffle([...opts]);
+}
+
+// ===== CONFETTI =====
+function triggerConfetti() {
+  const container = document.getElementById('confetti');
+  const colors = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#FF6584','#C77DFF'];
+  for (let i = 0; i < 30; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-10px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (Math.random() * 1 + 1) + 's';
+    piece.style.animationDelay = Math.random() * 0.5 + 's';
+    piece.style.transform = `rotate(${Math.random()*360}deg)`;
+    container.appendChild(piece);
+    setTimeout(() => piece.remove(), 2000);
+  }
+}
+
+// ===== SOUND (Web Audio API - no files needed) =====
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playSound(success) {
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    if (success) {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+    } else {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, ctx.currentTime);
+      osc.frequency.setValueAtTime(150, ctx.currentTime + 0.2);
+    }
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چاپ و تبلیغات فدک</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Vazirmatn',sans-serif;min-height:100vh;
+    background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+    display:flex;flex-direction:column;align-items:center;padding:16px;
+  }
+  .container{width:100%;max-width:840px;display:flex;flex-direction:column;gap:14px}
+
+  /* HEADER */
+  .header{
+    background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.13);border-radius:16px;
+    padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  .header-title{color:#fff;font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px}
+  .badge{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:0.7rem;padding:3px 10px;border-radius:20px}
+
+  /* CALC PANEL */
+  .calc-panel{
+    background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:18px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .panel-title{color:#fff;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:7px}
+
+  /* SELECT */
+  .sg{display:flex;flex-direction:column;gap:5px}
+  .sg label{color:rgba(255,255,255,0.6);font-size:0.78rem}
+  select,input[type=number],textarea{
+    background:rgba(255,255,255,0.09);border:1.5px solid rgba(255,255,255,0.16);
+    border-radius:10px;padding:9px 13px;color:#fff;
+    font-family:'Vazirmatn',sans-serif;font-size:0.83rem;outline:none;width:100%;
+    transition:border-color .2s;appearance:none;-webkit-appearance:none;
+  }
+  select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='rgba(255,255,255,0.6)' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:left 12px center;padding-left:34px;cursor:pointer;
+  }
+  select:focus,input:focus{border-color:rgba(102,126,234,0.7)}
+  select option{background:#302b63;color:#fff}
+
+  /* SERVICE SECTION */
+  .service-section{display:none;flex-direction:column;gap:12px;animation:sIn .3s ease}
+  .service-section.active{display:flex}
+  @keyframes sIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  .form-row{display:flex;gap:10px;flex-wrap:wrap}
+  .fg{display:flex;flex-direction:column;gap:5px;flex:1;min-width:130px}
+  .fg label{color:rgba(255,255,255,0.6);font-size:0.78rem}
+
+  /* RESULT */
+  .result-box{
+    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.13);
+    border-radius:12px;padding:14px;display:none;flex-direction:column;gap:8px;animation:sIn .3s ease;
+  }
+  .result-box.show{display:flex}
+  .rrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
+  .rrow:last-child{border-bottom:none}
+  .rl{color:rgba(255,255,255,0.55);font-size:0.8rem}
+  .rv{color:#fff;font-size:0.85rem;font-weight:500;text-align:left}
+  .rtotal{
+    background:linear-gradient(135deg,rgba(102,126,234,0.2),rgba(118,75,162,0.2));
+    border:1px solid rgba(102,126,234,0.35);border-radius:9px;padding:10px 14px;
+  }
+  .rtotal .rl{font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.8)}
+  .rtotal .rv{font-size:1rem;font-weight:700;color:#b39ddb}
+  .per{color:rgba(255,255,255,0.4);font-size:0.72rem;margin-top:2px}
+
+  /* SAVINGS */
+  .sav-box{
+    background:rgba(46,213,115,0.08);border:1.5px solid rgba(46,213,115,0.25);
+    border-radius:11px;padding:12px 14px;display:none;flex-direction:column;gap:7px;animation:sIn .3s ease;
+  }
+  .sav-box.show{display:flex}
+  .sav-title{color:#69f0ae;font-size:0.82rem;font-weight:700}
+  .sav-line{color:rgba(255,255,255,0.6);font-size:0.78rem;line-height:1.8}
+  .sav-save{color:#69f0ae;font-size:0.86rem;font-weight:700;margin-top:3px}
+
+  /* TIP / WARN */
+  .tip{background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.25);border-radius:9px;padding:9px 13px;color:#ffd54f;font-size:0.78rem;line-height:1.8}
+  .warn{background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.25);border-radius:9px;padding:9px 13px;color:#ff8a80;font-size:0.78rem;line-height:1.8}
+  .info{background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.25);border-radius:9px;padding:9px 13px;color:#90caf9;font-size:0.78rem;line-height:1.8}
+
+  /* CALC BTN */
+  .calc-btn{
+    background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:10px;
+    padding:10px 22px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:0.85rem;font-weight:600;
+    cursor:pointer;transition:all .2s;align-self:flex-start;
+  }
+  .calc-btn:hover{opacity:.88;transform:translateY(-1px)}
+
+  /* RISO TABLE */
+  .riso-table{width:100%;border-collapse:collapse}
+  .riso-table th,.riso-table td{padding:8px 12px;text-align:center;font-size:0.8rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .riso-table th{color:rgba(255,255,255,0.5);font-weight:500}
+  .riso-table td{color:#fff}
+  .riso-table tr:last-child td{border-bottom:none}
+
+  /* PHOTO TABLE */
+  .photo-table{width:100%;border-collapse:collapse}
+  .photo-table th,.photo-table td{padding:8px 12px;text-align:center;font-size:0.8rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .photo-table th{color:rgba(255,255,255,0.5);font-weight:500}
+  .photo-table td{color:#fff}
+  .photo-table tr:last-child td{border-bottom:none}
+  .photo-select-row{display:flex;gap:10px;flex-wrap:wrap}
+
+  /* CHAT */
+  .chat-box{
+    background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.1);border-radius:18px;
+    padding:14px;height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;
+  }
+  .chat-box::-webkit-scrollbar{width:3px}
+  .chat-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:10px}
+  .msg{display:flex;gap:8px;animation:sIn .3s ease}
+  .msg.user{flex-direction:row-reverse}
+  .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0}
+  .msg.bot .av{background:linear-gradient(135deg,#667eea,#764ba2)}
+  .msg.user .av{background:linear-gradient(135deg,#f093fb,#f5576c)}
+  .bubble{max-width:80%;padding:9px 13px;border-radius:13px;font-size:0.82rem;line-height:1.75}
+  .msg.bot .bubble{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#f0f0f0;border-top-right-radius:3px}
+  .msg.user .bubble{background:linear-gradient(135deg,rgba(102,126,234,0.4),rgba(118,75,162,0.4));border:1px solid rgba(255,255,255,0.15);color:#fff;border-top-left-radius:3px}
+
+  .qr-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0}
+  .qr{
+    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);
+    color:rgba(255,255,255,0.85);padding:5px 11px;border-radius:16px;font-size:0.75rem;
+    cursor:pointer;font-family:'Vazirmatn',sans-serif;transition:all .2s;
+  }
+  .qr:hover{background:rgba(102,126,234,0.35);border-color:rgba(102,126,234,0.55);color:#fff}
+
+  .dots-wrap{display:flex;gap:4px;padding:9px 13px;background:rgba(255,255,255,0.08);border-radius:13px;border-top-right-radius:3px}
+  .dot{width:5px;height:5px;background:rgba(255,255,255,0.45);border-radius:50%;animation:bounce 1.2s infinite}
+  .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+  /* INPUT AREA */
+  .input-area{
+    background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.12);border-radius:14px;
+    padding:10px 12px;display:flex;gap:9px;align-items:flex-end;
+  }
+  #userInput{
+    flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);
+    border-radius:9px;padding:8px 12px;color:#fff;font-family:'Vazirmatn',sans-serif;
+    font-size:0.82rem;outline:none;resize:none;min-height:36px;max-height:100px;
+  }
+  #userInput::placeholder{color:rgba(255,255,255,0.3)}
+  #sendBtn{
+    background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:9px;
+    width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;
+  }
+  #sendBtn:hover{opacity:.88;transform:scale(1.04)}
+  #sendBtn svg{width:17px;height:17px;fill:#fff}
+
+  /* CONTACT BAR */
+  .cbar{
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);
+    border-radius:12px;padding:9px 16px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap;
+  }
+  .cbar span{color:rgba(255,255,255,0.5);font-size:0.75rem;display:flex;align-items:center;gap:4px}
+
+  @media(max-width:580px){
+    .form-row{flex-direction:column}
+    .fg{min-width:unset}
+    .chat-box{height:220px}
+    .header-title{font-size:0.95rem}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-title">🖨️ چاپ و تبلیغات فدک</div>
+    <span class="badge">دستیار هوش مصنوعی</span>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="calc-panel">
+    <div class="panel-title">🧮 ماشین‌حساب قیمت</div>
+
+    <div class="sg">
+      <label>خدمت مورد نظر را انتخاب کنید</label>
+      <select id="svcSel" onchange="switchSvc()">
+        <option value="">— انتخاب کنید —</option>
+        <option value="banner">🖼️ بنر</option>
+        <option value="tract">📄 تراکت افست</option>
+        <option value="riso">🖨️ تراکت ریسو</option>
+        <option value="bc">🎴 کارت ویزیت</option>
+        <option value="lh">📋 سربرگ</option>
+        <option value="label">🏷️ لیبل / برچسب</option>
+        <option value="sub">🎨 چاپ سابلیمیشن</option>
+        <option value="photo">📸 عکس پرسنلی ۴×۳</option>
+      </select>
+    </div>
+
+    <!-- ═══════════════════ BANNER ═══════════════════ -->
+    <div class="service-section" id="sec_banner">
+      <div class="form-row">
+        <div class="fg">
+          <label>کیفیت چاپ</label>
+          <select id="bn_q" onchange="calcBanner()">
+            <option value="350000">معمولی — ۳۵۰٬۰۰۰ تومان / متر مربع</option>
+            <option value="400000">خوب (کیفیت بالا) — ۴۰۰٬۰۰۰ تومان / متر مربع</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>عرض (سانتی‌متر)</label>
+          <select id="bn_w" onchange="calcBanner()">
+            <option value="100">۱۰۰</option><option value="120">۱۲۰</option>
+            <option value="150">۱۵۰</option><option value="200">۲۰۰</option>
+            <option value="250">۲۵۰</option><option value="300">۳۰۰ (۲ روز)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>طول (سانتی‌متر)</label>
+          <input type="number" id="bn_l" placeholder="مثال: ۲۰۰" min="1" oninput="calcBanner()">
+        </div>
+      </div>
+      <div class="result-box" id="res_banner">
+        <div class="rrow"><span class="rl">ابعاد</span><span class="rv" id="bn_dims"></span></div>
+        <div class="rrow"><span class="rl">مساحت محاسبه‌شده</span><span class="rv" id="bn_area"></span></div>
+        <div class="rrow"><span class="rl">نرخ هر متر مربع</span><span class="rv" id="bn_rate"></span></div>
+        <div class="rrow rtotal"><span class="rl">قیمت تقریبی</span><span class="rv" id="bn_total"></span></div>
+        <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="bn_del"></span></div>
+      </div>
+      <div class="tip">📞 این قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>09301499659</strong></div>
+    </div>
+
+    <!-- ═══════════════════ TRACT ═══════════════════ -->
+    <div class="service-section" id="sec_tract">
+      <div class="form-row">
+        <div class="fg">
+          <label>نوع کاغذ</label>
+          <select id="tc_p">
+            <option value="tahrir">تحریر ۸۰ گرم</option>
+            <option value="glasseh">گلاسه ۱۳۵ گرم</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>نوع چاپ</label>
+          <select id="tc_s">
+            <option value="yekro">یک‌رو</option>
+            <option value="doro">دو‌رو</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>سایز</label>
+          <select id="tc_sz">
+            <option value="A6">A6</option>
+            <option value="A5">A5</option>
+            <option value="A4">A4</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>تیراژ</label>
+          <select id="tc_qty" onchange="onTcQty()">
+            <option value="500">۵۰۰ عدد</option>
+            <option value="1000">۱۰۰۰ عدد</option>
+            <option value="5000">۵۰۰۰ عدد</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>طراحی</label>
+          <select id="tc_d">
+            <option value="no">ندارم (فایل دارم)</option>
+            <option value="yes">لازم دارم (+۳۵۰٬۰۰۰)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>تحویل</label>
+          <select id="tc_f">
+            <option value="normal">عادی (۷ روز)</option>
+            <option value="fast">فوری ۷۲ ساعت (+۲۰۰٬۰۰۰)</option>
+          </select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcTract()">محاسبه قیمت</button>
+      <div class="result-box" id="res_tract">
+        <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="tc_base"></span></div>
+        <div class="rrow" id="tc_d_row"><span class="rl">طراحی</span><span class="rv">+۳۵۰٬۰۰۰ تومان</span></div>
+        <div class="rrow" id="tc_f_row"><span class="rl">هزینه فوری</span><span class="rv">+۲۰۰٬۰۰۰ تومان</span></div>
+        <div class="rrow rtotal">
+          <span class="rl">مجموع</span>
+          <div><div class="rv" id="tc_total"></div><div class="per" id="tc_per"></div></div>
+        </div>
+        <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="tc_del"></span></div>
+      </div>
+      <div class="sav-box" id="sav_tc">
+        <div class="sav-title">💚 صرفه‌جویی با تیراژ بالاتر</div>
+        <div class="sav-line" id="sav_tc1"></div>
+        <div class="sav-line" id="sav_tc2"></div>
+        <div class="sav-line" id="sav_tc3"></div>
+        <div class="sav-save" id="sav_tc_s"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ RISO ═══════════════════ -->
+    <div class="service-section" id="sec_riso">
+      <div class="info">🖨️ تراکت ریسو — چاپ سیاه‌وسفید با کیفیت مناسب تبلیغات انبوه</div>
+      <div class="result-box show">
+        <table class="riso-table">
+          <thead><tr><th>سایز</th><th>تیراژ</th><th>قیمت</th><th>تحویل</th></tr></thead>
+          <tbody>
+            <tr><td>A4</td><td>۵۰۰ عدد</td><td>۱٬۷۰۰٬۰۰۰ تومان</td><td>۱ روز</td></tr>
+            <tr><td>A5</td><td>۱۰۰۰ عدد</td><td>۱٬۸۵۰٬۰۰۰ تومان</td><td>۱ روز</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip">
+        💡 <strong>چاپ کمتر هم ممکن است؟</strong><br>
+        بله — با <strong>چاپ دیجیتال</strong>:<br>
+        هر ورق A4 = <strong>۹٬۰۰۰ تومان</strong> &nbsp;|&nbsp; هر ورق A5 = <strong>۵٬۰۰۰ تومان</strong><br>
+        برای تبلیغات انبوه، تیراژ بالا به‌صرفه‌تر است.
+      </div>
+    </div>
+
+    <!-- ═══════════════════ BUSINESS CARD ═══════════════════ -->
+    <div class="service-section" id="sec_bc">
+      <div class="form-row">
+        <div class="fg" style="flex:2;min-width:200px">
+          <label>نوع کارت ویزیت</label>
+          <select id="bc_t" onchange="updateBC()">
+            <option value="سلفون دورتیز">سلفون دورتیز (مات/براق) — ۴.۸×۸.۵</option>
+            <option value="سلفون دورگرد">سلفون دورگرد (مات/براق) — ۶×۹</option>
+            <option value="لمینت براق مربع">لمینت براق مربع — ۶×۶</option>
+            <option value="لمینت برجسته دورگرد">لمینت برجسته دورگرد — ۶×۹</option>
+            <option value="لمینت براق">لمینت براق — ۶×۹</option>
+            <option value="لمینت مات">لمینت مات — ۶×۹</option>
+            <option value="سلفون مربع دورگرد">سلفون مربع دورگرد — ۶×۶</option>
+            <option value="لمینت براق دایره">لمینت براق دایره — ۵.۵×۵.۵</option>
+            <option value="سلفون مخملی">سلفون مخملی مات — ۶×۹</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>تیراژ</label>
+          <select id="bc_qty" onchange="updateBCFast()"></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>طراحی</label>
+          <select id="bc_d">
+            <option value="no">ندارم (فایل دارم)</option>
+            <option value="yes">لازم دارم (+۳۰۰٬۰۰۰)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>تحویل</label>
+          <select id="bc_f"></select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcBC()">محاسبه قیمت</button>
+      <div class="result-box" id="res_bc">
+        <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="bc_base"></span></div>
+        <div class="rrow" id="bc_d_row"><span class="rl">طراحی</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
+        <div class="rrow" id="bc_f_row"><span class="rl">هزینه فوری</span><span class="rv" id="bc_fv"></span></div>
+        <div class="rrow rtotal">
+          <span class="rl">مجموع</span>
+          <div><div class="rv" id="bc_total"></div><div class="per" id="bc_per"></div></div>
+        </div>
+        <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="bc_del"></span></div>
+      </div>
+      <div class="sav-box" id="sav_bc">
+        <div class="sav-title">💚 صرفه‌جویی با تیراژ بالاتر</div>
+        <div class="sav-line" id="sav_bc1"></div>
+        <div class="sav-line" id="sav_bc2"></div>
+        <div class="sav-save" id="sav_bc_s"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ LETTERHEAD ═══════════════════ -->
+    <div class="service-section" id="sec_lh">
+      <div class="form-row">
+        <div class="fg">
+          <label>نوع کاغذ</label>
+          <select id="lh_p" onchange="updateLH()">
+            <option value="80">تحریر ۸۰ گرم</option>
+            <option value="120">تحریر ۱۲۰ گرم</option>
+          </select>
+        </div>
+        <div class="fg"><label>سایز</label><select id="lh_sz"></select></div>
+        <div class="fg">
+          <label>طراحی</label>
+          <select id="lh_d">
+            <option value="no">ندارم</option>
+            <option value="yes">لازم دارم (+۳۰۰٬۰۰۰)</option>
+          </select>
+        </div>
+        <div class="fg"><label>تحویل</label><select id="lh_f"></select></div>
+      </div>
+      <button class="calc-btn" onclick="calcLH()">محاسبه قیمت</button>
+      <div class="result-box" id="res_lh">
+        <div class="rrow"><span class="rl">چاپ پایه (۱۰۰۰ عدد)</span><span class="rv" id="lh_base"></span></div>
+        <div class="rrow" id="lh_d_row"><span class="rl">طراحی</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
+        <div class="rrow" id="lh_f_row"><span class="rl">هزینه فوری</span><span class="rv" id="lh_fv"></span></div>
+        <div class="rrow rtotal">
+          <span class="rl">مجموع</span>
+          <div><div class="rv" id="lh_total"></div><div class="per" id="lh_per"></div></div>
+        </div>
+        <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="lh_del"></span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ LABEL ═══════════════════ -->
+    <div class="service-section" id="sec_label">
+      <div class="form-row">
+        <div class="fg" style="flex:2">
+          <label>نوع لیبل</label>
+          <select id="lb_t">
+            <option value="nocoat">بدون روکش ⚠️ (پیشنهاد نمی‌شود)</option>
+            <option value="uv" selected>یووی ✅ (پیشنهادی)</option>
+            <option value="uvdie">یووی قالبدار</option>
+            <option value="glass">شیشه‌ای</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>طراحی</label>
+          <select id="lb_d">
+            <option value="no">ندارم</option>
+            <option value="yes">لازم دارم (+۲۵۰٬۰۰۰)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>تحویل</label>
+          <select id="lb_f">
+            <option value="normal">عادی</option>
+            <option value="fast">فوری (+۱۲۰٬۰۰۰)</option>
+          </select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcLabel()">محاسبه قیمت</button>
+      <div class="result-box" id="res_lb">
+        <div class="rrow"><span class="rl">چاپ (۱۰۰۰ عدد — ۴.۸×۸.۵)</span><span class="rv" id="lb_base"></span></div>
+        <div class="rrow" id="lb_d_row"><span class="rl">طراحی</span><span class="rv">+۲۵۰٬۰۰۰ تومان</span></div>
+        <div class="rrow" id="lb_f_row"><span class="rl">هزینه فوری</span><span class="rv">+۱۲۰٬۰۰۰ تومان</span></div>
+        <div class="rrow rtotal"><span class="rl">مجموع</span><span class="rv" id="lb_total"></span></div>
+        <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="lb_del"></span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ SUBLIMATION ═══════════════════ -->
+    <div class="service-section" id="sec_sub">
+      <div class="form-row">
+        <div class="fg">
+          <label>نوع محصول</label>
+          <select id="sub_t" onchange="toggleSub()">
+            <option value="carpet">چاپ فرش</option>
+            <option value="mug">چاپ ماگ / لیوان</option>
+          </select>
+        </div>
+      </div>
+      <div id="sub_carpet" class="form-row">
+        <div class="fg">
+          <label>سایز فرش</label>
+          <select id="sub_cs">
+            <option value="500000">A4 — ۵۰۰٬۰۰۰ تومان</option>
+            <option value="700000">A3 — ۷۰۰٬۰۰۰ تومان</option>
+          </select>
+        </div>
+      </div>
+      <div id="sub_mug" style="display:none" class="form-row">
+        <div class="fg">
+          <label>نوع ماگ</label>
+          <select id="sub_mt">
+            <option value="400000">ماگ معمولی — ۴۰۰٬۰۰۰</option>
+            <option value="500000">ماگ حرارتی — ۵۰۰٬۰۰۰</option>
+            <option value="450000">ماگ دسته قلبی — ۴۵۰٬۰۰۰</option>
+            <option value="550000">ماگ حرارتی دسته قلبی — ۵۵۰٬۰۰۰</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>تعداد</label>
+          <input type="number" id="sub_mq" value="1" min="1">
+        </div>
+        <div class="fg">
+          <label>جعبه (+۵۰٬۰۰۰ هر عدد)</label>
+          <select id="sub_box">
+            <option value="no">خیر</option>
+            <option value="yes">بله</option>
+          </select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcSub()">محاسبه قیمت</button>
+      <div class="result-box" id="res_sub">
+        <div class="rrow"><span class="rl">محصول</span><span class="rv" id="sub_prod"></span></div>
+        <div class="rrow" id="sub_box_row"><span class="rl">جعبه</span><span class="rv" id="sub_bv"></span></div>
+        <div class="rrow rtotal"><span class="rl">مجموع</span><span class="rv" id="sub_total"></span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ PHOTO ═══════════════════ -->
+    <div class="service-section" id="sec_photo">
+      <div class="info">📸 عکاسی پرسنلی با موبایل + پردازش هوش مصنوعی</div>
+      <div class="photo-select-row">
+        <div class="fg">
+          <label>تعداد قطعه</label>
+          <select id="ph_qty" onchange="calcPhoto()">
+            <option value="180000">۶ قطعه — ۱۸۰٬۰۰۰ تومان</option>
+            <option value="230000">۱۲ قطعه — ۲۳۰٬۰۰۰ تومان</option>
+          </select>
+        </div>
+      </div>
+      <div class="result-box" id="res_photo">
+        <div class="rrow"><span class="rl">سایز</span><span class="rv">۴×۳ سانتی‌متر</span></div>
+        <div class="rrow"><span class="rl">تعداد</span><span class="rv" id="ph_qty_lbl"></span></div>
+        <div class="rrow rtotal"><span class="rl">قیمت</span><span class="rv" id="ph_price"></span></div>
+        <div class="rrow"><span class="rl">تحویل</span><span class="rv">همان روز</span></div>
+      </div>
+    </div>
+
+  </div><!-- /calc-panel -->
+
+  <!-- CHAT -->
+  <div class="chat-box" id="chatBox"></div>
+  <div class="input-area">
+    <textarea id="userInput" rows="1" placeholder="سوال بپرسید — قیمت، فرق RGB/CMYK، راهنمای فایل، ..."></textarea>
+    <button id="sendBtn" onclick="send()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+
+  <div class="cbar">
+    <span>📞 09301499659</span>
+    <span>📱 ایتا · روبیکا · بله</span>
+    <span>🕐 ۱۰ الی ۲۰</span>
+    <span>💳 تسویه کامل قبل از چاپ</span>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────
+const TC = {
+  tahrir:{
+    yekro:{500:{A6:1300000,A5:2350000,A4:4320000},1000:{A6:1600000,A5:2950000,A4:5850000},5000:{A6:4470000,A5:8021000,A4:17200000}},
+    doro: {500:{A6:1950000,A5:3550000,A4:7150000},1000:{A6:2450000,A5:4400000,A4:8780000},5000:{A6:5500000,A5:11000000,A4:21990000}}
+  },
+  glasseh:{
+    yekro:{500:{A6:1400000,A5:2560000,A4:4750000},1000:{A6:1800000,A5:3300000,A4:6600000},5000:{A6:5500000,A5:10875000,A4:21750000}},
+    doro: {500:{A6:2100000,A5:3770000,A4:7515000},1000:{A6:2590000,A5:4780000,A4:9550000},5000:{A6:6470000,A5:12950000,A4:25890000}}
+  }
+};
+const BC_DATA = {
+  "سلفون دورتیز":        {p:{500:1200000,1000:1600000},fast:150000,noFast:false,del:"۷ روز"},
+  "سلفون دورگرد":        {p:{500:1650000,1000:2200000},fast:150000,noFast:false,del:"۷ روز"},
+  "لمینت براق مربع":     {p:{1000:2250000},fast:null,noFast:true,del:"۱۰ روز"},
+  "لمینت برجسته دورگرد": {p:{500:3000000,1000:3820000},fast:150000,noFast:false,del:"۷ روز"},
+  "لمینت براق":          {p:{500:2360000,1000:3410000},fast:150000,noFast:false,del:"۷ روز"},
+  "لمینت مات":           {p:{1000:4200000},fast:150000,noFast:false,del:"۷ روز"},
+  "سلفون مربع دورگرد":   {p:{1000:1550000},fast:100000,noFast:false,del:"۷ روز"},
+  "لمینت براق دایره":    {p:{1000:2584000},fast:null,noFast:true,del:"۱۰ روز"},
+  "سلفون مخملی":         {p:{1000:3100000},fast:null,noFast:true,del:"۱۰ روز"}
+};
+const LH = {
+  80:  {p:{A6:2380000,A5:3900000,A4:7910000},fast:150000,hasFast:true,del:"۷ روز"},
+  120: {p:{A5:5260000,A4:10500000},fast:null,hasFast:false,del:"۸ روز"}
+};
+const LB = {
+  nocoat:{price:1350000,fast:120000,noFast:false,del:"۷ روز"},
+  uv:    {price:1600000,fast:120000,noFast:false,del:"۷ روز"},
+  uvdie: {price:2200000,fast:null, noFast:true, del:"۱۰ روز"},
+  glass: {price:5100000,fast:null, noFast:true, del:"۱۰ روز"}
+};
+
+function f(n){return n.toLocaleString('fa-IR')+' تومان'}
+function fn(n){return n.toLocaleString('fa-IR')}
+
+// ─────────────────────────────────────────
+//  SERVICE SWITCH
+// ─────────────────────────────────────────
+function switchSvc(){
+  const v=document.getElementById('svcSel').value;
+  document.querySelectorAll('.service-section').forEach(s=>s.classList.remove('active'));
+  if(v){const s=document.getElementById('sec_'+v);if(s)s.classList.add('active')}
+  document.querySelectorAll('.result-box:not(.show)').forEach(r=>r.style.display='');
+  if(v==='bc')updateBC();
+  if(v==='lh')updateLH();
+  if(v==='photo')calcPhoto();
+}
+
+// ─────────────────────────────────────────
+//  BANNER — live calc
+// ─────────────────────────────────────────
+function calcBanner(){
+  const rate=parseInt(document.getElementById('bn_q').value);
+  const w=parseInt(document.getElementById('bn_w').value);
+  const l=parseFloat(document.getElementById('bn_l').value);
+  const r=document.getElementById('res_banner');
+  if(!l||l<=0){r.classList.remove('show');return}
+  const areaM2=(w*l)/10000;
+  const bill=Math.max(areaM2,1);
+  const total=Math.round(bill*rate);
+  const wide=w===300;
+  document.getElementById('bn_dims').textContent=`${fn(w)} × ${fn(l)} سانتی‌متر`;
+  document.getElementById('bn_area').textContent=`${bill.toFixed(2)} متر مربع${areaM2<1?' (حداقل ۱ متر)':''}`;
+  document.getElementById('bn_rate').textContent=f(rate);
+  document.getElementById('bn_total').textContent=f(total);
+  document.getElementById('bn_del').textContent=wide?'۲ روز کاری':'۱ روز کاری';
+  r.classList.add('show');
+}
+
+// ─────────────────────────────────────────
+//  TRACT
+// ─────────────────────────────────────────
+function onTcQty(){
+  const qty=document.getElementById('tc_qty').value;
+  const fe=document.getElementById('tc_f');
+  if(qty==='5000'){fe.options[1].disabled=true;fe.value='normal'}
+  else fe.options[1].disabled=false;
+}
+function calcTract(){
+  const p=document.getElementById('tc_p').value;
+  const s=document.getElementById('tc_s').value;
+  const sz=document.getElementById('tc_sz').value;
+  const qty=parseInt(document.getElementById('tc_qty').value);
+  const des=document.getElementById('tc_d').value;
+  const fast=document.getElementById('tc_f').value;
+  const base=TC[p][s][qty][sz];
+  let tot=base;
+  const dr=document.getElementById('tc_d_row');
+  const fr=document.getElementById('tc_f_row');
+  dr.style.display=des==='yes'?'':'none'; if(des==='yes')tot+=350000;
+  fr.style.display=(fast==='fast'&&qty<5000)?'':'none'; if(fast==='fast'&&qty<5000)tot+=200000;
+  document.getElementById('tc_base').textContent=f(base);
+  document.getElementById('tc_total').textContent=f(tot);
+  document.getElementById('tc_per').textContent=`هر عدد: ${f(Math.round(tot/qty))}`;
+  document.getElementById('tc_del').textContent=fast==='fast'&&qty<5000?'۷۲ ساعت':'۷ روز کاری';
+  document.getElementById('res_tract').classList.add('show');
+  // savings
+  const sb=document.getElementById('sav_tc');
+  if(qty<5000){
+    const nq=qty===500?1000:5000;
+    const nb=TC[p][s][nq][sz];
+    if(nq===1000){
+      const x2=base*2;
+      document.getElementById('sav_tc1').textContent=`۲ بار سفارش ۵۰۰ عدد: ${f(base)} × ۲ = ${f(x2)}`;
+      document.getElementById('sav_tc2').textContent=`یک‌بار ۱۰۰۰ عدد: فقط ${f(nb)}`;
+      document.getElementById('sav_tc3').textContent='';
+      document.getElementById('sav_tc_s').textContent=`✅ صرفه‌جویی: ${f(x2-nb)}`;
+    } else {
+      const x5=base*5;
+      document.getElementById('sav_tc1').textContent=`۵ بار سفارش ۱۰۰۰ عدد: ${f(base)} × ۵ = ${f(x5)}`;
+      document.getElementById('sav_tc2').textContent=`یک‌بار ۵۰۰۰ عدد: فقط ${f(nb)}`;
+      document.getElementById('sav_tc3').textContent=`هر عدد: ${f(Math.round(base/qty))} ← ${f(Math.round(nb/5000))}`;
+      document.getElementById('sav_tc_s').textContent=`✅ صرفه‌جویی: ${f(x5-nb)}`;
+    }
+    sb.classList.add('show');
+  } else sb.classList.remove('show');
+}
+
+// ─────────────────────────────────────────
+//  BUSINESS CARD
+// ─────────────────────────────────────────
+function updateBC(){
+  const type=document.getElementById('bc_t').value;
+  const card=BC_DATA[type];
+  const qe=document.getElementById('bc_qty');
+  qe.innerHTML='';
+  Object.keys(card.p).forEach(q=>{
+    const o=document.createElement('option');o.value=q;o.text=`${parseInt(q).toLocaleString('fa-IR')} عدد`;qe.appendChild(o);
+  });
+  updateBCFast();
+}
+function updateBCFast(){
+  const type=document.getElementById('bc_t').value;
+  const card=BC_DATA[type];
+  const fe=document.getElementById('bc_f');
+  fe.innerHTML='';
+  const o1=document.createElement('option');o1.value='normal';o1.text=`عادی (${card.del})`;fe.appendChild(o1);
+  if(!card.noFast&&card.fast){
+    const o2=document.createElement('option');o2.value='fast';o2.text=`فوری ۷۲ ساعت (+${fn(card.fast)})`;fe.appendChild(o2);
+  }
+}
+function calcBC(){
+  const type=document.getElementById('bc_t').value;
+  const qty=parseInt(document.getElementById('bc_qty').value);
+  const des=document.getElementById('bc_d').value;
+  const fast=document.getElementById('bc_f').value;
+  const card=BC_DATA[type];
+  const base=card.p[qty];let tot=base;
+  document.getElementById('bc_d_row').style.display=des==='yes'?'':'none';if(des==='yes')tot+=300000;
+  const canFast=fast==='fast'&&!card.noFast&&card.fast;
+  document.getElementById('bc_f_row').style.display=canFast?'':'none';
+  if(canFast){tot+=card.fast;document.getElementById('bc_fv').textContent=`+${f(card.fast)}`}
+  document.getElementById('bc_base').textContent=f(base);
+  document.getElementById('bc_total').textContent=f(tot);
+  document.getElementById('bc_per').textContent=`هر عدد: ${f(Math.round(tot/qty))}`;
+  document.getElementById('bc_del').textContent=canFast?'۷۲ ساعت':card.del;
+  document.getElementById('res_bc').classList.add('show');
+  // savings
+  const sb=document.getElementById('sav_bc');
+  if(qty===500&&card.p[1000]){
+    const p5=card.p[500],p10=card.p[1000],x2=p5*2;
+    document.getElementById('sav_bc1').textContent=`۲ بار ۵۰۰ عدد: ${f(p5)} × ۲ = ${f(x2)}`;
+    document.getElementById('sav_bc2').textContent=`یک‌بار ۱۰۰۰ عدد: فقط ${f(p10)}`;
+    document.getElementById('sav_bc_s').textContent=`✅ صرفه‌جویی: ${f(x2-p10)}`;
+    sb.classList.add('show');
+  } else sb.classList.remove('show');
+}
+
+// ─────────────────────────────────────────
+//  LETTERHEAD
+// ─────────────────────────────────────────
+function updateLH(){
+  const p=document.getElementById('lh_p').value;
+  const lh=LH[p];
+  const se=document.getElementById('lh_sz');se.innerHTML='';
+  Object.keys(lh.p).forEach(s=>{const o=document.createElement('option');o.value=s;o.text=s;se.appendChild(o)});
+  const fe=document.getElementById('lh_f');fe.innerHTML='';
+  const o1=document.createElement('option');o1.value='normal';o1.text=`عادی (${lh.del})`;fe.appendChild(o1);
+  if(lh.hasFast){const o2=document.createElement('option');o2.value='fast';o2.text=`فوری ۷۲ ساعت (+${fn(lh.fast)})`;fe.appendChild(o2)}
+}
+function calcLH(){
+  const p=document.getElementById('lh_p').value;
+  const sz=document.getElementById('lh_sz').value;
+  const des=document.getElementById('lh_d').value;
+  const fast=document.getElementById('lh_f').value;
+  const lh=LH[p];const base=lh.p[sz];let tot=base;
+  document.getElementById('lh_d_row').style.display=des==='yes'?'':'none';if(des==='yes')tot+=300000;
+  const canFast=fast==='fast'&&lh.hasFast;
+  document.getElementById('lh_f_row').style.display=canFast?'':'none';
+  if(canFast){tot+=lh.fast;document.getElementById('lh_fv').textContent=`+${f(lh.fast)}`}
+  document.getElementById('lh_base').textContent=f(base);
+  document.getElementById('lh_total').textContent=f(tot);
+  document.getElementById('lh_per').textContent=`هر عدد: ${f(Math.round(tot/1000))}`;
+  document.getElementById('lh_del').textContent=canFast?'۷۲ ساعت':lh.del;
+  document.getElementById('res_lh').classList.add('show');
+}
+
+// ─────────────────────────────────────────
+//  LABEL
+// ─────────────────────────────────────────
+function calcLabel(){
+  const t=document.getElementById('lb_t').value;
+  const des=document.getElementById('lb_d').value;
+  const fast=document.getElementById('lb_f').value;
+  const lb=LB[t];let tot=lb.price;
+  document.getElementById('lb_d_row').style.display=des==='yes'?'':'none';if(des==='yes')tot+=250000;
+  const canFast=!lb.noFast&&fast==='fast';
+  document.getElementById('lb_f_row').style.display=canFast?'':'none';if(canFast)tot+=lb.fast||120000;
+  document.getElementById('lb_base').textContent=f(lb.price);
+  document.getElementById('lb_total').textContent=f(tot);
+  document.getElementById('lb_del').textContent=canFast?'۷۲ ساعت':lb.del;
+  document.getElementById('res_lb').classList.add('show');
+}
+
+// ─────────────────────────────────────────
+//  SUBLIMATION
+// ─────────────────────────────────────────
+function toggleSub(){
+  const t=document.getElementById('sub_t').value;
+  document.getElementById('sub_carpet').style.display=t==='carpet'?'flex':'none';
+  document.getElementById('sub_mug').style.display=t==='mug'?'flex':'none';
+}
+function calcSub(){
+  const t=document.getElementById('sub_t').value;
+  const r=document.getElementById('res_sub');
+  if(t==='carpet'){
+    const p=parseInt(document.getElementById('sub_cs').value);
+    const sz=document.getElementById('sub_cs').selectedOptions[0].text.split(' — ')[0];
+    document.getElementById('sub_prod').textContent=`فرش ${sz} = ${f(p)}`;
+    document.getElementById('sub_box_row').style.display='none';
+    document.getElementById('sub_total').textContent=f(p);
+  } else {
+    const mp=parseInt(document.getElementById('sub_mt').value);
+    const mn=document.getElementById('sub_mt').selectedOptions[0].text.split(' — ')[0];
+    const qty=parseInt(document.getElementById('sub_mq').value)||1;
+    const box=document.getElementById('sub_box').value;
+    let tot=mp*qty;
+    document.getElementById('sub_prod').textContent=`${mn} × ${fn(qty)} = ${f(mp*qty)}`;
+    if(box==='yes'){
+      const bt=50000*qty;tot+=bt;
+      document.getElementById('sub_box_row').style.display='';
+      document.getElementById('sub_bv').textContent=`${fn(qty)} جعبه = ${f(bt)}`;
+    } else document.getElementById('sub_box_row').style.display='none';
+    document.getElementById('sub_total').textContent=f(tot);
+  }
+  r.classList.add('show');
+}
+
+// ─────────────────────────────────────────
+//  PHOTO
+// ─────────────────────────────────────────
+function calcPhoto(){
+  const sel=document.getElementById('ph_qty');
+  const price=parseInt(sel.value);
+  const label=sel.selectedOptions[0].text.split(' — ')[0];
+  document.getElementById('ph_qty_lbl').textContent=label;
+  document.getElementById('ph_price').textContent=f(price);
+  document.getElementById('res_photo').classList.add('show');
+}
+
+// ─────────────────────────────────────────
+//  CHAT KNOWLEDGE BASE
+// ─────────────────────────────────────────
+const KB = [
+  {
+    keys:/rgb|سی‌ام‌وای‌کی|cmyk|مد رنگی|رنگ چاپ|تفاوت رنگ/i,
+    html:`<strong>🎨 فرق RGB و CMYK</strong><br><br>
+<strong>RGB</strong> (Red · Green · Blue):<br>
+— مخصوص نمایشگر، موبایل، وب<br>
+— رنگ‌ها با نور ساخته می‌شوند<br>
+— طیف رنگی گسترده‌تر و روشن‌تر<br><br>
+<strong>CMYK</strong> (Cyan · Magenta · Yellow · Key/Black):<br>
+— مخصوص <strong>چاپ</strong><br>
+— رنگ‌ها با جوهر ساخته می‌شوند<br>
+— ممکن است رنگ‌های RGB روی کاغذ کمی متفاوت دیده شوند<br><br>
+⚠️ <strong>مهم:</strong> فایل چاپی خود را <strong>حتماً در مد CMYK</strong> ذخیره کنید. اگر فایل RGB بدهید، ما تبدیل می‌کنیم ولی ممکن است رنگ کمی تغییر کند.`
+  },
+  {
+    keys:/مد رنگ|پانتون|pantone|spot color/i,
+    html:`<strong>🎨 مدهای رنگی در چاپ</strong><br><br>
+<strong>CMYK:</strong> استاندارد چاپ افست و دیجیتال<br>
+<strong>RGB:</strong> برای صفحه‌نمایش — باید تبدیل شود<br>
+<strong>Pantone:</strong> رنگ‌های استاندارد جهانی برای چاپ صنعتی — در چاپ افست معمولی پشتیبانی محدود دارد<br><br>
+توصیه: همیشه در <strong>CMYK</strong> طراحی کنید.`
+  },
+  {
+    keys:/رزولوشن|dpi|کیفیت فایل|پیکسل|resolution/i,
+    html:`<strong>🔍 رزولوشن فایل چاپی</strong><br><br>
+حداقل <strong>۳۰۰ DPI</strong> برای چاپ باکیفیت<br>
+برای بنر بزرگ: <strong>۷۲–۱۵۰ DPI</strong> کافی است (چون از فاصله دیده می‌شود)<br>
+برای کارت ویزیت و تراکت: <strong>۳۰۰ DPI</strong><br><br>
+⚠️ فایل وب (۷۲ DPI) برای چاپ مناسب نیست — تصویر تار می‌شود.`
+  },
+  {
+    keys:/بلید|bleed|حاشیه امن|حاشیه|safe zone/i,
+    html:`<strong>✂️ بلید (Bleed) و حاشیه امن</strong><br><br>
+<strong>بلید:</strong> ۳ میلی‌متر اضافه در هر طرف فایل — برای برش<br>
+<strong>حاشیه امن:</strong> ۳–۵ میلی‌متر از لبه — متن و لوگو نباید در این ناحیه باشد<br><br>
+مثال: کارت ویزیت ۶×۹ → فایل باید <strong>۶.۶ × ۹.۶</strong> سانتی‌متر باشد.`
+  },
+  {
+    keys:/فرمت فایل|pdf|ai|psd|png|jpg|فایل چاپ/i,
+    html:`<strong>📁 فرمت‌های مناسب برای چاپ</strong><br><br>
+✅ <strong>PDF</strong> (بهترین — با بلید و CMYK)<br>
+✅ <strong>AI</strong> (Illustrator — برای گرافیک‌های وکتور)<br>
+✅ <strong>PSD</strong> (Photoshop — حداقل ۳۰۰ DPI)<br>
+⚠️ <strong>JPG/PNG</strong> — فقط اگر رزولوشن بالا باشد<br>
+❌ Word، PowerPoint — مناسب چاپ نیست`
+  },
+  {
+    keys:/افست|offset|چاپ افست/i,
+    html:`<strong>🖨️ چاپ افست</strong><br><br>
+— بهترین کیفیت رنگ برای تیراژ بالا<br>
+— مناسب: تراکت، کارت ویزیت، سربرگ، بروشور<br>
+— رنگ‌ها تثبیت‌شده و یکنواخت<br>
+— <strong>مقرون‌به‌صرفه برای ۵۰۰ عدد به بالا</strong><br>
+— زمان تحویل: ۷–۱۰ روز کاری<br><br>
+در فدک تمام تراکت‌ها و کارت‌ها با چاپ افست تولید می‌شوند.`
+  },
+  {
+    keys:/دیجیتال|digital print|لیزر|inkjet/i,
+    html:`<strong>🖨️ چاپ دیجیتال</strong><br><br>
+— مناسب تیراژ کم (زیر ۵۰۰ عدد)<br>
+— سرعت بالا — تحویل همان روز ممکن<br>
+— هزینه هر ورق بیشتر از افست<br>
+— در فدک: هر ورق A4 = ۹٬۰۰۰ تومان | A5 = ۵٬۰۰۰ تومان`
+  },
+  {
+    keys:/ریسو|riso/i,
+    html:`<strong>🖨️ چاپ ریسو</strong><br><br>
+— چاپ سیاه‌وسفید با کیفیت مطبوعاتی<br>
+— سرعت بالا — ایده‌آل برای تبلیغات انبوه<br>
+— A4 / ۵۰۰ عدد = ۱٬۷۰۰٬۰۰۰ تومان<br>
+— A5 / ۱۰۰۰ عدد = ۱٬۸۵۰٬۰۰۰ تومان<br>
+— تحویل ۱ روز کاری`
+  },
+  {
+    keys:/سابلیمیشن|sublimation|حرارتی|ماگ|فرش چاپ/i,
+    html:`<strong>🎨 چاپ سابلیمیشن</strong><br><br>
+— انتقال رنگ با حرارت و فشار<br>
+— مناسب: ماگ، فرش، تی‌شرت، پارچه<br>
+— رنگ‌ها بسیار ماندگار و مقاوم<br>
+— در فدک: ماگ از ۴۰۰٬۰۰۰ | فرش A4 از ۵۰۰٬۰۰۰ تومان`
+  },
+  {
+    keys:/لمینت|سلفون|روکش|کوتینگ|uv|یووی/i,
+    html:`<strong>✨ انواع روکش و لمینت</strong><br><br>
+<strong>سلفون مات:</strong> روکش پلاستیکی کدر — ظاهر شیک<br>
+<strong>سلفون براق:</strong> روکش پلاستیکی درخشان — رنگ‌ها پررنگ‌تر<br>
+<strong>لمینت مات:</strong> ضخیم‌تر از سلفون — مقاوم‌تر<br>
+<strong>لمینت براق:</strong> درخشان + محکم<br>
+<strong>UV:</strong> لایه پوشش فوری با اشعه UV — مقاوم در برابر آب و خراش<br>
+<strong>برجسته:</strong> بخش‌هایی از طرح برجسته می‌شود — لوکس‌تر<br>
+<strong>مخملی:</strong> احساس لمسی نرم و مخملی — کارت ویزیت خاص`
+  },
+  {
+    keys:/طراحی|گرافیک|لوگو|فونت/i,
+    html:`<strong>🖌️ خدمات طراحی فدک</strong><br><br>
+— طراحی تراکت: +۳۵۰٬۰۰۰ تومان<br>
+— طراحی کارت ویزیت: +۳۰۰٬۰۰۰ تومان<br>
+— طراحی سربرگ: +۳۰۰٬۰۰۰ تومان<br>
+— طراحی لیبل: +۲۵۰٬۰۰۰ تومان<br><br>
+⚠️ <strong>فونت‌ها:</strong> حتماً فونت‌ها را Embed یا Outline کنید تا در چاپ مشکل نداشته باشید.`
+  },
+  {
+    keys:/پرسنلی|عکس|۴×۳|پاسپورت/i,
+    html:`<strong>📸 عکس پرسنلی ۴×۳</strong><br><br>
+— ۶ قطعه: ۱۸۰٬۰۰۰ تومان<br>
+— ۱۲ قطعه: ۲۳۰٬۰۰۰ تومان<br>
+— عکاسی با موبایل + پردازش AI<br>
+— تحویل همان روز`
+  },
+  {
+    keys:/بنر|banner|فلکس|فلکسی/i,
+    html:`<strong>🖼️ بنر / فلکس</strong><br><br>
+— معمولی: ۳۵۰٬۰۰۰ تومان / متر مربع<br>
+— کیفیت بالا: ۴۰۰٬۰۰۰ تومان / متر مربع<br>
+— حداقل محاسبه: ۱ متر مربع<br>
+— عرض ۱۰۰ تا ۲۵۰ سانت: تحویل ۱ روز<br>
+— عرض ۳۰۰ سانت: تحویل ۲ روز<br><br>
+از ماشین‌حساب بالا قیمت دقیق‌تر دریافت کنید.`
+  },
+  {
+    keys:/آدرس|تماس|کجا|شماره|ساعت|کاری/i,
+    html:`<strong>📍 اطلاعات تماس فدک</strong><br><br>
+📍 پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع<br>
+📞 <strong>09301499659</strong><br>
+📱 ایتا · روبیکا · بله<br>
+🕐 ساعت کاری: ۱۰ الی ۲۰<br>
+💳 تسویه کامل قبل از چاپ`
+  },
+  {
+    keys:/فوری|اکسپرس|سریع|emergency/i,
+    html:`<strong>⚡ خدمات فوری فدک</strong><br><br>
+✅ تراکت افست تا ۱۰۰۰ عدد — ۷۲ ساعت<br>
+✅ کارت ویزیت (اکثر انواع) — ۷۲ ساعت<br>
+✅ سربرگ ۸۰ گرم — ۷۲ ساعت<br>
+✅ لیبل یووی — ۷۲ ساعت<br>
+✅ بنر — ۱ روز کاری<br>
+❌ تراکت ۵۰۰۰ عدد — فوری ندارد<br>
+❌ سربرگ ۱۲۰ گرم — فوری ندارد`
+  },
+  {
+    keys:/سلام|درود|hello|hi|خوش|وقت بخیر/i,
+    html:`سلام! خوش اومدید به <strong>چاپ و تبلیغات فدک</strong> 🖨️<br>
+از ماشین‌حساب بالا قیمت هر خدمت را محاسبه کنید<br>
+یا هر سوالی در مورد چاپ دارید بپرسید.`
+  },
+  {
+    keys:/ممنون|تشکر|مرسی|خداحافظ|باشه/i,
+    html:`خواهش می‌کنم! 🙏 هر وقت سوالی داشتید در خدمتیم.`
+  }
+];
+
+function SERVICES_QR(){
+  return `<br><div class="qr-wrap">
+    <button class="qr" onclick="openSvc('banner')">بنر</button>
+    <button class="qr" onclick="openSvc('tract')">تراکت افست</button>
+    <button class="qr" onclick="openSvc('riso')">تراکت ریسو</button>
+    <button class="qr" onclick="openSvc('bc')">کارت ویزیت</button>
+    <button class="qr" onclick="openSvc('lh')">سربرگ</button>
+    <button class="qr" onclick="openSvc('label')">لیبل</button>
+    <button class="qr" onclick="openSvc('sub')">سابلیمیشن</button>
+    <button class="qr" onclick="openSvc('photo')">عکس پرسنلی</button>
+  </div>`;
+}
+
+function openSvc(val){
+  document.getElementById('svcSel').value=val;
+  switchSvc();
+  document.getElementById('svcSel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function getReply(q){
+  for(const kb of KB){
+    if(kb.keys.test(q)){
+      return kb.html+`<br><br><div class="qr-wrap"><button class="qr" onclick="openSvc(document.getElementById('svcSel').value||'banner');void 0">🧮 خدمات چاپ فدک</button></div>`+SERVICES_QR();
+    }
+  }
+  // fallback
+  return `ممنون از سوالتون 🙏<br>
+لطفاً سوال خود را بیشتر توضیح دهید یا از خدمات زیر انتخاب کنید:`+SERVICES_QR();
+}
+
+// ─────────────────────────────────────────
+//  CHAT ENGINE
+// ─────────────────────────────────────────
+function addMsg(html,isUser=false){
+  const cb=document.getElementById('chatBox');
+  const d=document.createElement('div');d.className=`msg ${isUser?'user':'bot'}`;
+  d.innerHTML=`<div class="av">${isUser?'👤':'🤖'}</div><div class="bubble">${html}</div>`;
+  cb.appendChild(d);cb.scrollTop=cb.scrollHeight;
+}
+function showTyping(){
+  const cb=document.getElementById('chatBox');
+  const d=document.createElement('div');d.className='msg bot';d.id='typing';
+  d.innerHTML=`<div class="av" style="background:linear-gradient(135deg,#667eea,#764ba2)">🤖</div><div class="dots-wrap"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  cb.appendChild(d);cb.scrollTop=cb.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove()}
+
+function send(override){
+  const inp=document.getElementById('userInput');
+  const text=override||inp.value.trim();
+  if(!text)return;
+  addMsg(text,true);
+  if(!override)inp.value='';
+  showTyping();
+  const reply=getReply(text);
+  setTimeout(()=>{removeTyping();addMsg(reply)},700);
+}
+
+document.getElementById('userInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}
+});
+
+// INIT
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    showTyping();
+    setTimeout(()=>{
+      removeTyping();
+      addMsg(`سلام! 👋 به <strong>چاپ و تبلیغات فدک</strong> خوش اومدید.<br>
+از ماشین‌حساب بالا قیمت دقیق دریافت کنید<br>
+یا هر سوالی در مورد چاپ، رنگ، فایل و... بپرسید.`+SERVICES_QR());
+    },800);
+  },300);
+  updateBC();
+  updateLH();
+  calcPhoto();
+});
+</script>
+</body>
+</html>

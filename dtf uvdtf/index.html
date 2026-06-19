@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماشین‌حساب قیمت</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Vazirmatn', 'Vazir', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        
+        .form-section {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-family: 'Vazirmatn', 'Vazir', Tahoma, Arial, sans-serif;
+            transition: all 0.3s;
+            font-weight: 400;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        select option {
+            background: #2d1b4e;
+            color: white;
+            padding: 10px;
+            font-family: 'Vazirmatn', 'Vazir', Tahoma, Arial, sans-serif;
+        }
+
+        /* کادر ثابت عرض */
+        .fixed-input-wrapper {
+            position: relative;
+        }
+
+        .fixed-input-wrapper input[readonly] {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            padding-left: 85px;
+        }
+
+        .fixed-badge {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .result-box {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .result-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .result-price {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .approximate {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* باکس هشدار */
+        .warning-box {
+            display: none;
+            background: rgba(255, 80, 80, 0.12);
+            border: 1px solid rgba(255, 100, 100, 0.4);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .warning-box .warning-icon {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .warning-box .warning-title {
+            color: #ff8a8a;
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .warning-box .warning-detail {
+            color: rgba(255, 180, 180, 0.85);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        
+        .contact-box {
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            color: #ffd700;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧮 ماشین‌حساب قیمت</h1>
+        <p class="subtitle">خدمت مورد نظر را انتخاب کنید</p>
+        
+        <div class="form-section">
+            <label>نوع چاپ 🖨️</label>
+            <select id="printType">
+                <option value="dtf">چاپ DTF — مخصوص پارچه و لباس</option>
+                <option value="uvdtf">چاپ UVDTF — مخصوص سطوح صاف</option>
+            </select>
+        </div>
+        
+        <div class="row">
+            <div class="form-section">
+                <label>عرض (سانتی‌متر)</label>
+                <div class="fixed-input-wrapper">
+                    <input type="number" id="width" value="60" readonly>
+                    <span class="fixed-badge">🔒 ثابت</span>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <label>طول (سانتی‌متر)</label>
+                <input type="number" id="length" placeholder="مثال: ۲۰۰" min="1" max="420">
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <label>آرایش و چیدمان</label>
+            <select id="arrangement">
+                <option value="0">نیاز ندارم</option>
+                <option value="300000">نیاز به آرایش و چیدمان دارم — ۳۰۰,۰۰۰ تومان</option>
+            </select>
+        </div>
+        
+        <div class="result-box">
+            <div class="result-label">قیمت تقریبی</div>
+            <div class="result-price" id="result">۰ تومان</div>
+            <div class="approximate">محاسبه بر اساس مساحت</div>
+        </div>
+
+        <!-- باکس هشدار -->
+        <div class="warning-box" id="warningBox">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-title">مقدار وارد شده قابل چاپ نیست</div>
+            <div class="warning-detail" id="warningDetail"></div>
+        </div>
+        
+        <div class="contact-box">
+            🔥 این قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>۰۹۳۰۱۴۹۹۶۵۹</strong>
+        </div>
+    </div>
+    
+    <script>
+        const printType = document.getElementById('printType');
+        const lengthInput = document.getElementById('length');
+        const arrangement = document.getElementById('arrangement');
+        const result = document.getElementById('result');
+        const warningBox = document.getElementById('warningBox');
+        const warningDetail = document.getElementById('warningDetail');
+
+        const prices = {
+            dtf: 1850000,
+            uvdtf: 2200000
+        };
+
+        // تبدیل اعداد به فارسی
+        function toPersianNumber(num) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return num.toString().replace(/\d/g, digit => persianDigits[digit]);
+        }
+
+        function calculate() {
+            const type = printType.value;
+            const lengthValue = parseFloat(lengthInput.value) || 0;
+            const arrangementCost = parseInt(arrangement.value);
+
+            // پنهان کردن هشدار به صورت پیش‌فرض
+            warningBox.style.display = 'none';
+
+            if (lengthValue <= 0) {
+                result.textContent = '۰ تومان';
+                return;
+            }
+
+            // محاسبه قیمت (حتی برای مقادیر خارج از محدوده)
+            const baseArea = 6000; // 60 × 100
+            const currentArea = 60 * lengthValue;
+            const basePrice = prices[type];
+            let totalPrice = (currentArea / baseArea) * basePrice + arrangementCost;
+
+            const formattedPrice = Math.round(totalPrice).toLocaleString('en-US');
+            const persianPrice = toPersianNumber(formattedPrice);
+            result.textContent = `${persianPrice} تومان`;
+
+            // بررسی محدوده و نمایش هشدار
+            if (lengthValue < 100) {
+                warningBox.style.display = 'block';
+                warningDetail.innerHTML = `ابعاد قابل سفارش: حداقل <strong>${toPersianNumber(100)}</strong> و حداکثر <strong>${toPersianNumber(420)}</strong> سانتیمتر<br>مقدار وارد شده (<strong>${toPersianNumber(lengthValue)}</strong> سانتیمتر) قابل چاپ نیست.`;
+            } else if (lengthValue > 420) {
+                warningBox.style.display = 'block';
+                warningDetail.innerHTML = `ابعاد قابل سفارش: حداقل <strong>${toPersianNumber(100)}</strong> و حداکثر <strong>${toPersianNumber(420)}</strong> سانتیمتر<br>مقدار وارد شده (<strong>${toPersianNumber(lengthValue)}</strong> سانتیمتر) قابل چاپ نیست.`;
+            }
+        }
+
+        printType.addEventListener('change', calculate);
+        lengthInput.addEventListener('input', calculate);
+        arrangement.addEventListener('change', calculate);
+
+        calculate();
+    </script>
+</body>
+</html>

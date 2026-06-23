@@ -2,195 +2,465 @@
 <html lang="fa" dir="rtl">
 <head>
   <link rel="manifest" href="manifest.json">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>چاپ و تبلیغات فدک</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    font-family:'Vazirmatn',sans-serif;min-height:100vh;
-    background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-    display:flex;flex-direction:column;align-items:center;padding:16px;
-  }
-  .container{width:100%;max-width:840px;display:flex;flex-direction:column;gap:14px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>چاپ و تبلیغات فدک</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
 
-  /* HEADER */
-  .header{
-    background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.13);border-radius:16px;
-    padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
-  }
-  .header-title{color:#fff;font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px}
-  .badge{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:0.7rem;padding:3px 10px;border-radius:20px}
+    :root {
+      --ink: #1a1625;
+      --ink2: #2e2840;
+      --accent: #6c5ce7;
+      --accent2: #a29bfe;
+      --accent-glow: rgba(108,92,231,0.18);
+      --gold: #fdcb6e;
+      --green: #00cec9;
+      --surface: rgba(255,255,255,0.055);
+      --surface2: rgba(255,255,255,0.09);
+      --border: rgba(255,255,255,0.1);
+      --border2: rgba(255,255,255,0.18);
+      --text: #f0eeff;
+      --text2: rgba(240,238,255,0.6);
+      --text3: rgba(240,238,255,0.35);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 7px;
+    }
 
-  /* CALC PANEL */
-  .calc-panel{
-    background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:18px;
-    display:flex;flex-direction:column;gap:14px;
-  }
-  .panel-title{color:#fff;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:7px}
+    html { font-size: 15px }
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background: var(--ink);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 14px 40px;
+    }
 
-  /* SELECT */
-  .sg{display:flex;flex-direction:column;gap:5px}
-  .sg label{color:rgba(255,255,255,0.6);font-size:0.78rem}
-  select,input[type=number],textarea{
-    background:rgba(255,255,255,0.09);border:1.5px solid rgba(255,255,255,0.16);
-    border-radius:10px;padding:9px 13px;color:#fff;
-    font-family:'Vazirmatn',sans-serif;font-size:0.83rem;outline:none;width:100%;
-    transition:border-color .2s;appearance:none;-webkit-appearance:none;
-  }
-  select{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='rgba(255,255,255,0.6)' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;background-position:left 12px center;padding-left:34px;cursor:pointer;
-  }
-  select:focus,input:focus{border-color:rgba(102,126,234,0.7)}
-  select option{background:#302b63;color:#fff}
+    /* bg texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(108,92,231,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,206,201,0.12) 0%, transparent 55%),
+        linear-gradient(160deg, #1a1625 0%, #16122c 50%, #0f1a2e 100%);
+    }
 
-  /* SERVICE SECTION */
-  .service-section{display:none;flex-direction:column;gap:12px;animation:sIn .3s ease}
-  .service-section.active{display:flex}
-  @keyframes sIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .container { width: 100%; max-width: 820px; display: flex; flex-direction: column; gap: 12px }
 
-  .form-row{display:flex;gap:10px;flex-wrap:wrap}
-  .fg{display:flex;flex-direction:column;gap:5px;flex:1;min-width:130px}
-  .fg label{color:rgba(255,255,255,0.6);font-size:0.78rem}
+    /* ── HEADER ── */
+    .header {
+      background: rgba(108,92,231,0.12);
+      border: 1px solid rgba(108,92,231,0.3);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px }
+    .logo-mark {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #a29bfe);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .header-title { font-size: 1rem; font-weight: 700; color: var(--text) }
+    .header-sub { font-size: 0.72rem; color: var(--text2); margin-top: 1px }
+    .hbadge {
+      background: rgba(108,92,231,0.25); border: 1px solid rgba(108,92,231,0.4);
+      color: var(--accent2); font-size: 0.7rem; padding: 4px 12px; border-radius: 20px; font-weight: 600;
+    }
 
-  /* RESULT */
-  .result-box{
-    background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.13);
-    border-radius:12px;padding:14px;display:none;flex-direction:column;gap:8px;animation:sIn .3s ease;
-  }
-  .result-box.show{display:flex}
-  .rrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
-  .rrow:last-child{border-bottom:none}
-  .rl{color:rgba(255,255,255,0.55);font-size:0.8rem}
-  .rv{color:#fff;font-size:0.85rem;font-weight:500;text-align:left}
-  .rtotal{
-    background:linear-gradient(135deg,rgba(102,126,234,0.2),rgba(118,75,162,0.2));
-    border:1px solid rgba(102,126,234,0.35);border-radius:9px;padding:10px 14px;
-  }
-  .rtotal .rl{font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.8)}
-  .rtotal .rv{font-size:1rem;font-weight:700;color:#b39ddb}
-  .per{color:rgba(255,255,255,0.4);font-size:0.72rem;margin-top:2px}
+    /* ── PANEL ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .panel-head {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.88rem; font-weight: 600; color: var(--text);
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-head-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--accent-glow); border: 1px solid rgba(108,92,231,0.3);
+      display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+    }
 
-  /* SAVINGS */
-  .sav-box{
-    background:rgba(46,213,115,0.08);border:1.5px solid rgba(46,213,115,0.25);
-    border-radius:11px;padding:12px 14px;display:none;flex-direction:column;gap:7px;animation:sIn .3s ease;
-  }
-  .sav-box.show{display:flex}
-  .sav-title{color:#69f0ae;font-size:0.82rem;font-weight:700}
-  .sav-line{color:rgba(255,255,255,0.6);font-size:0.78rem;line-height:1.8}
-  .sav-save{color:#69f0ae;font-size:0.86rem;font-weight:700;margin-top:3px}
+    /* ── FORM CONTROLS ── */
+    .sg { display: flex; flex-direction: column; gap: 5px }
+    .sg label, .fg label { font-size: 0.73rem; color: var(--text2); font-weight: 500; letter-spacing: 0.01em }
 
-  /* TIP / WARN */
-  .tip{background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.25);border-radius:9px;padding:9px 13px;color:#ffd54f;font-size:0.78rem;line-height:1.8}
-  .warn{background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.25);border-radius:9px;padding:9px 13px;color:#ff8a80;font-size:0.78rem;line-height:1.8}
-  .info{background:rgba(33,150,243,0.1);border:1px solid rgba(33,150,243,0.25);border-radius:9px;padding:9px 13px;color:#90caf9;font-size:0.78rem;line-height:1.8}
+    select, input[type=number], textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-xs);
+      padding: 9px 12px;
+      color: var(--text);
+      font-family: 'Vazirmatn', sans-serif;
+      font-size: 0.82rem;
+      outline: none;
+      width: 100%;
+      transition: border-color .2s, background .2s;
+      appearance: none; -webkit-appearance: none;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='rgba(162,155,254,0.7)' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: left 12px center; padding-left: 32px; cursor: pointer;
+    }
+    select:focus, input:focus, textarea:focus {
+      border-color: rgba(108,92,231,0.65);
+      background: rgba(108,92,231,0.08);
+    }
+    select option { background: #1e1a36; color: var(--text) }
 
-  /* CALC BTN */
-  .calc-btn{
-    background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:10px;
-    padding:10px 22px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:0.85rem;font-weight:600;
-    cursor:pointer;transition:all .2s;align-self:flex-start;
-  }
-  .calc-btn:hover{opacity:.88;transform:translateY(-1px)}
+    .form-row { display: flex; gap: 10px; flex-wrap: wrap }
+    .fg { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 130px }
 
-  /* RISO TABLE */
-  .riso-table{width:100%;border-collapse:collapse}
-  .riso-table th,.riso-table td{padding:8px 12px;text-align:center;font-size:0.8rem;border-bottom:1px solid rgba(255,255,255,0.08)}
-  .riso-table th{color:rgba(255,255,255,0.5);font-weight:500}
-  .riso-table td{color:#fff}
-  .riso-table tr:last-child td{border-bottom:none}
+    /* ── SERVICE SECTIONS ── */
+    .service-section { display: none; flex-direction: column; gap: 12px; animation: fadeUp .25s ease }
+    .service-section.active { display: flex }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
 
-  /* PHOTO TABLE */
-  .photo-table{width:100%;border-collapse:collapse}
-  .photo-table th,.photo-table td{padding:8px 12px;text-align:center;font-size:0.8rem;border-bottom:1px solid rgba(255,255,255,0.08)}
-  .photo-table th{color:rgba(255,255,255,0.5);font-weight:500}
-  .photo-table td{color:#fff}
-  .photo-table tr:last-child td{border-bottom:none}
-  .photo-select-row{display:flex;gap:10px;flex-wrap:wrap}
+    /* ── RESULT BOX ── */
+    .result-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      display: none; flex-direction: column;
+      animation: fadeUp .25s ease;
+    }
+    .result-box.show { display: flex }
+    .rrow {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .rrow:last-child { border-bottom: none }
+    .rl { color: var(--text2); font-size: 0.78rem }
+    .rv { color: var(--text); font-size: 0.83rem; font-weight: 500; text-align: left }
+    .rtotal {
+      background: rgba(108,92,231,0.12);
+      border-top: 1px solid rgba(108,92,231,0.2) !important;
+    }
+    .rtotal .rl { color: var(--accent2); font-weight: 600; font-size: 0.82rem }
+    .rtotal .rv { color: #c4b5fd; font-size: 0.95rem; font-weight: 700 }
+    .per { color: var(--text3); font-size: 0.7rem; margin-top: 1px }
 
-  /* CHAT */
-  .chat-box{
-    background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.1);border-radius:18px;
-    padding:14px;height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;
-  }
-  .chat-box::-webkit-scrollbar{width:3px}
-  .chat-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:10px}
-  .msg{display:flex;gap:8px;animation:sIn .3s ease}
-  .msg.user{flex-direction:row-reverse}
-  .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0}
-  .msg.bot .av{background:linear-gradient(135deg,#667eea,#764ba2)}
-  .msg.user .av{background:linear-gradient(135deg,#f093fb,#f5576c)}
-  .bubble{max-width:80%;padding:9px 13px;border-radius:13px;font-size:0.82rem;line-height:1.75}
-  .msg.bot .bubble{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#f0f0f0;border-top-right-radius:3px}
-  .msg.user .bubble{background:linear-gradient(135deg,rgba(102,126,234,0.4),rgba(118,75,162,0.4));border:1px solid rgba(255,255,255,0.15);color:#fff;border-top-left-radius:3px}
+    /* ── SAVINGS ── */
+    .sav-box {
+      background: rgba(0,206,201,0.07);
+      border: 1px solid rgba(0,206,201,0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: none; flex-direction: column; gap: 6px;
+      animation: fadeUp .25s ease;
+    }
+    .sav-box.show { display: flex }
+    .sav-title { color: #00cec9; font-size: 0.8rem; font-weight: 700 }
+    .sav-line { color: var(--text2); font-size: 0.76rem; line-height: 1.8 }
+    .sav-save { color: #55efc4; font-size: 0.84rem; font-weight: 700; margin-top: 2px }
 
-  .qr-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0}
-  .qr{
-    background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);
-    color:rgba(255,255,255,0.85);padding:5px 11px;border-radius:16px;font-size:0.75rem;
-    cursor:pointer;font-family:'Vazirmatn',sans-serif;transition:all .2s;
-  }
-  .qr:hover{background:rgba(102,126,234,0.35);border-color:rgba(102,126,234,0.55);color:#fff}
+    /* ── ALERTS ── */
+    .tip  { background: rgba(253,203,110,0.08); border: 1px solid rgba(253,203,110,0.22); border-radius: var(--radius-xs); padding: 9px 13px; color: #ffeaa7; font-size: 0.76rem; line-height: 1.85 }
+    .warn { background: rgba(255,118,117,0.08); border: 1px solid rgba(255,118,117,0.22); border-radius: var(--radius-xs); padding: 9px 13px; color: #fab1a0; font-size: 0.76rem; line-height: 1.85 }
+    .info { background: rgba(108,92,231,0.1);  border: 1px solid rgba(108,92,231,0.25); border-radius: var(--radius-xs); padding: 9px 13px; color: var(--accent2); font-size: 0.76rem; line-height: 1.85 }
 
-  .dots-wrap{display:flex;gap:4px;padding:9px 13px;background:rgba(255,255,255,0.08);border-radius:13px;border-top-right-radius:3px}
-  .dot{width:5px;height:5px;background:rgba(255,255,255,0.45);border-radius:50%;animation:bounce 1.2s infinite}
-  .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
-  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+    /* ── CALC BUTTON ── */
+    .calc-btn {
+      background: linear-gradient(135deg, var(--accent), #8b7cf7);
+      border: none; border-radius: var(--radius-xs);
+      padding: 10px 22px; color: #fff;
+      font-family: 'Vazirmatn', sans-serif; font-size: 0.83rem; font-weight: 600;
+      cursor: pointer; transition: all .2s; align-self: flex-start;
+      box-shadow: 0 2px 14px rgba(108,92,231,0.35);
+    }
+    .calc-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(108,92,231,0.45) }
+    .calc-btn:active { transform: translateY(0) }
 
-  /* INPUT AREA */
-  .input-area{
-    background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.12);border-radius:14px;
-    padding:10px 12px;display:flex;gap:9px;align-items:flex-end;
-  }
-  #userInput{
-    flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);
-    border-radius:9px;padding:8px 12px;color:#fff;font-family:'Vazirmatn',sans-serif;
-    font-size:0.82rem;outline:none;resize:none;min-height:36px;max-height:100px;
-  }
-  #userInput::placeholder{color:rgba(255,255,255,0.3)}
-  #sendBtn{
-    background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:9px;
-    width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;
-  }
-  #sendBtn:hover{opacity:.88;transform:scale(1.04)}
-  #sendBtn svg{width:17px;height:17px;fill:#fff}
+    /* ── TABLES ── */
+    .riso-table, .photo-table { width:100%; border-collapse: collapse }
+    .riso-table th, .riso-table td,
+    .photo-table th, .photo-table td {
+      padding: 8px 12px; text-align: center; font-size: 0.78rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .riso-table th, .photo-table th { color: var(--text2); font-weight: 500 }
+    .riso-table td, .photo-table td { color: var(--text) }
+    .riso-table tr:last-child td, .photo-table tr:last-child td { border-bottom: none }
+    .photo-select-row { display: flex; gap: 10px; flex-wrap: wrap }
 
-  /* CONTACT BAR */
-  .cbar{
-    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);
-    border-radius:12px;padding:9px 16px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap;
-  }
-  .cbar span{color:rgba(255,255,255,0.5);font-size:0.75rem;display:flex;align-items:center;gap:4px}
+    /* ── CHAT ── */
+    .chat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      height: 300px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .chat-box::-webkit-scrollbar { width: 3px }
+    .chat-box::-webkit-scrollbar-thumb { background: rgba(108,92,231,0.4); border-radius: 10px }
 
-  @media(max-width:580px){
-    .form-row{flex-direction:column}
-    .fg{min-width:unset}
-    .chat-box{height:220px}
-    .header-title{font-size:0.95rem}
-  }
-</style>
+    .msg { display: flex; gap: 8px; animation: fadeUp .25s ease }
+    .msg.user { flex-direction: row-reverse }
+    .av {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0;
+    }
+    .msg.bot .av { background: linear-gradient(135deg, var(--accent), #a29bfe) }
+    .msg.user .av { background: linear-gradient(135deg, #fd79a8, #e84393) }
+    .bubble {
+      max-width: 82%; padding: 9px 13px; border-radius: 13px;
+      font-size: 0.8rem; line-height: 1.8;
+    }
+    .msg.bot .bubble {
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+      border-top-right-radius: 3px;
+    }
+    .msg.user .bubble {
+      background: rgba(108,92,231,0.25); border: 1px solid rgba(108,92,231,0.35); color: var(--text);
+      border-top-left-radius: 3px;
+    }
+
+    .qr-wrap { display: flex; flex-wrap: wrap; gap: 6px; padding: 3px 0 }
+    .qr {
+      background: rgba(108,92,231,0.12); border: 1px solid rgba(108,92,231,0.3);
+      color: var(--accent2); padding: 5px 12px; border-radius: 20px;
+      font-size: 0.73rem; cursor: pointer;
+      font-family: 'Vazirmatn', sans-serif; transition: all .2s;
+    }
+    .qr:hover { background: rgba(108,92,231,0.28); border-color: rgba(108,92,231,0.55); color: #fff }
+
+    .dots-wrap { display: flex; gap: 4px; padding: 9px 13px; background: var(--surface2); border-radius: 13px; border-top-right-radius: 3px }
+    .dot { width: 5px; height: 5px; background: rgba(162,155,254,0.6); border-radius: 50%; animation: bounce 1.2s infinite }
+    .dot:nth-child(2) { animation-delay:.2s } .dot:nth-child(3) { animation-delay:.4s }
+    @keyframes bounce { 0%,60%,100% { transform:translateY(0) } 30% { transform:translateY(-5px) } }
+
+    /* ── INPUT AREA ── */
+    .input-area {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      display: flex; gap: 9px; align-items: flex-end;
+    }
+    #userInput {
+      flex: 1; background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-xs);
+      padding: 8px 12px; color: var(--text);
+      font-family: 'Vazirmatn', sans-serif; font-size: 0.8rem;
+      outline: none; resize: none; min-height: 36px; max-height: 100px;
+    }
+    #userInput::placeholder { color: var(--text3) }
+    #userInput:focus { border-color: rgba(108,92,231,0.5) }
+    #sendBtn {
+      background: linear-gradient(135deg, var(--accent), #8b7cf7);
+      border: none; border-radius: var(--radius-xs);
+      width: 38px; height: 38px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .2s;
+      box-shadow: 0 2px 10px rgba(108,92,231,0.3);
+    }
+    #sendBtn:hover { transform: scale(1.06); box-shadow: 0 4px 14px rgba(108,92,231,0.45) }
+    #sendBtn svg { width: 16px; height: 16px; fill: #fff }
+
+    /* ── CONTACT BAR ── */
+    .cbar {
+      background: rgba(108,92,231,0.07);
+      border: 1px solid rgba(108,92,231,0.15);
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+    }
+    .cbar span {
+      color: var(--text2); font-size: 0.73rem;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .cbar span strong { color: var(--accent2) }
+
+    /* ── SELECT PILL ── */
+    .svc-select-wrap {
+      position: relative;
+    }
+    .svc-select-wrap::before {
+      content: '🧮';
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      font-size: 14px; pointer-events: none; z-index: 1;
+    }
+    .svc-select-wrap select { padding-right: 36px }
+
+    /* ── ACTION BUTTONS ── */
+    .action-btns {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .btn-channel {
+      flex: 1; min-width: 140px;
+      background: linear-gradient(135deg, #ef5da8, #c2185b);
+      border: none; border-radius: var(--radius-xs);
+      padding: 10px 16px; color: #fff;
+      font-family: 'Vazirmatn', sans-serif; font-size: 0.83rem; font-weight: 600;
+      cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;
+      box-shadow: 0 2px 14px rgba(239,93,168,0.35); transition: all .2s;
+    }
+    .btn-channel:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(239,93,168,0.5) }
+    .btn-about {
+      flex: 1; min-width: 140px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: var(--radius-xs);
+      padding: 10px 16px; color: var(--text);
+      font-family: 'Vazirmatn', sans-serif; font-size: 0.83rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all .2s;
+    }
+    .btn-about:hover { background: rgba(108,92,231,0.15); border-color: rgba(108,92,231,0.4) }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex }
+    .modal {
+      background: #1e1a36; border: 1px solid rgba(108,92,231,0.3);
+      border-radius: var(--radius); padding: 24px; max-width: 480px; width: 100%;
+      position: relative; animation: fadeUp .25s ease;
+    }
+    .modal-close {
+      position: absolute; top: 14px; left: 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 50%; width: 28px; height: 28px;
+      color: var(--text2); font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-family: monospace; transition: all .2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text) }
+    .modal-logo {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #a29bfe);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin: 0 auto 16px;
+    }
+    .modal h2 { font-size: 1rem; font-weight: 700; text-align: center; margin-bottom: 4px }
+    .modal .modal-tagline { font-size: 0.78rem; color: var(--accent2); text-align: center; margin-bottom: 18px }
+    .modal-body { font-size: 0.8rem; color: var(--text2); line-height: 2; }
+    .modal-section { margin-bottom: 14px }
+    .modal-section-title { font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 6px }
+    .modal-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 4px; font-size: 0.79rem; color: var(--text2) }
+    .modal-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0 }
+    .modal-contact { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px 14px; }
+    .modal-contact-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text2); margin-bottom: 6px }
+    .modal-contact-row:last-child { margin-bottom: 0 }
+    .modal-contact-row strong { color: var(--text) }
+    .modal-channel-btn {
+      display: block; width: 100%; margin-top: 16px;
+      background: linear-gradient(135deg, #ef5da8, #c2185b);
+      border: none; border-radius: var(--radius-xs);
+      padding: 11px; color: #fff; font-family: 'Vazirmatn', sans-serif;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; text-decoration: none;
+      text-align: center; box-shadow: 0 2px 12px rgba(239,93,168,0.3); transition: all .2s;
+    }
+    .modal-channel-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(239,93,168,0.45) }
+
+    @media(max-width: 580px) {
+      .form-row { flex-direction: column }
+      .fg { min-width: unset }
+      .chat-box { height: 230px }
+      .header-title { font-size: 0.9rem }
+      html { font-size: 14px }
+    }
+  </style>
 </head>
 <body>
 <div class="container">
 
   <!-- HEADER -->
   <div class="header">
-    <div class="header-title">🖨️ چاپ و تبلیغات فدک</div>
-    <span class="badge">دستیار هوش مصنوعی</span>
+    <div class="header-left">
+      <div class="logo-mark">🖨️</div>
+      <div>
+        <div class="header-title">چاپ و تبلیغات فدک</div>
+        <div class="header-sub">پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع</div>
+      </div>
+    </div>
+    <span class="hbadge">دستیار هوش مصنوعی</span>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-btns">
+    <a href="https://eitaa.com/fadakph" target="_blank" rel="noopener" class="btn-channel">
+      📢 عضویت در کانال ایتا
+    </a>
+    <button class="btn-about" onclick="document.getElementById('aboutModal').classList.add('open')">
+      ℹ️ درباره ما
+    </button>
+  </div>
+
+  <!-- ABOUT MODAL -->
+  <div class="modal-overlay" id="aboutModal" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('aboutModal').classList.remove('open')">×</button>
+      <div class="modal-logo">🖨️</div>
+      <h2>چاپ فدک</h2>
+      <div class="modal-tagline">✨ مرکز تخصصی خدمات چاپی در پرند</div>
+
+      <div class="modal-body">
+        <div class="modal-section">
+          <p style="text-align:center; color:var(--text); font-size:0.83rem;">ما با کیفیت و سرعت، ایده‌های شما را چاپ می‌کنیم</p>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <div class="modal-section">
+          <div class="modal-item">🔹 <span><strong>تبلیغاتی:</strong> بنر فوری، کارت ویزیت، تراکت، لیبل</span></div>
+          <div class="modal-item">🔹 <span><strong>اداری:</strong> انواع فاکتور، قبض، مهر</span></div>
+          <div class="modal-item">🔹 <span><strong>خاص:</strong> چاپ DTF (تیشرت)، چاپ برجسته UV DTF، ماگ</span></div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <div class="modal-contact">
+          <div class="modal-contact-row">📍 <span>پرند · فاز ۲ · بلوار جمهوری · طبقه همکف مسجد جامع</span></div>
+          <div class="modal-contact-row">📞 <strong>09301499659</strong></div>
+          <div class="modal-contact-row">👤 <span>مشاوره و سفارش: <a href="https://eitaa.com/fadakph" target="_blank" style="color:var(--accent2);text-decoration:none">eitaa.com/fadakph</a></span></div>
+        </div>
+
+        <div style="text-align:center; margin-top:14px; color:var(--accent2); font-size:0.8rem; font-weight:600;">
+          ✅ چاپ فدک؛ کیفیتِ چاپ، سرعتِ عمل.
+        </div>
+
+        <a href="https://eitaa.com/fadakph" target="_blank" rel="noopener" class="modal-channel-btn">
+          📢 مشاوره و سفارش در ایتا
+        </a>
+
+        <div style="text-align:center; margin-top:12px; color:var(--text3); font-size:0.7rem;">
+          طراحی شده توسط محمدرضا جباری
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- CALCULATOR -->
-  <div class="calc-panel">
-    <div class="panel-title">🧮 ماشین‌حساب قیمت</div>
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-head-icon">🧮</div>
+      ماشین‌حساب قیمت
+    </div>
 
-    <div class="sg">
+    <div class="sg" style="margin-bottom:14px">
       <label>خدمت مورد نظر را انتخاب کنید</label>
       <select id="svcSel" onchange="switchSvc()">
         <option value="">— انتخاب کنید —</option>
@@ -202,17 +472,18 @@
         <option value="label">🏷️ لیبل / برچسب</option>
         <option value="sub">🎨 چاپ سابلیمیشن</option>
         <option value="photo">📸 عکس پرسنلی ۴×۳</option>
+        <option value="dtf">👕 چاپ DTF / UVDTF</option>
       </select>
     </div>
 
-    <!-- ═══════════════════ BANNER ═══════════════════ -->
+    <!-- BANNER -->
     <div class="service-section" id="sec_banner">
       <div class="form-row">
         <div class="fg">
           <label>کیفیت چاپ</label>
           <select id="bn_q" onchange="calcBanner()">
-            <option value="350000">معمولی — ۳۵۰٬۰۰۰ تومان / متر مربع</option>
-            <option value="400000">خوب (کیفیت بالا) — ۴۰۰٬۰۰۰ تومان / متر مربع</option>
+            <option value="350000">معمولی — ۳۵۰٬۰۰۰ تومان / م²</option>
+            <option value="400000">کیفیت بالا — ۴۰۰٬۰۰۰ تومان / م²</option>
           </select>
         </div>
         <div class="fg">
@@ -235,10 +506,10 @@
         <div class="rrow rtotal"><span class="rl">قیمت تقریبی</span><span class="rv" id="bn_total"></span></div>
         <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="bn_del"></span></div>
       </div>
-      <div class="tip">📞 این قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>09301499659</strong></div>
+      <div class="tip">📞 قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>09301499659</strong></div>
     </div>
 
-    <!-- ═══════════════════ TRACT ═══════════════════ -->
+    <!-- TRACT -->
     <div class="service-section" id="sec_tract">
       <div class="form-row">
         <div class="fg">
@@ -293,10 +564,7 @@
         <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="tc_base"></span></div>
         <div class="rrow" id="tc_d_row"><span class="rl">طراحی</span><span class="rv">+۳۵۰٬۰۰۰ تومان</span></div>
         <div class="rrow" id="tc_f_row"><span class="rl">هزینه فوری</span><span class="rv">+۲۰۰٬۰۰۰ تومان</span></div>
-        <div class="rrow rtotal">
-          <span class="rl">مجموع</span>
-          <div><div class="rv" id="tc_total"></div><div class="per" id="tc_per"></div></div>
-        </div>
+        <div class="rrow rtotal"><span class="rl">مجموع</span><div><div class="rv" id="tc_total"></div><div class="per" id="tc_per"></div></div></div>
         <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="tc_del"></span></div>
       </div>
       <div class="sav-box" id="sav_tc">
@@ -308,7 +576,7 @@
       </div>
     </div>
 
-    <!-- ═══════════════════ RISO ═══════════════════ -->
+    <!-- RISO -->
     <div class="service-section" id="sec_riso">
       <div class="info">🖨️ تراکت ریسو — چاپ سیاه‌وسفید با کیفیت مناسب تبلیغات انبوه</div>
       <div class="result-box show">
@@ -320,15 +588,10 @@
           </tbody>
         </table>
       </div>
-      <div class="tip">
-        💡 <strong>چاپ کمتر هم ممکن است؟</strong><br>
-        بله — با <strong>چاپ دیجیتال</strong>:<br>
-        هر ورق A4 = <strong>۹٬۰۰۰ تومان</strong> &nbsp;|&nbsp; هر ورق A5 = <strong>۵٬۰۰۰ تومان</strong><br>
-        برای تبلیغات انبوه، تیراژ بالا به‌صرفه‌تر است.
-      </div>
+      <div class="tip">💡 <strong>تیراژ کمتر نیاز دارید؟</strong><br>با چاپ دیجیتال: هر ورق A4 = <strong>۹٬۰۰۰ تومان</strong> &nbsp;|&nbsp; A5 = <strong>۵٬۰۰۰ تومان</strong></div>
     </div>
 
-    <!-- ═══════════════════ BUSINESS CARD ═══════════════════ -->
+    <!-- BUSINESS CARD -->
     <div class="service-section" id="sec_bc">
       <div class="form-row">
         <div class="fg" style="flex:2;min-width:200px">
@@ -368,10 +631,7 @@
         <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="bc_base"></span></div>
         <div class="rrow" id="bc_d_row"><span class="rl">طراحی</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
         <div class="rrow" id="bc_f_row"><span class="rl">هزینه فوری</span><span class="rv" id="bc_fv"></span></div>
-        <div class="rrow rtotal">
-          <span class="rl">مجموع</span>
-          <div><div class="rv" id="bc_total"></div><div class="per" id="bc_per"></div></div>
-        </div>
+        <div class="rrow rtotal"><span class="rl">مجموع</span><div><div class="rv" id="bc_total"></div><div class="per" id="bc_per"></div></div></div>
         <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="bc_del"></span></div>
       </div>
       <div class="sav-box" id="sav_bc">
@@ -382,7 +642,7 @@
       </div>
     </div>
 
-    <!-- ═══════════════════ LETTERHEAD ═══════════════════ -->
+    <!-- LETTERHEAD -->
     <div class="service-section" id="sec_lh">
       <div class="form-row">
         <div class="fg">
@@ -407,15 +667,12 @@
         <div class="rrow"><span class="rl">چاپ پایه (۱۰۰۰ عدد)</span><span class="rv" id="lh_base"></span></div>
         <div class="rrow" id="lh_d_row"><span class="rl">طراحی</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
         <div class="rrow" id="lh_f_row"><span class="rl">هزینه فوری</span><span class="rv" id="lh_fv"></span></div>
-        <div class="rrow rtotal">
-          <span class="rl">مجموع</span>
-          <div><div class="rv" id="lh_total"></div><div class="per" id="lh_per"></div></div>
-        </div>
+        <div class="rrow rtotal"><span class="rl">مجموع</span><div><div class="rv" id="lh_total"></div><div class="per" id="lh_per"></div></div></div>
         <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="lh_del"></span></div>
       </div>
     </div>
 
-    <!-- ═══════════════════ LABEL ═══════════════════ -->
+    <!-- LABEL -->
     <div class="service-section" id="sec_label">
       <div class="form-row">
         <div class="fg" style="flex:2">
@@ -452,7 +709,7 @@
       </div>
     </div>
 
-    <!-- ═══════════════════ SUBLIMATION ═══════════════════ -->
+    <!-- SUBLIMATION -->
     <div class="service-section" id="sec_sub">
       <div class="form-row">
         <div class="fg">
@@ -502,7 +759,7 @@
       </div>
     </div>
 
-    <!-- ═══════════════════ PHOTO ═══════════════════ -->
+    <!-- PHOTO -->
     <div class="service-section" id="sec_photo">
       <div class="info">📸 عکاسی پرسنلی با موبایل + پردازش هوش مصنوعی</div>
       <div class="photo-select-row">
@@ -522,19 +779,59 @@
       </div>
     </div>
 
-  </div><!-- /calc-panel -->
+    <!-- DTF / UVDTF -->
+    <div class="service-section" id="sec_dtf">
+      <div class="info">👕 چاپ DTF مخصوص پارچه و لباس — UVDTF مخصوص سطوح صاف</div>
+      <div class="form-row">
+        <div class="fg" style="flex:2">
+          <label>نوع چاپ</label>
+          <select id="dtf_t" onchange="calcDtf()">
+            <option value="1850000">DTF — مخصوص پارچه و لباس</option>
+            <option value="2200000">UVDTF — مخصوص سطوح صاف</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>عرض (سانتی‌متر)</label>
+          <input type="number" id="dtf_w" value="60" readonly style="opacity:0.5;cursor:not-allowed">
+        </div>
+        <div class="fg">
+          <label>طول (سانتی‌متر)</label>
+          <input type="number" id="dtf_l" placeholder="مثال: ۲۰۰" min="1" oninput="calcDtf()">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>آرایش و چیدمان</label>
+          <select id="dtf_arr" onchange="calcDtf()">
+            <option value="0">نیاز ندارم</option>
+            <option value="300000">نیاز دارم (+۳۰۰٬۰۰۰ تومان)</option>
+          </select>
+        </div>
+      </div>
+      <div class="result-box" id="res_dtf">
+        <div class="rrow"><span class="rl">ابعاد</span><span class="rv" id="dtf_dims"></span></div>
+        <div class="rrow"><span class="rl">مساحت</span><span class="rv" id="dtf_area"></span></div>
+        <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="dtf_base"></span></div>
+        <div class="rrow" id="dtf_arr_row"><span class="rl">آرایش و چیدمان</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
+        <div class="rrow rtotal"><span class="rl">قیمت تقریبی</span><span class="rv" id="dtf_total"></span></div>
+      </div>
+      <div class="warn" id="dtf_warn" style="display:none"></div>
+      <div class="tip">📞 این قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>09301499659</strong></div>
+    </div>
+
+  </div><!-- /panel -->
 
   <!-- CHAT -->
   <div class="chat-box" id="chatBox"></div>
   <div class="input-area">
-    <textarea id="userInput" rows="1" placeholder="سوال بپرسید — قیمت، فرق RGB/CMYK، راهنمای فایل، ..."></textarea>
+    <textarea id="userInput" rows="1" placeholder="سوال بپرسید — قیمت، فرق RGB/CMYK، راهنمای فایل..."></textarea>
     <button id="sendBtn" onclick="send()">
       <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
     </button>
   </div>
 
   <div class="cbar">
-    <span>📞 09301499659</span>
+    <span>📞 <strong>09301499659</strong></span>
     <span>📱 ایتا · روبیکا · بله</span>
     <span>🕐 ۱۰ الی ۲۰</span>
     <span>💳 تسویه کامل قبل از چاپ</span>
@@ -543,9 +840,6 @@
 </div>
 
 <script>
-// ─────────────────────────────────────────
-//  DATA
-// ─────────────────────────────────────────
 const TC = {
   tahrir:{
     yekro:{500:{A6:1300000,A5:2350000,A4:4320000},1000:{A6:1600000,A5:2950000,A4:5850000},5000:{A6:4470000,A5:8021000,A4:17200000}},
@@ -581,9 +875,6 @@ const LB = {
 function f(n){return n.toLocaleString('fa-IR')+' تومان'}
 function fn(n){return n.toLocaleString('fa-IR')}
 
-// ─────────────────────────────────────────
-//  SERVICE SWITCH
-// ─────────────────────────────────────────
 function switchSvc(){
   const v=document.getElementById('svcSel').value;
   document.querySelectorAll('.service-section').forEach(s=>s.classList.remove('active'));
@@ -594,9 +885,6 @@ function switchSvc(){
   if(v==='photo')calcPhoto();
 }
 
-// ─────────────────────────────────────────
-//  BANNER — live calc
-// ─────────────────────────────────────────
 function calcBanner(){
   const rate=parseInt(document.getElementById('bn_q').value);
   const w=parseInt(document.getElementById('bn_w').value);
@@ -615,9 +903,6 @@ function calcBanner(){
   r.classList.add('show');
 }
 
-// ─────────────────────────────────────────
-//  TRACT
-// ─────────────────────────────────────────
 function onTcQty(){
   const qty=document.getElementById('tc_qty').value;
   const fe=document.getElementById('tc_f');
@@ -642,7 +927,6 @@ function calcTract(){
   document.getElementById('tc_per').textContent=`هر عدد: ${f(Math.round(tot/qty))}`;
   document.getElementById('tc_del').textContent=fast==='fast'&&qty<5000?'۷۲ ساعت':'۷ روز کاری';
   document.getElementById('res_tract').classList.add('show');
-  // savings
   const sb=document.getElementById('sav_tc');
   if(qty<5000){
     const nq=qty===500?1000:5000;
@@ -664,9 +948,6 @@ function calcTract(){
   } else sb.classList.remove('show');
 }
 
-// ─────────────────────────────────────────
-//  BUSINESS CARD
-// ─────────────────────────────────────────
 function updateBC(){
   const type=document.getElementById('bc_t').value;
   const card=BC_DATA[type];
@@ -703,7 +984,6 @@ function calcBC(){
   document.getElementById('bc_per').textContent=`هر عدد: ${f(Math.round(tot/qty))}`;
   document.getElementById('bc_del').textContent=canFast?'۷۲ ساعت':card.del;
   document.getElementById('res_bc').classList.add('show');
-  // savings
   const sb=document.getElementById('sav_bc');
   if(qty===500&&card.p[1000]){
     const p5=card.p[500],p10=card.p[1000],x2=p5*2;
@@ -714,9 +994,6 @@ function calcBC(){
   } else sb.classList.remove('show');
 }
 
-// ─────────────────────────────────────────
-//  LETTERHEAD
-// ─────────────────────────────────────────
 function updateLH(){
   const p=document.getElementById('lh_p').value;
   const lh=LH[p];
@@ -743,9 +1020,6 @@ function calcLH(){
   document.getElementById('res_lh').classList.add('show');
 }
 
-// ─────────────────────────────────────────
-//  LABEL
-// ─────────────────────────────────────────
 function calcLabel(){
   const t=document.getElementById('lb_t').value;
   const des=document.getElementById('lb_d').value;
@@ -760,9 +1034,6 @@ function calcLabel(){
   document.getElementById('res_lb').classList.add('show');
 }
 
-// ─────────────────────────────────────────
-//  SUBLIMATION
-// ─────────────────────────────────────────
 function toggleSub(){
   const t=document.getElementById('sub_t').value;
   document.getElementById('sub_carpet').style.display=t==='carpet'?'flex':'none';
@@ -794,9 +1065,6 @@ function calcSub(){
   r.classList.add('show');
 }
 
-// ─────────────────────────────────────────
-//  PHOTO
-// ─────────────────────────────────────────
 function calcPhoto(){
   const sel=document.getElementById('ph_qty');
   const price=parseInt(sel.value);
@@ -806,158 +1074,25 @@ function calcPhoto(){
   document.getElementById('res_photo').classList.add('show');
 }
 
-// ─────────────────────────────────────────
-//  CHAT KNOWLEDGE BASE
-// ─────────────────────────────────────────
 const KB = [
-  {
-    keys:/rgb|سی‌ام‌وای‌کی|cmyk|مد رنگی|رنگ چاپ|تفاوت رنگ/i,
-    html:`<strong>🎨 فرق RGB و CMYK</strong><br><br>
-<strong>RGB</strong> (Red · Green · Blue):<br>
-— مخصوص نمایشگر، موبایل، وب<br>
-— رنگ‌ها با نور ساخته می‌شوند<br>
-— طیف رنگی گسترده‌تر و روشن‌تر<br><br>
-<strong>CMYK</strong> (Cyan · Magenta · Yellow · Key/Black):<br>
-— مخصوص <strong>چاپ</strong><br>
-— رنگ‌ها با جوهر ساخته می‌شوند<br>
-— ممکن است رنگ‌های RGB روی کاغذ کمی متفاوت دیده شوند<br><br>
-⚠️ <strong>مهم:</strong> فایل چاپی خود را <strong>حتماً در مد CMYK</strong> ذخیره کنید. اگر فایل RGB بدهید، ما تبدیل می‌کنیم ولی ممکن است رنگ کمی تغییر کند.`
-  },
-  {
-    keys:/مد رنگ|پانتون|pantone|spot color/i,
-    html:`<strong>🎨 مدهای رنگی در چاپ</strong><br><br>
-<strong>CMYK:</strong> استاندارد چاپ افست و دیجیتال<br>
-<strong>RGB:</strong> برای صفحه‌نمایش — باید تبدیل شود<br>
-<strong>Pantone:</strong> رنگ‌های استاندارد جهانی برای چاپ صنعتی — در چاپ افست معمولی پشتیبانی محدود دارد<br><br>
-توصیه: همیشه در <strong>CMYK</strong> طراحی کنید.`
-  },
-  {
-    keys:/رزولوشن|dpi|کیفیت فایل|پیکسل|resolution/i,
-    html:`<strong>🔍 رزولوشن فایل چاپی</strong><br><br>
-حداقل <strong>۳۰۰ DPI</strong> برای چاپ باکیفیت<br>
-برای بنر بزرگ: <strong>۷۲–۱۵۰ DPI</strong> کافی است (چون از فاصله دیده می‌شود)<br>
-برای کارت ویزیت و تراکت: <strong>۳۰۰ DPI</strong><br><br>
-⚠️ فایل وب (۷۲ DPI) برای چاپ مناسب نیست — تصویر تار می‌شود.`
-  },
-  {
-    keys:/بلید|bleed|حاشیه امن|حاشیه|safe zone/i,
-    html:`<strong>✂️ بلید (Bleed) و حاشیه امن</strong><br><br>
-<strong>بلید:</strong> ۳ میلی‌متر اضافه در هر طرف فایل — برای برش<br>
-<strong>حاشیه امن:</strong> ۳–۵ میلی‌متر از لبه — متن و لوگو نباید در این ناحیه باشد<br><br>
-مثال: کارت ویزیت ۶×۹ → فایل باید <strong>۶.۶ × ۹.۶</strong> سانتی‌متر باشد.`
-  },
-  {
-    keys:/فرمت فایل|pdf|ai|psd|png|jpg|فایل چاپ/i,
-    html:`<strong>📁 فرمت‌های مناسب برای چاپ</strong><br><br>
-✅ <strong>PDF</strong> (بهترین — با بلید و CMYK)<br>
-✅ <strong>AI</strong> (Illustrator — برای گرافیک‌های وکتور)<br>
-✅ <strong>PSD</strong> (Photoshop — حداقل ۳۰۰ DPI)<br>
-⚠️ <strong>JPG/PNG</strong> — فقط اگر رزولوشن بالا باشد<br>
-❌ Word، PowerPoint — مناسب چاپ نیست`
-  },
-  {
-    keys:/افست|offset|چاپ افست/i,
-    html:`<strong>🖨️ چاپ افست</strong><br><br>
-— بهترین کیفیت رنگ برای تیراژ بالا<br>
-— مناسب: تراکت، کارت ویزیت، سربرگ، بروشور<br>
-— رنگ‌ها تثبیت‌شده و یکنواخت<br>
-— <strong>مقرون‌به‌صرفه برای ۵۰۰ عدد به بالا</strong><br>
-— زمان تحویل: ۷–۱۰ روز کاری<br><br>
-در فدک تمام تراکت‌ها و کارت‌ها با چاپ افست تولید می‌شوند.`
-  },
-  {
-    keys:/دیجیتال|digital print|لیزر|inkjet/i,
-    html:`<strong>🖨️ چاپ دیجیتال</strong><br><br>
-— مناسب تیراژ کم (زیر ۵۰۰ عدد)<br>
-— سرعت بالا — تحویل همان روز ممکن<br>
-— هزینه هر ورق بیشتر از افست<br>
-— در فدک: هر ورق A4 = ۹٬۰۰۰ تومان | A5 = ۵٬۰۰۰ تومان`
-  },
-  {
-    keys:/ریسو|riso/i,
-    html:`<strong>🖨️ چاپ ریسو</strong><br><br>
-— چاپ سیاه‌وسفید با کیفیت مطبوعاتی<br>
-— سرعت بالا — ایده‌آل برای تبلیغات انبوه<br>
-— A4 / ۵۰۰ عدد = ۱٬۷۰۰٬۰۰۰ تومان<br>
-— A5 / ۱۰۰۰ عدد = ۱٬۸۵۰٬۰۰۰ تومان<br>
-— تحویل ۱ روز کاری`
-  },
-  {
-    keys:/سابلیمیشن|sublimation|حرارتی|ماگ|فرش چاپ/i,
-    html:`<strong>🎨 چاپ سابلیمیشن</strong><br><br>
-— انتقال رنگ با حرارت و فشار<br>
-— مناسب: ماگ، فرش، تی‌شرت، پارچه<br>
-— رنگ‌ها بسیار ماندگار و مقاوم<br>
-— در فدک: ماگ از ۴۰۰٬۰۰۰ | فرش A4 از ۵۰۰٬۰۰۰ تومان`
-  },
-  {
-    keys:/لمینت|سلفون|روکش|کوتینگ|uv|یووی/i,
-    html:`<strong>✨ انواع روکش و لمینت</strong><br><br>
-<strong>سلفون مات:</strong> روکش پلاستیکی کدر — ظاهر شیک<br>
-<strong>سلفون براق:</strong> روکش پلاستیکی درخشان — رنگ‌ها پررنگ‌تر<br>
-<strong>لمینت مات:</strong> ضخیم‌تر از سلفون — مقاوم‌تر<br>
-<strong>لمینت براق:</strong> درخشان + محکم<br>
-<strong>UV:</strong> لایه پوشش فوری با اشعه UV — مقاوم در برابر آب و خراش<br>
-<strong>برجسته:</strong> بخش‌هایی از طرح برجسته می‌شود — لوکس‌تر<br>
-<strong>مخملی:</strong> احساس لمسی نرم و مخملی — کارت ویزیت خاص`
-  },
-  {
-    keys:/طراحی|گرافیک|لوگو|فونت/i,
-    html:`<strong>🖌️ خدمات طراحی فدک</strong><br><br>
-— طراحی تراکت: +۳۵۰٬۰۰۰ تومان<br>
-— طراحی کارت ویزیت: +۳۰۰٬۰۰۰ تومان<br>
-— طراحی سربرگ: +۳۰۰٬۰۰۰ تومان<br>
-— طراحی لیبل: +۲۵۰٬۰۰۰ تومان<br><br>
-⚠️ <strong>فونت‌ها:</strong> حتماً فونت‌ها را Embed یا Outline کنید تا در چاپ مشکل نداشته باشید.`
-  },
-  {
-    keys:/پرسنلی|عکس|۴×۳|پاسپورت/i,
-    html:`<strong>📸 عکس پرسنلی ۴×۳</strong><br><br>
-— ۶ قطعه: ۱۸۰٬۰۰۰ تومان<br>
-— ۱۲ قطعه: ۲۳۰٬۰۰۰ تومان<br>
-— عکاسی با موبایل + پردازش AI<br>
-— تحویل همان روز`
-  },
-  {
-    keys:/بنر|banner|فلکس|فلکسی/i,
-    html:`<strong>🖼️ بنر / فلکس</strong><br><br>
-— معمولی: ۳۵۰٬۰۰۰ تومان / متر مربع<br>
-— کیفیت بالا: ۴۰۰٬۰۰۰ تومان / متر مربع<br>
-— حداقل محاسبه: ۱ متر مربع<br>
-— عرض ۱۰۰ تا ۲۵۰ سانت: تحویل ۱ روز<br>
-— عرض ۳۰۰ سانت: تحویل ۲ روز<br><br>
-از ماشین‌حساب بالا قیمت دقیق‌تر دریافت کنید.`
-  },
-  {
-    keys:/آدرس|تماس|کجا|شماره|ساعت|کاری/i,
-    html:`<strong>📍 اطلاعات تماس فدک</strong><br><br>
-📍 پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع<br>
-📞 <strong>09301499659</strong><br>
-📱 ایتا · روبیکا · بله<br>
-🕐 ساعت کاری: ۱۰ الی ۲۰<br>
-💳 تسویه کامل قبل از چاپ`
-  },
-  {
-    keys:/فوری|اکسپرس|سریع|emergency/i,
-    html:`<strong>⚡ خدمات فوری فدک</strong><br><br>
-✅ تراکت افست تا ۱۰۰۰ عدد — ۷۲ ساعت<br>
-✅ کارت ویزیت (اکثر انواع) — ۷۲ ساعت<br>
-✅ سربرگ ۸۰ گرم — ۷۲ ساعت<br>
-✅ لیبل یووی — ۷۲ ساعت<br>
-✅ بنر — ۱ روز کاری<br>
-❌ تراکت ۵۰۰۰ عدد — فوری ندارد<br>
-❌ سربرگ ۱۲۰ گرم — فوری ندارد`
-  },
-  {
-    keys:/سلام|درود|hello|hi|خوش|وقت بخیر/i,
-    html:`سلام! خوش اومدید به <strong>چاپ و تبلیغات فدک</strong> 🖨️<br>
-از ماشین‌حساب بالا قیمت هر خدمت را محاسبه کنید<br>
-یا هر سوالی در مورد چاپ دارید بپرسید.`
-  },
-  {
-    keys:/ممنون|تشکر|مرسی|خداحافظ|باشه/i,
-    html:`خواهش می‌کنم! 🙏 هر وقت سوالی داشتید در خدمتیم.`
-  }
+  {keys:/rgb|سی‌ام‌وای‌کی|cmyk|مد رنگی|رنگ چاپ|تفاوت رنگ/i,html:`<strong>🎨 فرق RGB و CMYK</strong><br><br><strong>RGB</strong> (Red · Green · Blue):<br>— مخصوص نمایشگر، موبایل، وب<br>— رنگ‌ها با نور ساخته می‌شوند<br>— طیف رنگی گسترده‌تر و روشن‌تر<br><br><strong>CMYK</strong> (Cyan · Magenta · Yellow · Key/Black):<br>— مخصوص <strong>چاپ</strong><br>— رنگ‌ها با جوهر ساخته می‌شوند<br>— ممکن است رنگ‌های RGB روی کاغذ کمی متفاوت دیده شوند<br><br>⚠️ <strong>مهم:</strong> فایل چاپی خود را <strong>حتماً در مد CMYK</strong> ذخیره کنید.`},
+  {keys:/مد رنگ|پانتون|pantone|spot color/i,html:`<strong>🎨 مدهای رنگی در چاپ</strong><br><br><strong>CMYK:</strong> استاندارد چاپ افست و دیجیتال<br><strong>RGB:</strong> برای صفحه‌نمایش — باید تبدیل شود<br><strong>Pantone:</strong> رنگ‌های استاندارد جهانی برای چاپ صنعتی<br><br>توصیه: همیشه در <strong>CMYK</strong> طراحی کنید.`},
+  {keys:/رزولوشن|dpi|کیفیت فایل|پیکسل|resolution/i,html:`<strong>🔍 رزولوشن فایل چاپی</strong><br><br>حداقل <strong>۳۰۰ DPI</strong> برای چاپ باکیفیت<br>برای بنر بزرگ: <strong>۷۲–۱۵۰ DPI</strong> کافی است<br>برای کارت ویزیت و تراکت: <strong>۳۰۰ DPI</strong><br><br>⚠️ فایل وب (۷۲ DPI) برای چاپ مناسب نیست.`},
+  {keys:/بلید|bleed|حاشیه امن|حاشیه|safe zone/i,html:`<strong>✂️ بلید (Bleed) و حاشیه امن</strong><br><br><strong>بلید:</strong> ۳ میلی‌متر اضافه در هر طرف فایل — برای برش<br><strong>حاشیه امن:</strong> ۳–۵ میلی‌متر از لبه — متن و لوگو نباید در این ناحیه باشد<br><br>مثال: کارت ویزیت ۶×۹ → فایل باید <strong>۶.۶ × ۹.۶</strong> سانتی‌متر باشد.`},
+  {keys:/فرمت فایل|pdf|ai|psd|png|jpg|فایل چاپ/i,html:`<strong>📁 فرمت‌های مناسب برای چاپ</strong><br><br>✅ <strong>PDF</strong> (بهترین — با بلید و CMYK)<br>✅ <strong>AI</strong> (Illustrator — برای گرافیک‌های وکتور)<br>✅ <strong>PSD</strong> (Photoshop — حداقل ۳۰۰ DPI)<br>⚠️ <strong>JPG/PNG</strong> — فقط اگر رزولوشن بالا باشد<br>❌ Word، PowerPoint — مناسب چاپ نیست`},
+  {keys:/افست|offset|چاپ افست/i,html:`<strong>🖨️ چاپ افست</strong><br><br>— بهترین کیفیت رنگ برای تیراژ بالا<br>— مناسب: تراکت، کارت ویزیت، سربرگ، بروشور<br>— <strong>مقرون‌به‌صرفه برای ۵۰۰ عدد به بالا</strong><br>— زمان تحویل: ۷–۱۰ روز کاری`},
+  {keys:/دیجیتال|digital print|لیزر|inkjet/i,html:`<strong>🖨️ چاپ دیجیتال</strong><br><br>— مناسب تیراژ کم (زیر ۵۰۰ عدد)<br>— سرعت بالا — تحویل همان روز ممکن<br>— در فدک: هر ورق A4 = ۹٬۰۰۰ تومان | A5 = ۵٬۰۰۰ تومان`},
+  {keys:/ریسو|riso/i,html:`<strong>🖨️ چاپ ریسو</strong><br><br>— چاپ سیاه‌وسفید با کیفیت مطبوعاتی<br>— A4 / ۵۰۰ عدد = ۱٬۷۰۰٬۰۰۰ تومان<br>— A5 / ۱۰۰۰ عدد = ۱٬۸۵۰٬۰۰۰ تومان<br>— تحویل ۱ روز کاری`},
+  {keys:/سابلیمیشن|sublimation|حرارتی|ماگ|فرش چاپ/i,html:`<strong>🎨 چاپ سابلیمیشن</strong><br><br>— انتقال رنگ با حرارت و فشار<br>— مناسب: ماگ، فرش، تی‌شرت، پارچه<br>— در فدک: ماگ از ۴۰۰٬۰۰۰ | فرش A4 از ۵۰۰٬۰۰۰ تومان`},
+  {keys:/لمینت|سلفون|روکش|کوتینگ|uv|یووی/i,html:`<strong>✨ انواع روکش و لمینت</strong><br><br><strong>سلفون مات:</strong> روکش کدر — ظاهر شیک<br><strong>سلفون براق:</strong> روکش درخشان — رنگ‌ها پررنگ‌تر<br><strong>UV:</strong> مقاوم در برابر آب و خراش<br><strong>مخملی:</strong> احساس لمسی نرم — کارت ویزیت خاص`},
+  {keys:/طراحی|گرافیک|لوگو|فونت/i,html:`<strong>🖌️ خدمات طراحی فدک</strong><br><br>— طراحی تراکت: +۳۵۰٬۰۰۰ تومان<br>— طراحی کارت ویزیت: +۳۰۰٬۰۰۰ تومان<br>— طراحی سربرگ: +۳۰۰٬۰۰۰ تومان<br>— طراحی لیبل: +۲۵۰٬۰۰۰ تومان`},
+  {keys:/پرسنلی|عکس|۴×۳|پاسپورت/i,html:`<strong>📸 عکس پرسنلی ۴×۳</strong><br><br>— ۶ قطعه: ۱۸۰٬۰۰۰ تومان<br>— ۱۲ قطعه: ۲۳۰٬۰۰۰ تومان<br>— عکاسی با موبایل + پردازش AI<br>— تحویل همان روز`},
+  {keys:/بنر|banner|فلکس|فلکسی/i,html:`<strong>🖼️ بنر / فلکس</strong><br><br>— معمولی: ۳۵۰٬۰۰۰ تومان / متر مربع<br>— کیفیت بالا: ۴۰۰٬۰۰۰ تومان / متر مربع<br>— حداقل محاسبه: ۱ متر مربع<br>— تحویل ۱ روز کاری`},
+  {keys:/آدرس|تماس|کجا|شماره|ساعت|کاری/i,html:`<strong>📍 اطلاعات تماس فدک</strong><br><br>📍 پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع<br>📞 <strong>09301499659</strong><br>📱 ایتا · روبیکا · بله<br>🕐 ساعت کاری: ۱۰ الی ۲۰<br>💳 تسویه کامل قبل از چاپ`},
+  {keys:/فوری|اکسپرس|سریع|emergency/i,html:`<strong>⚡ خدمات فوری فدک</strong><br><br>✅ تراکت افست تا ۱۰۰۰ عدد — ۷۲ ساعت<br>✅ کارت ویزیت (اکثر انواع) — ۷۲ ساعت<br>✅ بنر — ۱ روز کاری<br>❌ تراکت ۵۰۰۰ عدد — فوری ندارد`},
+  {keys:/سلام|درود|hello|hi|خوش|وقت بخیر/i,html:`سلام! خوش اومدید به <strong>چاپ و تبلیغات فدک</strong> 🖨️<br>از ماشین‌حساب بالا قیمت هر خدمت را محاسبه کنید<br>یا هر سوالی در مورد چاپ دارید بپرسید.`},
+  {keys:/ممنون|تشکر|مرسی|خداحافظ|باشه/i,html:`خواهش می‌کنم! 🙏 هر وقت سوالی داشتید در خدمتیم.`},
+  {keys:/dtf|uvdtf|پارچه|لباس|تی‌شرت|تیشرت/i,html:`<strong>👕 چاپ DTF و UVDTF</strong><br><br><strong>DTF:</strong> چاپ مستقیم روی پارچه و لباس<br>— قیمت پایه: ۱٬۸۵۰٬۰۰۰ تومان (عرض ۶۰ سانت)<br>— طول: ۱۰۰ تا ۴۲۰ سانتی‌متر<br><br><strong>UVDTF:</strong> چاپ روی سطوح صاف (لیوان، جعبه، ...)<br>— قیمت پایه: ۲٬۲۰۰٬۰۰۰ تومان (عرض ۶۰ سانت)<br><br>آرایش و چیدمان: +۳۰۰٬۰۰۰ تومان`}
 ];
 
 function SERVICES_QR(){
@@ -970,29 +1105,23 @@ function SERVICES_QR(){
     <button class="qr" onclick="openSvc('label')">لیبل</button>
     <button class="qr" onclick="openSvc('sub')">سابلیمیشن</button>
     <button class="qr" onclick="openSvc('photo')">عکس پرسنلی</button>
+    <button class="qr" onclick="openSvc('dtf')">DTF / UVDTF</button>
   </div>`;
 }
-
 function openSvc(val){
   document.getElementById('svcSel').value=val;
   switchSvc();
   document.getElementById('svcSel').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
 function getReply(q){
   for(const kb of KB){
     if(kb.keys.test(q)){
       return kb.html+`<br><br><div class="qr-wrap"><button class="qr" onclick="openSvc(document.getElementById('svcSel').value||'banner');void 0">🧮 خدمات چاپ فدک</button></div>`+SERVICES_QR();
     }
   }
-  // fallback
-  return `ممنون از سوالتون 🙏<br>
-لطفاً سوال خود را بیشتر توضیح دهید یا از خدمات زیر انتخاب کنید:`+SERVICES_QR();
+  return `ممنون از سوالتون 🙏<br>لطفاً سوال خود را بیشتر توضیح دهید یا از خدمات زیر انتخاب کنید:`+SERVICES_QR();
 }
 
-// ─────────────────────────────────────────
-//  CHAT ENGINE
-// ─────────────────────────────────────────
 function addMsg(html,isUser=false){
   const cb=document.getElementById('chatBox');
   const d=document.createElement('div');d.className=`msg ${isUser?'user':'bot'}`;
@@ -1002,7 +1131,7 @@ function addMsg(html,isUser=false){
 function showTyping(){
   const cb=document.getElementById('chatBox');
   const d=document.createElement('div');d.className='msg bot';d.id='typing';
-  d.innerHTML=`<div class="av" style="background:linear-gradient(135deg,#667eea,#764ba2)">🤖</div><div class="dots-wrap"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  d.innerHTML=`<div class="av" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">🤖</div><div class="dots-wrap"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
   cb.appendChild(d);cb.scrollTop=cb.scrollHeight;
 }
 function removeTyping(){const t=document.getElementById('typing');if(t)t.remove()}
@@ -1022,15 +1151,37 @@ document.getElementById('userInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}
 });
 
-// INIT
+function calcDtf(){
+  const basePrice=parseInt(document.getElementById('dtf_t').value);
+  const l=parseFloat(document.getElementById('dtf_l').value)||0;
+  const arr=parseInt(document.getElementById('dtf_arr').value);
+  const warn=document.getElementById('dtf_warn');
+  const res=document.getElementById('res_dtf');
+  if(!l||l<=0){res.classList.remove('show');warn.style.display='none';return}
+  const area=(60*l)/10000;
+  const baseArea=60*100/10000;
+  const baseCost=Math.round((area/baseArea)*basePrice);
+  const total=baseCost+arr;
+  document.getElementById('dtf_dims').textContent=`۶۰ × ${l} سانتی‌متر`;
+  document.getElementById('dtf_area').textContent=`${area.toFixed(2)} متر مربع`;
+  document.getElementById('dtf_base').textContent=f(baseCost);
+  document.getElementById('dtf_arr_row').style.display=arr>0?'':'none';
+  document.getElementById('dtf_total').textContent=f(total);
+  res.classList.add('show');
+  if(l<100||l>420){
+    warn.style.display='';
+    warn.textContent=`⚠️ طول وارد شده (${l} سانتیمتر) خارج از محدوده مجاز است. حداقل ۱۰۰ و حداکثر ۴۲۰ سانتیمتر.`;
+  } else {
+    warn.style.display='none';
+  }
+}
+
 window.addEventListener('load',()=>{
   setTimeout(()=>{
     showTyping();
     setTimeout(()=>{
       removeTyping();
-      addMsg(`سلام! 👋 به <strong>چاپ و تبلیغات فدک</strong> خوش اومدید.<br>
-از ماشین‌حساب بالا قیمت دقیق دریافت کنید<br>
-یا هر سوالی در مورد چاپ، رنگ، فایل و... بپرسید.`+SERVICES_QR());
+      addMsg(`سلام! 👋 به <strong>چاپ و تبلیغات فدک</strong> خوش اومدید.<br>از ماشین‌حساب بالا قیمت دقیق دریافت کنید<br>یا هر سوالی در مورد چاپ، رنگ، فایل و... بپرسید.`+SERVICES_QR());
     },800);
   },300);
   updateBC();

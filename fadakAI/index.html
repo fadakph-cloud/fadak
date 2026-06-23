@@ -302,6 +302,19 @@
     }
     .svc-select-wrap select { padding-right: 36px }
 
+    /* ── RISO TABS ── */
+    .riso-tab {
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 20px; padding: 5px 14px;
+      color: var(--text2); font-family: 'Vazirmatn', sans-serif;
+      font-size: 0.76rem; cursor: pointer; transition: all .2s;
+    }
+    .riso-tab.active {
+      background: rgba(108,92,231,0.25); border-color: rgba(108,92,231,0.5);
+      color: var(--accent2); font-weight: 600;
+    }
+    .riso-tab:hover:not(.active) { background: rgba(255,255,255,0.08) }
+
     /* ── ACTION BUTTONS ── */
     .action-btns {
       display: flex; gap: 10px; flex-wrap: wrap;
@@ -466,7 +479,7 @@
         <option value="">— انتخاب کنید —</option>
         <option value="banner">🖼️ بنر</option>
         <option value="tract">📄 تراکت افست</option>
-        <option value="riso">🖨️ تراکت ریسو</option>
+        <option value="riso">🖨️ ریسو (تراکت / فاکتور / قبض)</option>
         <option value="bc">🎴 کارت ویزیت</option>
         <option value="lh">📋 سربرگ</option>
         <option value="label">🏷️ لیبل / برچسب</option>
@@ -578,17 +591,111 @@
 
     <!-- RISO -->
     <div class="service-section" id="sec_riso">
-      <div class="info">🖨️ تراکت ریسو — چاپ سیاه‌وسفید با کیفیت مناسب تبلیغات انبوه</div>
-      <div class="result-box show">
-        <table class="riso-table">
-          <thead><tr><th>سایز</th><th>تیراژ</th><th>قیمت</th><th>تحویل</th></tr></thead>
-          <tbody>
-            <tr><td>A4</td><td>۵۰۰ عدد</td><td>۱٬۷۰۰٬۰۰۰ تومان</td><td>۱ روز</td></tr>
-            <tr><td>A5</td><td>۱۰۰۰ عدد</td><td>۱٬۸۵۰٬۰۰۰ تومان</td><td>۱ روز</td></tr>
-          </tbody>
-        </table>
+      <div class="info">🖨️ ریسو — چاپ سیاه‌وسفید با کیفیت مناسب تبلیغات انبوه · تحویل ۱ روز کاری</div>
+
+      <!-- Sub tabs -->
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
+        <button class="riso-tab active" id="rtab_tract" onclick="switchRisoTab('tract')">📄 تراکت</button>
+        <button class="riso-tab" id="rtab_factor" onclick="switchRisoTab('factor')">🧾 فاکتور</button>
+        <button class="riso-tab" id="rtab_qbz" onclick="switchRisoTab('qbz')">📋 قبض</button>
       </div>
-      <div class="tip">💡 <strong>تیراژ کمتر نیاز دارید؟</strong><br>با چاپ دیجیتال: هر ورق A4 = <strong>۹٬۰۰۰ تومان</strong> &nbsp;|&nbsp; A5 = <strong>۵٬۰۰۰ تومان</strong></div>
+
+      <!-- TRAKTAT -->
+      <div id="rsec_tract" class="riso-sub">
+        <div class="form-row">
+          <div class="fg">
+            <label>سایز</label>
+            <select id="rs_sz" onchange="calcRisoTract()">
+              <option value="A6">A6</option>
+              <option value="A5" selected>A5</option>
+              <option value="A4">A4</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>تیراژ</label>
+            <select id="rs_qty" onchange="calcRisoTract()">
+              <option value="500">۵۰۰ عدد</option>
+              <option value="1000">۱۰۰۰ عدد</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>طراحی</label>
+            <select id="rs_d" onchange="calcRisoTract()">
+              <option value="no">ندارم (فایل دارم)</option>
+              <option value="yes">لازم دارم (+۳۵۰٬۰۰۰)</option>
+            </select>
+          </div>
+        </div>
+        <div class="result-box" id="res_riso_tract">
+          <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="rs_base"></span></div>
+          <div class="rrow" id="rs_d_row"><span class="rl">طراحی</span><span class="rv">+۳۵۰٬۰۰۰ تومان</span></div>
+          <div class="rrow rtotal"><span class="rl">مجموع</span><div><div class="rv" id="rs_total"></div><div class="per" id="rs_per"></div></div></div>
+          <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv">۱ روز کاری</span></div>
+        </div>
+        <div class="sav-box" id="sav_riso">
+          <div class="sav-title">💚 صرفه‌جویی با تیراژ بالاتر</div>
+          <div class="sav-line" id="sav_riso1"></div>
+          <div class="sav-line" id="sav_riso2"></div>
+          <div class="sav-save" id="sav_riso_s"></div>
+        </div>
+      </div>
+
+      <!-- FACTOR -->
+      <div id="rsec_factor" class="riso-sub" style="display:none">
+        <div class="form-row">
+          <div class="fg">
+            <label>سایز</label>
+            <select id="rf_sz" onchange="calcRisoFactor()">
+              <option value="A6">A6</option>
+              <option value="A5">A5</option>
+              <option value="A4" selected>A4</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>نوع</label>
+            <select id="rf_type" onchange="calcRisoFactor()">
+              <option value="nocarbon">بدون کاربن</option>
+              <option value="carbon">کاربن‌دار</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>طراحی</label>
+            <select id="rf_d" onchange="calcRisoFactor()">
+              <option value="no">ندارم (فایل دارم)</option>
+              <option value="yes">لازم دارم (+۳۵۰٬۰۰۰)</option>
+            </select>
+          </div>
+        </div>
+        <div class="info" style="font-size:0.75rem;">📌 تمام فاکتورها ۲ برگی · ۵۰۰ شماره</div>
+        <div class="result-box" id="res_riso_factor">
+          <div class="rrow"><span class="rl">نوع</span><span class="rv" id="rf_desc"></span></div>
+          <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="rf_base"></span></div>
+          <div class="rrow" id="rf_d_row"><span class="rl">طراحی</span><span class="rv">+۳۵۰٬۰۰۰ تومان</span></div>
+          <div class="rrow rtotal"><span class="rl">مجموع</span><span class="rv" id="rf_total"></span></div>
+          <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv">۱ روز کاری</span></div>
+        </div>
+      </div>
+
+      <!-- QABZ -->
+      <div id="rsec_qbz" class="riso-sub" style="display:none">
+        <div class="form-row">
+          <div class="fg">
+            <label>طراحی</label>
+            <select id="rq_d" onchange="calcRisoQbz()">
+              <option value="no">ندارم (فایل دارم)</option>
+              <option value="yes">لازم دارم (+۳۵۰٬۰۰۰)</option>
+            </select>
+          </div>
+        </div>
+        <div class="info" style="font-size:0.75rem;">📌 قبض ۹۰۰/۳ شماره</div>
+        <div class="result-box" id="res_riso_qbz">
+          <div class="rrow"><span class="rl">چاپ قبض (۹۰۰/۳ شماره)</span><span class="rv">۱٬۸۰۰٬۰۰۰ تومان</span></div>
+          <div class="rrow" id="rq_d_row"><span class="rl">طراحی</span><span class="rv">+۳۵۰٬۰۰۰ تومان</span></div>
+          <div class="rrow rtotal"><span class="rl">مجموع</span><span class="rv" id="rq_total"></span></div>
+          <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv">۱ روز کاری</span></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- BUSINESS CARD -->
@@ -883,6 +990,7 @@ function switchSvc(){
   if(v==='bc')updateBC();
   if(v==='lh')updateLH();
   if(v==='photo')calcPhoto();
+  if(v==='riso')calcRisoTract();
 }
 
 function calcBanner(){
@@ -1082,7 +1190,7 @@ const KB = [
   {keys:/فرمت فایل|pdf|ai|psd|png|jpg|فایل چاپ/i,html:`<strong>📁 فرمت‌های مناسب برای چاپ</strong><br><br>✅ <strong>PDF</strong> (بهترین — با بلید و CMYK)<br>✅ <strong>AI</strong> (Illustrator — برای گرافیک‌های وکتور)<br>✅ <strong>PSD</strong> (Photoshop — حداقل ۳۰۰ DPI)<br>⚠️ <strong>JPG/PNG</strong> — فقط اگر رزولوشن بالا باشد<br>❌ Word، PowerPoint — مناسب چاپ نیست`},
   {keys:/افست|offset|چاپ افست/i,html:`<strong>🖨️ چاپ افست</strong><br><br>— بهترین کیفیت رنگ برای تیراژ بالا<br>— مناسب: تراکت، کارت ویزیت، سربرگ، بروشور<br>— <strong>مقرون‌به‌صرفه برای ۵۰۰ عدد به بالا</strong><br>— زمان تحویل: ۷–۱۰ روز کاری`},
   {keys:/دیجیتال|digital print|لیزر|inkjet/i,html:`<strong>🖨️ چاپ دیجیتال</strong><br><br>— مناسب تیراژ کم (زیر ۵۰۰ عدد)<br>— سرعت بالا — تحویل همان روز ممکن<br>— در فدک: هر ورق A4 = ۹٬۰۰۰ تومان | A5 = ۵٬۰۰۰ تومان`},
-  {keys:/ریسو|riso/i,html:`<strong>🖨️ چاپ ریسو</strong><br><br>— چاپ سیاه‌وسفید با کیفیت مطبوعاتی<br>— A4 / ۵۰۰ عدد = ۱٬۷۰۰٬۰۰۰ تومان<br>— A5 / ۱۰۰۰ عدد = ۱٬۸۵۰٬۰۰۰ تومان<br>— تحویل ۱ روز کاری`},
+  {keys:/ریسو|riso|فاکتور|قبض/i,html:`<strong>🖨️ چاپ ریسو</strong><br><br><strong>تراکت:</strong><br>— A6: ۵۰۰ عدد ۷۵۰٬۰۰۰ | ۱۰۰۰ عدد ۹۵۰٬۰۰۰ تومان<br>— A5: ۵۰۰ عدد ۱٬۳۰۰٬۰۰۰ | ۱۰۰۰ عدد ۱٬۸۵۰٬۰۰۰ تومان<br>— A4: ۵۰۰ عدد ۱٬۸۵۰٬۰۰۰ | ۱۰۰۰ عدد ۳٬۵۰۰٬۰۰۰ تومان<br><br><strong>فاکتور (۲ برگی · ۵۰۰ شماره):</strong><br>— A6: بدون کاربن ۱٬۹۰۰٬۰۰۰ | کاربن‌دار ۲٬۲۰۰٬۰۰۰<br>— A5: بدون کاربن ۲٬۹۰۰٬۰۰۰ | کاربن‌دار ۳٬۶۰۰٬۰۰۰<br>— A4: بدون کاربن ۵٬۳۰۰٬۰۰۰ | کاربن‌دار ۶٬۰۰۰٬۰۰۰<br><br><strong>قبض (۹۰۰/۳ شماره):</strong> ۱٬۸۰۰٬۰۰۰ تومان<br><br>طراحی: +۳۵۰٬۰۰۰ تومان | تحویل ۱ روز کاری`},
   {keys:/سابلیمیشن|sublimation|حرارتی|ماگ|فرش چاپ/i,html:`<strong>🎨 چاپ سابلیمیشن</strong><br><br>— انتقال رنگ با حرارت و فشار<br>— مناسب: ماگ، فرش، تی‌شرت، پارچه<br>— در فدک: ماگ از ۴۰۰٬۰۰۰ | فرش A4 از ۵۰۰٬۰۰۰ تومان`},
   {keys:/لمینت|سلفون|روکش|کوتینگ|uv|یووی/i,html:`<strong>✨ انواع روکش و لمینت</strong><br><br><strong>سلفون مات:</strong> روکش کدر — ظاهر شیک<br><strong>سلفون براق:</strong> روکش درخشان — رنگ‌ها پررنگ‌تر<br><strong>UV:</strong> مقاوم در برابر آب و خراش<br><strong>مخملی:</strong> احساس لمسی نرم — کارت ویزیت خاص`},
   {keys:/طراحی|گرافیک|لوگو|فونت/i,html:`<strong>🖌️ خدمات طراحی فدک</strong><br><br>— طراحی تراکت: +۳۵۰٬۰۰۰ تومان<br>— طراحی کارت ویزیت: +۳۰۰٬۰۰۰ تومان<br>— طراحی سربرگ: +۳۰۰٬۰۰۰ تومان<br>— طراحی لیبل: +۲۵۰٬۰۰۰ تومان`},
@@ -1113,43 +1221,200 @@ function openSvc(val){
   switchSvc();
   document.getElementById('svcSel').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function getReply(q){
+// پایگاه دانش محلی برای سوالات چاپی — پاسخ فوری بدون API
+function getLocalReply(q){
   for(const kb of KB){
     if(kb.keys.test(q)){
       return kb.html+`<br><br><div class="qr-wrap"><button class="qr" onclick="openSvc(document.getElementById('svcSel').value||'banner');void 0">🧮 خدمات چاپ فدک</button></div>`+SERVICES_QR();
     }
   }
-  return `ممنون از سوالتون 🙏<br>لطفاً سوال خود را بیشتر توضیح دهید یا از خدمات زیر انتخاب کنید:`+SERVICES_QR();
+  return null;
 }
 
-function addMsg(html,isUser=false){
+// تاریخچه مکالمه برای حافظه چندمرحله‌ای
+const chatHistory = [];
+
+const SYSTEM_PROMPT = `تو یک دستیار هوشمند و جامع هستی که به فارسی پاسخ می‌دهی.
+
+اطلاعات مرکز چاپ و تبلیغات فدک:
+📍 آدرس: پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع
+📞 تماس: 09301499659
+🕐 ساعت کاری: ۱۰ الی ۲۰
+📱 پیام‌رسان: ایتا · روبیکا · بله
+
+خدمات و قیمت‌ها:
+- بنر معمولی: ۳۵۰٬۰۰۰ تومان/م² | کیفیت بالا: ۴۰۰٬۰۰۰ تومان/م²
+- تراکت افست A6: ۵۰۰ عدد ۵۵۰٬۰۰۰ | ۱۰۰۰ عدد ۷۵۰٬۰۰۰ | ۵۰۰۰ عدد ۱٬۸۵۰٬۰۰۰ تومان
+- تراکت افست A5: ۵۰۰ عدد ۸۰۰٬۰۰۰ | ۱۰۰۰ عدد ۱٬۱۵۰٬۰۰۰ | ۵۰۰۰ عدد ۳٬۱۵۰٬۰۰۰ تومان
+- تراکت افست A4: ۵۰۰ عدد ۱٬۴۵۰٬۰۰۰ | ۱۰۰۰ عدد ۱٬۹۵۰٬۰۰۰ | ۵۰۰۰ عدد ۵٬۲۵۰٬۰۰۰ تومان
+- کارت ویزیت معمولی ۱۰۰۰ عدد: ۵۵۰٬۰۰۰ تومان
+- عکس پرسنلی ۶ قطعه: ۱۸۰٬۰۰۰ | ۱۲ قطعه: ۲۳۰٬۰۰۰ تومان
+- چاپ DTF (پارچه/لباس): از ۱٬۸۵۰٬۰۰۰ تومان
+- چاپ UVDTF: از ۲٬۲۰۰٬۰۰۰ تومان
+- ماگ سابلیمیشن: از ۴۰۰٬۰۰۰ تومان
+
+وظایف تو:
+1. به هر سوالی در هر زمینه‌ای (علمی، مذهبی، پزشکی، حقوقی، روانشناسی، مشاوره ازدواج، تحصیلی، شغلی، سیاسی، تاریخی، فنی، فرهنگی و ...) پاسخ کامل، دقیق و مفید بده.
+2. برای سوالات مربوط به چاپ، قیمت‌گذاری و خدمات فدک، اطلاعات دقیق بالا را ارائه بده.
+3. پاسخ‌هایت را به فارسی شیوا و واضح بنویس.
+4. در صورت نیاز از اموجی و فرمت‌بندی مناسب HTML (مثل <br>، <strong>) استفاده کن.
+5. هیچ محدودیتی در موضوع پاسخ نداشته باش — از مشاوره تا علم، از دین تا فناوری.
+6. اگر سوال شخصی و مشاوره‌ای بود، با همدلی و دقت پاسخ بده.
+7. پاسخ‌ها را مختصر اما کامل نگه دار.`;
+
+function addMsg(html, isUser=false){
   const cb=document.getElementById('chatBox');
-  const d=document.createElement('div');d.className=`msg ${isUser?'user':'bot'}`;
+  const d=document.createElement('div');
+  d.className=`msg ${isUser?'user':'bot'}`;
   d.innerHTML=`<div class="av">${isUser?'👤':'🤖'}</div><div class="bubble">${html}</div>`;
-  cb.appendChild(d);cb.scrollTop=cb.scrollHeight;
+  cb.appendChild(d);
+  cb.scrollTop=cb.scrollHeight;
 }
+
 function showTyping(){
   const cb=document.getElementById('chatBox');
-  const d=document.createElement('div');d.className='msg bot';d.id='typing';
+  const d=document.createElement('div');
+  d.className='msg bot';
+  d.id='typing';
   d.innerHTML=`<div class="av" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">🤖</div><div class="dots-wrap"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
-  cb.appendChild(d);cb.scrollTop=cb.scrollHeight;
+  cb.appendChild(d);
+  cb.scrollTop=cb.scrollHeight;
 }
-function removeTyping(){const t=document.getElementById('typing');if(t)t.remove()}
 
-function send(override){
+function removeTyping(){
+  const t=document.getElementById('typing');
+  if(t) t.remove();
+}
+
+// تبدیل متن ساده به HTML
+function textToHtml(text){
+  return text
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\n/g,'<br>');
+}
+
+async function getAIReply(userText){
+  // ابتدا پاسخ محلی را بررسی کن
+  const local = getLocalReply(userText);
+  if(local) return local;
+
+  // افزودن پیام کاربر به تاریخچه
+  chatHistory.push({role:'user', content: userText});
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: chatHistory
+      })
+    });
+
+    const data = await response.json();
+    const replyText = data.content && data.content[0] ? data.content[0].text : 'متأسفم، خطایی رخ داد. لطفاً دوباره تلاش کنید.';
+
+    // افزودن پاسخ به تاریخچه
+    chatHistory.push({role:'assistant', content: replyText});
+
+    // محدود کردن تاریخچه به ۲۰ پیام
+    if(chatHistory.length > 20) chatHistory.splice(0, 2);
+
+    return textToHtml(replyText);
+  } catch(err) {
+    chatHistory.pop(); // حذف پیام ناموفق
+    return `⚠️ خطا در اتصال به سرور. لطفاً اینترنت خود را بررسی کرده و دوباره تلاش کنید.<br><br>برای خدمات چاپ فدک از دکمه‌های زیر استفاده کنید:`+SERVICES_QR();
+  }
+}
+
+async function send(override){
   const inp=document.getElementById('userInput');
   const text=override||inp.value.trim();
-  if(!text)return;
-  addMsg(text,true);
-  if(!override)inp.value='';
+  if(!text) return;
+  addMsg(text, true);
+  if(!override) inp.value='';
   showTyping();
-  const reply=getReply(text);
-  setTimeout(()=>{removeTyping();addMsg(reply)},700);
+
+  const reply = await getAIReply(text);
+  removeTyping();
+  addMsg(reply);
 }
 
-document.getElementById('userInput').addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}
+document.getElementById('userInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){e.preventDefault(); send();}
 });
+
+const RISO_TRACT = {
+  A6:{500:750000,1000:950000},
+  A5:{500:1300000,1000:1850000},
+  A4:{500:1850000,1000:3500000}
+};
+const RISO_FACTOR = {
+  nocarbon:{A6:1900000,A5:2900000,A4:5300000},
+  carbon:  {A6:2200000,A5:3600000,A4:6000000}
+};
+
+function switchRisoTab(tab){
+  ['tract','factor','qbz'].forEach(t=>{
+    document.getElementById('rsec_'+t).style.display = t===tab ? '' : 'none';
+    document.getElementById('rtab_'+t).classList.toggle('active', t===tab);
+  });
+  if(tab==='tract') calcRisoTract();
+  if(tab==='factor') calcRisoFactor();
+  if(tab==='qbz') calcRisoQbz();
+}
+
+function calcRisoTract(){
+  const sz=document.getElementById('rs_sz').value;
+  const qty=parseInt(document.getElementById('rs_qty').value);
+  const des=document.getElementById('rs_d').value;
+  const base=RISO_TRACT[sz][qty];
+  let tot=base;
+  const dr=document.getElementById('rs_d_row');
+  dr.style.display=des==='yes'?'':'none'; if(des==='yes')tot+=350000;
+  document.getElementById('rs_base').textContent=f(base);
+  document.getElementById('rs_total').textContent=f(tot);
+  document.getElementById('rs_per').textContent=`هر عدد: ${f(Math.round(tot/qty))}`;
+  document.getElementById('res_riso_tract').classList.add('show');
+  const sb=document.getElementById('sav_riso');
+  if(qty===500){
+    const p5=RISO_TRACT[sz][500], p10=RISO_TRACT[sz][1000], x2=p5*2;
+    document.getElementById('sav_riso1').textContent=`۲ بار ۵۰۰ عدد: ${f(p5)} × ۲ = ${f(x2)}`;
+    document.getElementById('sav_riso2').textContent=`یک‌بار ۱۰۰۰ عدد: فقط ${f(p10)}`;
+    document.getElementById('sav_riso_s').textContent=`✅ صرفه‌جویی: ${f(x2-p10)}`;
+    sb.classList.add('show');
+  } else sb.classList.remove('show');
+}
+
+function calcRisoFactor(){
+  const sz=document.getElementById('rf_sz').value;
+  const type=document.getElementById('rf_type').value;
+  const des=document.getElementById('rf_d').value;
+  const base=RISO_FACTOR[type][sz];
+  let tot=base;
+  const dr=document.getElementById('rf_d_row');
+  dr.style.display=des==='yes'?'':'none'; if(des==='yes')tot+=350000;
+  const typeLabel=type==='nocarbon'?'بدون کاربن':'کاربن‌دار';
+  document.getElementById('rf_desc').textContent=`فاکتور ${sz} ${typeLabel} · ۲ برگی · ۵۰۰ شماره`;
+  document.getElementById('rf_base').textContent=f(base);
+  document.getElementById('rf_total').textContent=f(tot);
+  document.getElementById('res_riso_factor').classList.add('show');
+}
+
+function calcRisoQbz(){
+  const des=document.getElementById('rq_d').value;
+  let tot=1800000;
+  const dr=document.getElementById('rq_d_row');
+  dr.style.display=des==='yes'?'':'none'; if(des==='yes')tot+=350000;
+  document.getElementById('rq_total').textContent=f(tot);
+  document.getElementById('res_riso_qbz').classList.add('show');
+}
 
 function calcDtf(){
   const basePrice=parseInt(document.getElementById('dtf_t').value);

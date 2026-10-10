@@ -484,8 +484,8 @@
         <div class="fg">
           <label>کیفیت چاپ</label>
           <select id="bn_q" onchange="calcBanner()">
-            <option value="490000">معمولی — ۴۹۰٬۰۰۰ تومان / م²</option>
-            <option value="600000">کیفیت بالا — ۶۰۰٬۰۰۰ تومان / م²</option>
+            <option value="500000">معمولی — ۵۰۰٬۰۰۰ تومان / م²</option>
+            <option value="700000">کیفیت بالا — ۷۰۰٬۰۰۰ تومان / م²</option>
           </select>
         </div>
         <div class="fg">
@@ -578,17 +578,32 @@
       </div>
     </div>
 
-    <!-- RISO -->
+    <!-- RISO (fixed) -->
     <div class="service-section" id="sec_riso">
       <div class="info">🖨️ تراکت ریسو — چاپ سیاه‌وسفید با کیفیت مناسب تبلیغات انبوه</div>
-      <div class="result-box show">
-        <table class="riso-table">
-          <thead><tr><th>سایز</th><th>تیراژ</th><th>قیمت</th><th>تحویل</th></tr></thead>
-          <tbody>
-            <tr><td>A4</td><td>۵۰۰ عدد</td><td>۲٬۵۰۰٬۰۰۰ تومان</td><td>۱ روز</td></tr>
-            <tr><td>A5</td><td>۱۰۰۰ عدد</td><td>۲٬۵۰۰٬۰۰۰ تومان</td><td>۱ روز</td></tr>
-          </tbody>
-        </table>
+      <div class="form-row">
+        <div class="fg">
+          <label>سایز و تیراژ</label>
+          <select id="riso_size">
+            <option value="A4_500">A4 — ۵۰۰ عدد — ۲٬۵۰۰٬۰۰۰ تومان</option>
+            <option value="A5_1000">A5 — ۱۰۰۰ عدد — ۲٬۵۰۰٬۰۰۰ تومان</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>طراحی</label>
+          <select id="riso_d">
+            <option value="no">ندارم</option>
+            <option value="yes">لازم دارم (+۲۵۰٬۰۰۰)</option>
+          </select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcRiso()">محاسبه قیمت</button>
+      <div class="result-box" id="res_riso">
+        <div class="rrow"><span class="rl">سایز / تیراژ</span><span class="rv" id="riso_sz_lbl"></span></div>
+        <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="riso_base"></span></div>
+        <div class="rrow" id="riso_d_row"><span class="rl">طراحی</span><span class="rv">+۲۵۰٬۰۰۰ تومان</span></div>
+        <div class="rrow rtotal"><span class="rl">مجموع</span><span class="rv" id="riso_total"></span></div>
+        <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv">۱ روز کاری</span></div>
       </div>
       <div class="tip">💡 <strong>تیراژ کمتر نیاز دارید؟</strong><br>با چاپ دیجیتال: هر ورق A4 = <strong>۹٬۰۰۰ تومان</strong> &nbsp;|&nbsp; A5 = <strong>۵٬۰۰۰ تومان</strong></div>
     </div>
@@ -620,7 +635,7 @@
           <label>طراحی</label>
           <select id="bc_d">
             <option value="no">ندارم (فایل دارم)</option>
-            <option value="yes">لازم دارم (+۳۰۰٬۰۰۰)</option>
+            <option value="yes">لازم دارم (+۳۵۰٬۰۰۰)</option>
           </select>
         </div>
         <div class="fg">
@@ -631,7 +646,7 @@
       <button class="calc-btn" onclick="calcBC()">محاسبه قیمت</button>
       <div class="result-box" id="res_bc">
         <div class="rrow"><span class="rl">چاپ پایه</span><span class="rv" id="bc_base"></span></div>
-        <div class="rrow" id="bc_d_row"><span class="rl">طراحی</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
+        <div class="rrow" id="bc_d_row"><span class="rl">طراحی</span><span class="rv">+۳۵۰٬۰۰۰ تومان</span></div>
         <div class="rrow" id="bc_f_row"><span class="rl">هزینه فوری</span><span class="rv" id="bc_fv"></span></div>
         <div class="rrow rtotal"><span class="rl">مجموع</span><div><div class="rv" id="bc_total"></div><div class="per" id="bc_per"></div></div></div>
         <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="bc_del"></span></div>
@@ -659,7 +674,7 @@
           <label>طراحی</label>
           <select id="lh_d">
             <option value="no">ندارم</option>
-            <option value="yes">لازم دارم (+۳۰۰٬۰۰۰)</option>
+            <option value="yes">لازم دارم (+۳۵۰٬۰۰۰)</option>
           </select>
         </div>
         <div class="fg"><label>تحویل</label><select id="lh_f"></select></div>
@@ -667,7 +682,7 @@
       <button class="calc-btn" onclick="calcLH()">محاسبه قیمت</button>
       <div class="result-box" id="res_lh">
         <div class="rrow"><span class="rl">چاپ پایه (۱۰۰۰ عدد)</span><span class="rv" id="lh_base"></span></div>
-        <div class="rrow" id="lh_d_row"><span class="rl">طراحی</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
+        <div class="rrow" id="lh_d_row"><span class="rl">طراحی</span><span class="rv">+۳۵۰٬۰۰۰ تومان</span></div>
         <div class="rrow" id="lh_f_row"><span class="rl">هزینه فوری</span><span class="rv" id="lh_fv"></span></div>
         <div class="rrow rtotal"><span class="rl">مجموع</span><div><div class="rv" id="lh_total"></div><div class="per" id="lh_per"></div></div></div>
         <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="lh_del"></span></div>
@@ -726,8 +741,8 @@
         <div class="fg">
           <label>سایز فرش</label>
           <select id="sub_cs">
-            <option value="700000">A4 — ۷۰۰٬۰۰۰ تومان</option>
-            <option value="900000">A3 — ۹۰۰٬۰۰۰ تومان</option>
+            <option value="850000">A4 — ۸۵۰٬۰۰۰ تومان</option>
+            <option value="1300000">A3 — ۱٬۳۰۰٬۰۰۰ تومان</option>
           </select>
         </div>
       </div>
@@ -735,10 +750,10 @@
         <div class="fg">
           <label>نوع ماگ</label>
           <select id="sub_mt">
-            <option value="500000">ماگ معمولی — ۵۰۰٬۰۰۰</option>
-            <option value="600000">ماگ حرارتی — ۶۰۰٬۰۰۰</option>
-            <option value="600000">ماگ دسته قلبی — ۶۰۰٬۰۰۰</option>
-            <option value="650000">ماگ حرارتی دسته قلبی — ۶۵۰٬۰۰۰</option>
+            <option value="600000">ماگ معمولی — ۶۰۰٬۰۰۰</option>
+            <option value="700000">ماگ حرارتی — ۷۰۰٬۰۰۰</option>
+            <option value="700000">ماگ دسته قلبی — ۷۰۰٬۰۰۰</option>
+            <option value="750000">ماگ حرارتی دسته قلبی — ۷۵۰٬۰۰۰</option>
           </select>
         </div>
         <div class="fg">
@@ -746,7 +761,7 @@
           <input type="number" id="sub_mq" value="1" min="1">
         </div>
         <div class="fg">
-          <label>جعبه (+۱۰۰٬۰۰۰ هر عدد)</label>
+          <label>جعبه (+۱۵۰٬۰۰۰ هر عدد)</label>
           <select id="sub_box">
             <option value="no">خیر</option>
             <option value="yes">بله</option>
@@ -788,8 +803,8 @@
         <div class="fg" style="flex:2">
           <label>نوع چاپ</label>
           <select id="dtf_t" onchange="calcDtf()">
-            <option value="2200000">DTF — مخصوص پارچه و لباس</option>
-            <option value="2550000">UVDTF — مخصوص سطوح صاف</option>
+            <option value="2400000">DTF — مخصوص پارچه و لباس</option>
+            <option value="3000000">UVDTF — مخصوص سطوح صاف</option>
           </select>
         </div>
         <div class="fg">
@@ -821,7 +836,7 @@
       <div class="tip">📞 این قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>09301499659</strong></div>
     </div>
 
-    <!-- INVOICE (New) -->
+    <!-- INVOICE (Updated) -->
     <div class="service-section" id="sec_invoice">
       <div class="info">📄 فاکتور بدون کاربن ۲ برگی (سیاه و سفید)</div>
       <div class="form-row">
@@ -857,7 +872,7 @@
       </div>
     </div>
 
-    <!-- RECEIPT (New) -->
+    <!-- RECEIPT (Updated) -->
     <div class="service-section" id="sec_receipt">
       <div class="info">🧾 قبض ۱/۳ ، ۹۰۰ شماره (تک رنگ)</div>
       <div class="form-row">
@@ -871,7 +886,7 @@
       </div>
       <button class="calc-btn" onclick="calcReceipt()">محاسبه قیمت</button>
       <div class="result-box" id="res_receipt">
-        <div class="rrow"><span class="rl">چاپ پایه (۹۰۰ عدد)</span><span class="rv">۲٬۱۰۰٬۰۰۰ تومان</span></div>
+        <div class="rrow"><span class="rl">چاپ پایه (۹۰۰ عدد)</span><span class="rv">۲٬۲۰۰٬۰۰۰ تومان</span></div>
         <div class="rrow" id="rec_design_row"><span class="rl">طراحی</span><span class="rv">+۳۰۰٬۰۰۰ تومان</span></div>
         <div class="rrow rtotal"><span class="rl">مجموع</span><span class="rv" id="rec_total"></span></div>
         <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv">۵ الی ۷ روز کاری</span></div>
@@ -903,54 +918,61 @@
 const TC = {
   tahrir:{
     yekro:{
-      500:{A6:1700000,A5:2950000,A4:5700000},
-      1000:{A6:2350000,A5:3990000,A4:7850000},
-      5000:{A6:6000000,A5:11950000,A4:23900000}
+      500:{A6:1950000,A5:3600000,A4:7000000},
+      1000:{A6:2611000,A5:4820000,A4:9500000},
+      5000:{A6:7400000,A5:14810000,A4:28400000}
     },
     doro:{
-      500:{A6:2600000,A5:4700000,A4:9400000},
-      1000:{A6:2950000,A5:5900000,A4:11800000},
-      5000:{A6:7300000,A5:14500000,A4:28900000}
+      500:{A6:2900000,A5:5800000,A4:11600000},
+      1000:{A6:3650000,A5:7250000,A4:14400000},
+      5000:{A6:9000000,A5:18000000,A4:36000000}
     }
   },
   glasseh:{
     yekro:{
-      500:{A6:1925000,A5:3300000,A4:6600000},
-      1000:{A6:2700000,A5:4850000,A4:9620000},
-      5000:{A6:8200000,A5:16000000,A4:29820000}
+      500:{A6:2200000,A5:3950000,A4:7850000},
+      1000:{A6:2900000,A5:5800000,A4:11600000},
+      5000:{A6:10200000,A5:20400000,A4:40800000}
     },
     doro:{
-      500:{A6:2800000,A5:5200000,A4:10230000},
-      1000:{A6:3400000,A5:6800000,A4:13600000},
-      5000:{A6:9500000,A5:18950000,A4:35000000}
+      500:{A6:2983000,A5:5966400,A4:11932800},
+      1000:{A6:3985740,A5:7971480,A4:15942960},
+      5000:{A6:11630000,A5:23261040,A4:46522080}
     }
   }
 };
+
+// Updated BC data
 const BC_DATA = {
-  "سلفون دورتیز":        {p:{500:1600000,1000:2400000},fast:200000,noFast:false,del:"۷ روز"},
-  "سلفون دورگرد":        {p:{500:2300000,1000:3000000},fast:200000,noFast:false,del:"۷ روز"},
-  "لمینت براق مربع":     {p:{1000:3100000},fast:null,noFast:true,del:"۱۰ روز"},
-  "لمینت برجسته دورگرد": {p:{500:3950000,1000:5300000},fast:200000,noFast:false,del:"۷ روز"},
-  "لمینت براق":          {p:{500:2900000,1000:4500000},fast:200000,noFast:false,del:"۷ روز"},
-  "لمینت مات":           {p:{500:3500000,1000:5600000},fast:null,noFast:true,del:"۷ روز"},
-  "سلفون مربع دورگرد":   {p:{1000:2200000},fast:null,noFast:true,del:"۷ روز"},
-  "لمینت براق دایره":    {p:{1000:3200000},fast:null,noFast:true,del:"۱۰ روز"},
-  "سلفون مخملی":         {p:{1000:3500000},fast:null,noFast:true,del:"۱۰ روز"}
-};
-const LH = {
-  80:  {p:{A6:2700000,A5:5000000,A4:9990000},fast:200000,hasFast:true,del:"۷ روز"},
-  120: {p:{A5:6500000,A4:12990000},fast:null,hasFast:false,del:"۸ روز"}
-};
-const LB = {
-  nocoat:{price:1800000,fast:200000,noFast:false,del:"۵ روز"},
-  glossy: {price:2000000,fast:200000,noFast:false,del:"۵ روز"},
-  uvdie: {price:2600000,fast:null, noFast:true, del:"۱۰ روز"},
-  glass: {price:6300000,fast:null, noFast:true, del:"۱۰ روز"}
+  "سلفون دورتیز":        {p:{500:1800000,1000:2700000},fast:200000,noFast:false,del:"۷ روز"},
+  "سلفون دورگرد":        {p:{500:2600000,1000:3350000},fast:200000,noFast:false,del:"۷ روز"},
+  "لمینت براق مربع":     {p:{1000:3400000},fast:null,noFast:true,del:"۱۰ روز"},
+  "لمینت برجسته دورگرد": {p:{500:4600000,1000:6250000},fast:200000,noFast:false,del:"۷ روز"},
+  "لمینت براق":          {p:{500:3300000,1000:5200000},fast:200000,noFast:false,del:"۷ روز"},
+  "لمینت مات":           {p:{500:4100000,1000:6600000},fast:200000,noFast:false,del:"۷ روز"},
+  "سلفون مربع دورگرد":   {p:{1000:2600000},fast:null,noFast:true,del:"۱۰ روز"},
+  "لمینت براق دایره":    {p:{1000:3600000},fast:null,noFast:true,del:"۱۰ روز"},
+  "سلفون مخملی":         {p:{1000:5200000},fast:null,noFast:true,del:"۷ روز"}
 };
 
+// Updated LH
+const LH = {
+  80:  {p:{A6:2850000,A5:5650000,A4:11200000},fast:200000,hasFast:true,del:"۷ روز"},
+  120: {p:{A5:7100000,A4:14098000},fast:null,hasFast:false,del:"۸ روز"}
+};
+
+// Updated LB
+const LB = {
+  nocoat:{price:1900000,fast:200000,noFast:false,del:"۵ روز"},
+  glossy: {price:2200000,fast:200000,noFast:false,del:"۵ روز"},
+  uvdie: {price:3100000,fast:null, noFast:true, del:"۱۰ روز"},
+  glass: {price:7200000,fast:null, noFast:true, del:"۱۰ روز"}
+};
+
+// Updated INVOICE
 const INVOICE_PRICES = {
-  nocarbon: {A6:2200000, A5:3100000, A4:5500000},
-  carbon: {A6:2500000, A5:3800000, A4:6200000}
+  nocarbon: {A6:2200000, A5:3600000, A4:7260000},
+  carbon: {A6:2500000, A5:4300000, A4:7920000}
 };
 
 function f(n){return n.toLocaleString('fa-IR')+' تومان'}
@@ -1029,6 +1051,22 @@ function calcTract(){
   } else sb.classList.remove('show');
 }
 
+// RISO (fixed)
+function calcRiso(){
+  const sel=document.getElementById('riso_size');
+  const base=2500000;
+  const label=sel.selectedOptions[0].text.split(' — ').slice(0,2).join(' — ');
+  const des=document.getElementById('riso_d').value;
+  let tot=base;
+  const dr=document.getElementById('riso_d_row');
+  dr.style.display=des==='yes'?'':'none';
+  if(des==='yes') tot+=250000;
+  document.getElementById('riso_sz_lbl').textContent=label;
+  document.getElementById('riso_base').textContent=f(base);
+  document.getElementById('riso_total').textContent=f(tot);
+  document.getElementById('res_riso').classList.add('show');
+}
+
 function updateBC(){
   const type=document.getElementById('bc_t').value;
   const card=BC_DATA[type];
@@ -1056,7 +1094,7 @@ function calcBC(){
   const fast=document.getElementById('bc_f').value;
   const card=BC_DATA[type];
   const base=card.p[qty];let tot=base;
-  document.getElementById('bc_d_row').style.display=des==='yes'?'':'none';if(des==='yes')tot+=300000;
+  document.getElementById('bc_d_row').style.display=des==='yes'?'':'none';if(des==='yes')tot+=350000;
   const canFast=fast==='fast'&&!card.noFast&&card.fast;
   document.getElementById('bc_f_row').style.display=canFast?'':'none';
   if(canFast){tot+=card.fast;document.getElementById('bc_fv').textContent=`+${f(card.fast)}`}
@@ -1090,7 +1128,7 @@ function calcLH(){
   const des=document.getElementById('lh_d').value;
   const fast=document.getElementById('lh_f').value;
   const lh=LH[p];const base=lh.p[sz];let tot=base;
-  document.getElementById('lh_d_row').style.display=des==='yes'?'':'none';if(des==='yes')tot+=300000;
+  document.getElementById('lh_d_row').style.display=des==='yes'?'':'none';if(des==='yes')tot+=350000;
   const canFast=fast==='fast'&&lh.hasFast;
   document.getElementById('lh_f_row').style.display=canFast?'':'none';
   if(canFast){tot+=lh.fast;document.getElementById('lh_fv').textContent=`+${f(lh.fast)}`}
@@ -1137,7 +1175,7 @@ function calcSub(){
     let tot=mp*qty;
     document.getElementById('sub_prod').textContent=`${mn} × ${fn(qty)} = ${f(mp*qty)}`;
     if(box==='yes'){
-      const bt=100000*qty;tot+=bt;
+      const bt=150000*qty;tot+=bt;
       document.getElementById('sub_box_row').style.display='';
       document.getElementById('sub_bv').textContent=`${fn(qty)} جعبه = ${f(bt)}`;
     } else document.getElementById('sub_box_row').style.display='none';
@@ -1174,7 +1212,7 @@ function calcDtf(){
   res.classList.add('show');
   if(l<100||l>420){
     warn.style.display='';
-    warn.textContent=`⚠️ طول وارد شده (${l} سانتیمتر) خارج از محدوده مجاز است. حداقل ۱۰۰ و حداکثر ۴۲۰ سانتیمتر.`;
+    warn.textContent=`⚠️ طول وارد شده (${l} سانتیمتر) خارج از محدوده مجاز است. حداقل ۱۰۰ و حداکثر ۴۲۰ سانتی‌متر.`;
   } else {
     warn.style.display='none';
   }
@@ -1195,7 +1233,7 @@ function calcInvoice(){
 
 function calcReceipt(){
   const design=document.getElementById('rec_design').value;
-  let total=2100000;
+  let total=2200000;
   document.getElementById('rec_design_row').style.display=design==='yes'?'':'none';
   if(design==='yes') total+=300000;
   document.getElementById('rec_total').textContent=f(total);
@@ -1210,17 +1248,17 @@ const KB = [
   {keys:/فرمت فایل|pdf|ai|psd|png|jpg|فایل چاپ/i,html:`<strong>📁 فرمت‌های مناسب برای چاپ</strong><br><br>✅ <strong>PDF</strong> (بهترین — با بلید و CMYK)<br>✅ <strong>AI</strong> (Illustrator — برای گرافیک‌های وکتور)<br>✅ <strong>PSD</strong> (Photoshop — حداقل ۳۰۰ DPI)<br>⚠️ <strong>JPG/PNG</strong> — فقط اگر رزولوشن بالا باشد<br>❌ Word، PowerPoint — مناسب چاپ نیست`},
   {keys:/افست|offset|چاپ افست/i,html:`<strong>🖨️ چاپ افست</strong><br><br>— بهترین کیفیت رنگ برای تیراژ بالا<br>— مناسب: تراکت، کارت ویزیت، سربرگ، بروشور<br>— <strong>مقرون‌به‌صرفه برای ۵۰۰ عدد به بالا</strong><br>— زمان تحویل: ۷–۱۰ روز کاری`},
   {keys:/دیجیتال|digital print|لیزر|inkjet/i,html:`<strong>🖨️ چاپ دیجیتال</strong><br><br>— مناسب تیراژ کم (زیر ۵۰۰ عدد)<br>— سرعت بالا — تحویل همان روز ممکن<br>— در فدک: هر ورق A4 = ۹٬۰۰۰ تومان | A5 = ۵٬۰۰۰ تومان`},
-  {keys:/ریسو|riso/i,html:`<strong>🖨️ چاپ ریسو</strong><br><br>— چاپ سیاه‌وسفید با کیفیت مطبوعاتی<br>— A4 / ۵۰۰ عدد = ۲٬۵۰۰٬۰۰۰ تومان<br>— A5 / ۱۰۰۰ عدد = ۲٬۵۰۰٬۰۰۰ تومان<br>— تحویل ۱ روز کاری`},
-  {keys:/سابلیمیشن|sublimation|حرارتی|ماگ|فرش چاپ/i,html:`<strong>🎨 چاپ سابلیمیشن</strong><br><br>— انتقال رنگ با حرارت و فشار<br>— مناسب: ماگ، فرش، تی‌شرت، پارچه<br>— در فدک: ماگ از ۵۰۰٬۰۰۰ | فرش A4 از ۷۰۰٬۰۰۰ تومان`},
+  {keys:/ریسو|riso/i,html:`<strong>🖨️ چاپ ریسو</strong><br><br>— چاپ سیاه‌وسفید با کیفیت مطبوعاتی<br>— A4 / ۵۰۰ عدد = ۲٬۵۰۰٬۰۰۰ تومان<br>— A5 / ۱۰۰۰ عدد = ۲٬۵۰۰٬۰۰۰ تومان<br>— تحویل ۱ روز کاری<br>— طراحی: +۲۵۰٬۰۰۰ تومان`},
+  {keys:/سابلیمیشن|sublimation|حرارتی|ماگ|فرش چاپ/i,html:`<strong>🎨 چاپ سابلیمیشن</strong><br><br>— انتقال رنگ با حرارت و فشار<br>— مناسب: ماگ، فرش، تی‌شرت، پارچه<br>— در فدک: ماگ از ۶۰۰٬۰۰۰ | فرش A4 از ۸۵۰٬۰۰۰ تومان`},
   {keys:/لمینت|سلفون|روکش|کوتینگ|uv|یووی/i,html:`<strong>✨ انواع روکش و لمینت</strong><br><br><strong>سلفون مات:</strong> روکش کدر — ظاهر شیک<br><strong>سلفون براق:</strong> روکش درخشان — رنگ‌ها پررنگ‌تر<br><strong>UV:</strong> مقاوم در برابر آب و خراش<br><strong>مخملی:</strong> احساس لمسی نرم — کارت ویزیت خاص`},
-  {keys:/طراحی|گرافیک|لوگو|فونت/i,html:`<strong>🖌️ خدمات طراحی فدک</strong><br><br>— طراحی تراکت: +۳۵۰٬۰۰۰ تومان<br>— طراحی کارت ویزیت: +۳۰۰٬۰۰۰ تومان<br>— طراحی سربرگ: +۳۰۰٬۰۰۰ تومان<br>— طراحی لیبل: +۲۵۰٬۰۰۰ تومان`},
+  {keys:/طراحی|گرافیک|لوگو|فونت/i,html:`<strong>🖌️ خدمات طراحی فدک</strong><br><br>— طراحی تراکت: +۳۵۰٬۰۰۰ تومان<br>— طراحی کارت ویزیت: +۳۵۰٬۰۰۰ تومان<br>— طراحی سربرگ: +۳۵۰٬۰۰۰ تومان<br>— طراحی لیبل: +۲۵۰٬۰۰۰ تومان`},
   {keys:/پرسنلی|عکس|۴×۳|پاسپورت/i,html:`<strong>📸 عکس پرسنلی ۴×۳</strong><br><br>— ۶ قطعه: ۲۵۰٬۰۰۰ تومان<br>— ۱۲ قطعه: ۳۵۰٬۰۰۰ تومان<br>— عکاسی با موبایل + پردازش AI<br>— تحویل همان روز`},
-  {keys:/بنر|banner|فلکس|فلکسی/i,html:`<strong>🖼️ بنر / فلکس</strong><br><br>— معمولی: ۴۹۰٬۰۰۰ تومان / متر مربع<br>— کیفیت بالا: ۶۰۰٬۰۰۰ تومان / متر مربع<br>— حداقل محاسبه: ۱ متر مربع<br>— تحویل ۱ روز کاری`},
+  {keys:/بنر|banner|فلکس|فلکسی/i,html:`<strong>🖼️ بنر / فلکس</strong><br><br>— معمولی: ۵۰۰٬۰۰۰ تومان / متر مربع<br>— کیفیت بالا: ۷۰۰٬۰۰۰ تومان / متر مربع<br>— حداقل محاسبه: ۱ متر مربع<br>— تحویل ۱ روز کاری`},
   {keys:/آدرس|تماس|کجا|شماره|ساعت|کاری/i,html:`<strong>📍 اطلاعات تماس فدک</strong><br><br>📍 پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع<br>📞 <strong>09301499659</strong><br>📱 ایتا · روبیکا · بله<br>🕐 ساعت کاری: ۱۰ الی ۲۰<br>💳 تسویه کامل قبل از چاپ`},
   {keys:/فوری|اکسپرس|سریع|emergency/i,html:`<strong>⚡ خدمات فوری فدک</strong><br><br>✅ تراکت افست تا ۱۰۰۰ عدد — ۷۲ ساعت<br>✅ کارت ویزیت (اکثر انواع) — ۷۲ ساعت<br>✅ بنر — ۱ روز کاری<br>❌ تراکت ۵۰۰۰ عدد — فوری ندارد`},
   {keys:/سلام|درود|hello|hi|خوش|وقت بخیر/i,html:`سلام! خوش اومدید به <strong>چاپ و تبلیغات فدک</strong> 🖨️<br>از ماشین‌حساب بالا قیمت هر خدمت را محاسبه کنید<br>یا هر سوالی در مورد چاپ دارید بپرسید.`},
   {keys:/ممنون|تشکر|مرسی|خداحافظ|باشه/i,html:`خواهش می‌کنم! 🙏 هر وقت سوالی داشتید در خدمتیم.`},
-  {keys:/dtf|uvdtf|پارچه|لباس|تی‌شرت|تیشرت/i,html:`<strong>👕 چاپ DTF و UVDTF</strong><br><br><strong>DTF:</strong> چاپ مستقیم روی پارچه و لباس<br>— قیمت پایه: ۲٬۲۰۰٬۰۰۰ تومان (عرض ۶۰ سانت)<br>— طول: ۱۰۰ تا ۴۲۰ سانتی‌متر<br><br><strong>UVDTF:</strong> چاپ روی سطوح صاف (لیوان، جعبه، ...)<br>— قیمت پایه: ۲٬۵۵۰٬۰۰۰ تومان (عرض ۶۰ سانت)<br><br>آرایش و چیدمان: +۳۰۰٬۰۰۰ تومان`}
+  {keys:/dtf|uvdtf|پارچه|لباس|تی‌شرت|تیشرت/i,html:`<strong>👕 چاپ DTF و UVDTF</strong><br><br><strong>DTF:</strong> چاپ مستقیم روی پارچه و لباس<br>— قیمت پایه: ۲٬۴۰۰٬۰۰۰ تومان (عرض ۶۰ سانت)<br>— طول: ۱۰۰ تا ۴۲۰ سانتی‌متر<br><br><strong>UVDTF:</strong> چاپ روی سطوح صاف (لیوان، جعبه، ...)<br>— قیمت پایه: ۳٬۰۰۰٬۰۰۰ تومان (عرض ۶۰ سانت)<br><br>آرایش و چیدمان: +۳۰۰٬۰۰۰ تومان`}
 ];
 
 function SERVICES_QR(){

@@ -1,0 +1,52 @@
+name: Build FadakPrintTools installer
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: FadakPrintTools
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download FFmpeg
+        run: |
+          Invoke-WebRequest https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -OutFile ff.zip
+          Expand-Archive ff.zip -DestinationPath ff
+          New-Item -ItemType Directory -Force bin | Out-Null
+          Copy-Item (Get-ChildItem ff -Recurse -Filter ffmpeg.exe | Select-Object -First 1).FullName bin\ffmpeg.exe
+
+      - name: Download Vazirmatn font
+        continue-on-error: true
+        run: |
+          New-Item -ItemType Directory -Force fonts | Out-Null
+          Invoke-WebRequest https://github.com/rastikerdar/vazirmatn/raw/master/fonts/ttf/Vazirmatn-Regular.ttf -OutFile fonts\Vazirmatn-Regular.ttf
+          Invoke-WebRequest https://github.com/rastikerdar/vazirmatn/raw/master/fonts/ttf/Vazirmatn-Bold.ttf -OutFile fonts\Vazirmatn-Bold.ttf
+
+      - name: Build app
+        run: pyinstaller --noconfirm --clean --windowed --name FadakPrintTools --icon assets\icon.ico main.py
+
+      - name: Copy extra files
+        run: |
+          Copy-Item assets dist\FadakPrintTools\assets -Recurse
+          if (Test-Path bin)   { Copy-Item bin   dist\FadakPrintTools\bin   -Recurse }
+          if (Test-Path fonts) { Copy-Item fonts dist\FadakPrintTools\fonts -Recurse }
+
+      - name: Build installer
+        run: |
+          choco install innosetup -y --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" installer.iss
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FadakPrintTools-Setup
+          path: FadakPrintTools/installer_output/FadakPrintTools-Setup.exe

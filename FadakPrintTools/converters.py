@@ -20,7 +20,7 @@ def app_dir() -> Path:
 
 
 # ---------------------------------------------------------------- دسته‌بندی فایل‌ها
-IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".gif", ".ico", ".jfif"}
+IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".gif", ".ico", ".jfif", ".psd"}
 PDF_EXT = {".pdf"}
 VIDEO_EXT = {".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".mpeg", ".mpg", ".3gp", ".ts", ".m4v"}
 AUDIO_EXT = {".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac", ".wma", ".opus", ".aiff"}
@@ -73,6 +73,7 @@ TARGETS = [
     ("wav",       "صوت WAV",                           {"video", "audio"}, False),
     ("flac",      "صوت FLAC",                          {"video", "audio"}, False),
     ("ogg",       "صوت OGG",                           {"video", "audio"}, False),
+    ("compress",  "کاهش حجم ویدیو (MP4)",              {"video"}, False),
 ]
 TARGET_BY_KEY = {t[0]: t for t in TARGETS}
 
@@ -293,6 +294,41 @@ def convert_media(src: Path, key: str, out_dir, cancel=lambda: False) -> list[Pa
     return [dst]
 
 
+# ---------------------------------------------------------------- کاهش حجم ویدیو
+def compress_video(src: Path, out_dir, opts: dict, cancel=lambda: False) -> list[Path]:
+    """opts: crf (هرچه بیشتر = حجم کمتر)، max_h (0 = بدون تغییر اندازه)، hevc (bool)"""
+    ff = find_ffmpeg()
+    if not ff:
+        raise ConvertError("ffmpeg پیدا نشد. فایل ffmpeg.exe را در پوشهٔ bin کنار برنامه قرار دهید.")
+    crf = int(opts.get("crf", 28))
+    max_h = int(opts.get("max_h", 0))
+    hevc = bool(opts.get("hevc", False))
+    dst = unique_path(out_dir_for(src, out_dir) / (src.stem + "_فشرده.mp4"))
+
+    args = []
+    if max_h:
+        args += ["-vf", f"scale=-2:'min({max_h},ih)'"]
+    if hevc:
+        args += ["-c:v", "libx265", "-crf", str(crf + 4), "-preset", "medium", "-tag:v", "hvc1"]
+    else:
+        args += ["-c:v", "libx264", "-crf", str(crf), "-preset", "medium"]
+    args += ["-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart"]
+
+    with tempfile.TemporaryDirectory(prefix="fadak_") as tmp:
+        tmp_out = Path(tmp) / "out.mp4"
+        if str(src).isascii():
+            tmp_in = src
+        else:
+            tmp_in = Path(tmp) / ("in" + src.suffix.lower())
+            shutil.copyfile(src, tmp_in)  # نام انگلیسی برای ffmpeg
+        r = _run([ff, "-nostdin", "-y", "-i", str(tmp_in), *args, str(tmp_out)])
+        if r.returncode != 0 or not tmp_out.exists():
+            msg = r.stderr.decode("utf-8", "ignore").strip().splitlines()
+            raise ConvertError("خطای ffmpeg: " + (msg[-1] if msg else "نامشخص"))
+        shutil.move(str(tmp_out), str(dst))
+    return [dst]
+
+
 # ---------------------------------------------------------------- آفیس → PDF
 def convert_office(src: Path, out_dir) -> list[Path]:
     so = find_soffice()
@@ -316,7 +352,7 @@ def convert_office(src: Path, out_dir) -> list[Path]:
 
 
 # ---------------------------------------------------------------- نقطهٔ ورود
-def convert_one(src, key: str, out_dir=None, quality: int = 90, cancel=lambda: False) -> list[Path]:
+def convert_one(src, key: str, out_dir=None, quality: int = 90, cancel=lambda: False, opts=None) -> list[Path]:
     src = Path(src)
     cat = category(src)
     t = TARGET_BY_KEY[key]
@@ -332,6 +368,8 @@ def convert_one(src, key: str, out_dir=None, quality: int = 90, cancel=lambda: F
         return split_pdf(src, out_dir)
     if key == "office2pdf":
         return convert_office(src, out_dir)
+    if key == "compress":
+        return compress_video(src, out_dir, opts or {}, cancel)
     if key in FFMPEG_ARGS:
         return convert_media(src, key, out_dir, cancel)
     raise ConvertError("تبدیل ناشناخته.")

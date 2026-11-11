@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="light">
 <head>
   <link rel="manifest" href="manifest.json">
   <meta charset="UTF-8">
@@ -10,7 +10,7 @@
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
-    /* ════════ DARK THEME (default) ════════ */
+    /* ════════ DARK THEME ════════ */
     :root {
       --bg-base: #080714;
       --glass: rgba(255, 255, 255, 0.06);
@@ -47,9 +47,10 @@
       --success-color: #30d158;
       --success-bg: rgba(48,209,88,0.1);
       --success-border: rgba(48,209,88,0.25);
+      --highlight-text: #a29bfe;
     }
 
-    /* ════════ LIGHT THEME — "Pearl" ════════ */
+    /* ════════ LIGHT THEME — "Pearl" (Default) ════════ */
     html[data-theme="light"] {
       --bg-base: #d8d4ec;
       --glass: rgba(255, 255, 255, 0.32);
@@ -81,6 +82,7 @@
       --success-color: #1a8f3a;
       --success-bg: rgba(48,209,88,0.15);
       --success-border: rgba(48,209,88,0.35);
+      --highlight-text: #5a4bd4;
     }
 
     html { font-size: 15px; -webkit-text-size-adjust: 100%; }
@@ -148,7 +150,6 @@
     .header-title { font-size: 1.02rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
     .header-sub { font-size: 0.7rem; color: var(--text2); margin-top: 2px; font-weight: 400; }
     
-    /* Changed badge to order button */
     .hbadge {
       background: var(--accent-soft);
       border: 1px solid var(--glass-border2);
@@ -303,7 +304,7 @@
     .calc-btn, .channel-btn {
       position: relative;
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 10px 20px; /* Smaller padding */
+      padding: 10px 20px;
       border-radius: 12px;
       font-family: 'Vazirmatn', sans-serif; font-size: 0.82rem; font-weight: 700;
       cursor: pointer; text-decoration: none;
@@ -313,7 +314,6 @@
       border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* Highlight/Reflection Top */
     .calc-btn::before, .channel-btn::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 50%;
@@ -323,7 +323,6 @@
       z-index: 1;
     }
 
-    /* Glow effect */
     .calc-btn::after, .channel-btn::after {
       content: '';
       position: absolute; inset: 0;
@@ -354,7 +353,7 @@
       box-shadow: 0 6px 20px rgba(255,45,85,0.4), 0 2px 4px rgba(0,0,0,0.2);
       width: 100%;
       margin-top: 4px;
-      padding: 14px 28px; /* Keep channel btn large */
+      padding: 14px 28px;
       border-radius: 16px;
     }
     .channel-btn::before { border-radius: 16px 16px 0 0; }
@@ -380,7 +379,7 @@
     /* ── TIPS / DESCRIPTION CARDS ── */
     .tips-grid {
       display: grid;
-      grid-template-columns: 1fr; /* One column for better readability */
+      grid-template-columns: 1fr;
       gap: 16px;
     }
     .tip-card {
@@ -395,10 +394,10 @@
       background: var(--glass2);
       border-color: var(--glass-border2);
     }
-    .tip-card-icon { font-size: 1.3rem; margin-bottom: 8px; display: block }
     .tip-card-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
     .tip-card-text { 
-      color: var(--text2); 
+      color: var(--text); 
+      font-weight: 500;
       line-height: 1.9; 
       font-size: var(--desc-font-size);
       transition: font-size 0.2s ease;
@@ -415,6 +414,7 @@
     .note-item {
       display: flex; align-items: flex-start; gap: 8px;
       margin-bottom: 10px; font-size: var(--desc-font-size); color: var(--text);
+      font-weight: 500;
     }
     .note-item:last-child { margin-bottom: 0; }
     .note-icon { color: var(--success-color); font-size: 1.1rem; line-height: 1.2; }
@@ -478,6 +478,53 @@
       border-radius: 2px;
     }
 
+    /* ── ACCORDION FOR CONSULTATION ── */
+    .accordion {
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      background: var(--row-bg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .accordion:last-child { margin-bottom: 0; }
+    .accordion-header {
+      padding: 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer;
+      font-weight: 700; color: var(--text);
+      font-size: 0.9rem;
+      transition: background 0.2s ease;
+    }
+    .accordion-header:hover { background: var(--glass2); }
+    .accordion-icon {
+      font-size: 1.2rem; transition: transform 0.3s ease;
+      color: var(--accent);
+    }
+    .accordion.active .accordion-icon { transform: rotate(180deg); }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+      padding: 0 16px;
+      color: var(--text);
+      font-size: var(--desc-font-size);
+      line-height: 1.9;
+      font-weight: 500;
+    }
+    .accordion.active .accordion-content {
+      max-height: 1200px;
+      padding-bottom: 16px;
+    }
+    .highlight-text {
+      color: var(--highlight-text);
+      font-weight: 800;
+    }
+    .highlight-green {
+      color: var(--success-color);
+      font-weight: 800;
+    }
+
     /* ── ABOUT SECTION ── */
     .about-hero { text-align: center; padding: 10px 0 20px; }
     .about-logo {
@@ -524,7 +571,10 @@
       box-shadow: 0 -4px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1);
       pointer-events: auto;
       transition: background 0.4s ease, border-color 0.4s ease;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .tabbar-inner::-webkit-scrollbar { display: none; }
     html[data-theme="light"] .tabbar-inner {
       box-shadow: 0 -4px 30px rgba(90,75,160,0.12), inset 0 1px 0 rgba(255,255,255,0.6);
     }
@@ -536,6 +586,8 @@
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       position: relative;
       letter-spacing: -0.01em;
+      min-width: 60px;
+      white-space: nowrap;
     }
     .tab-btn svg { width: 22px; height: 22px; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
     .tab-btn.active { color: var(--accent2); background: var(--accent-soft); }
@@ -571,7 +623,7 @@
 
     /* Description specific texts */
     .desc-heading { font-weight: 700; color: var(--text); margin-top: 12px; margin-bottom: 6px; font-size: 0.9rem; }
-    .desc-list { padding-right: 16px; margin-bottom: 8px; font-size: var(--desc-font-size); color: var(--text2); line-height: 1.9; }
+    .desc-list { padding-right: 16px; margin-bottom: 8px; font-size: var(--desc-font-size); color: var(--text); line-height: 1.9; font-weight: 500; }
 
     @media(max-width: 580px) {
       .form-row { flex-direction: column }
@@ -600,7 +652,6 @@
         <div class="header-sub">پرند · فاز ۲ · بلوار جمهوری · همکف مسجد جامع</div>
       </div>
     </div>
-    <!-- Changed to Order Button -->
     <a href="https://eitaa.com/adfadak" target="_blank" rel="noopener" class="hbadge">
       🛒 ثبت سفارش
     </a>
@@ -612,6 +663,14 @@
       <div class="panel-head">
         <div class="panel-head-icon">🧮</div>
         ماشین‌حساب قیمت
+      </div>
+
+      <!-- Intro and Warning -->
+      <div class="info" style="margin-bottom: 16px; font-weight: 600;">
+        برای محاسبه قیمت، ابتدا نوع خدمت را از منوی زیر انتخاب کنید و سپس مشخصات سفارش خود (مانند سایز، تیراژ و...) را وارد کنید. قیمت به صورت خودکار محاسبه می‌شود.
+      </div>
+      <div class="tip" style="margin-bottom: 16px; font-weight: 600;">
+        ⚠️ توجه: قیمت‌های نمایش داده شده تقریبی و بر اساس نرخ‌های پایه هستند. برای دریافت قیمت دقیق و نهایی حتماً با ما تماس بگیرید: <strong>09301499659</strong>
       </div>
 
       <div class="sg" style="margin-bottom:16px">
@@ -664,7 +723,6 @@
           <div class="rrow rtotal"><span class="rl">قیمت تقریبی</span><span class="rv" id="bn_total"></span></div>
           <div class="rrow"><span class="rl">زمان تحویل</span><span class="rv" id="bn_del"></span></div>
         </div>
-        <div class="tip">📞 قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>09301499659</strong></div>
       </div>
 
       <!-- TRACT -->
@@ -1006,7 +1064,6 @@
           <div class="rrow rtotal"><span class="rl">قیمت تقریبی</span><span class="rv" id="dtf_total"></span></div>
         </div>
         <div class="warn" id="dtf_warn" style="display:none"></div>
-        <div class="tip">📞 این قیمت تقریبی است — برای قیمت دقیق تماس بگیرید: <strong>09301499659</strong></div>
       </div>
 
       <!-- INVOICE -->
@@ -1171,6 +1228,228 @@
     </div>
   </div><!-- /tab-desc -->
 
+  <!-- ═══════════ TAB 5: CONSULTATION ═══════════ -->
+  <div class="tab-content" id="tab-consult">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-head-icon">💡</div>
+        مشاوره رایگان تبلیغات
+      </div>
+      
+      <!-- 1. Open Text (No Accordion) -->
+      <div class="tip-card-text" style="margin-bottom: 20px;">
+        <p style="margin-bottom: 16px; font-weight: 700; font-size: 1rem; color: var(--accent2);">
+          اگر تازه کسب‌وکارتان را راه‌انداخته‌اید، حتماً این سؤال برایتان پیش آمده که «با بودجه محدود، کدام تبلیغات بیشترین بازدهی را دارد؟» ما اینجاییم که کمکتان کنیم هوشمندانه انتخاب کنید. در ادامه، مسیر پیشنهادی ما را برای شروع تبلیغات، به ترتیب اولویت ببینید:
+        </p>
+
+        <p style="margin-bottom: 12px; font-weight: 800; color: var(--text);">۱. تابلوی مغازه (تابلو سر درب) — <span class="highlight-green">ضروری‌ترین شناسنامه کسب‌وکار</span></p>
+        <p style="margin-bottom: 12px;">
+          قبل از هر چیز، مشتری باید بداند شما وجود دارید. تابلوی مغازه اولین و مهم‌ترین سرمایه‌گذاری تبلیغاتی شماست. 
+          <br><strong>پیشنهاد اول (مجلل و بادوام):</strong> تابلو فلکسی. این تابلوها با چاپ باکیفیت و دوام بالا در برابر آفتاب و باران، ظاهری بسیار شیک و حرفه‌ای به مغازه شما می‌دهند. (طبیعتاً قیمت بالاتری نسبت به بنر دارند اما سرمایه‌گذاری بلندمدت هستند).
+          <br><strong>پیشنهاد دوم (اقتصادی و مقرون‌به‌صرفه):</strong> بنر ۱۰ انس (چاپ خوب). اگر بودجه محدودی دارید، بنر ۱۰ انس با چاپ باکیفیت، گزینه‌ای عالی و اقتصادی برای شروع است. این بنرها در برابر پارگی مقاوم هستند و ظاهر تمیز و خوانایی دارند.
+        </p>
+
+        <p style="margin-bottom: 12px; font-weight: 800; color: var(--text);">۲. بنر تبلیغات محیطی — دیده‌شدن در ابعاد بزرگ</p>
+        <p style="margin-bottom: 12px;">برای معرفی خدمات و جلب توجه عابران، یک بنر با ابعاد بزرگ در محل پرتردد کسب‌وکار شما ضروری است. بنر محیطی به مشتری محلی می‌گوید «اینجا هستیم» و اعتماد اولیه می‌سازد.</p>
+
+        <p style="margin-bottom: 12px; font-weight: 800; color: var(--text);">۳. تراکت سیاه و سفید — <span class="highlight-green">مقرون‌به‌صرفه‌ترین</span> شروع</p>
+        <p style="margin-bottom: 12px;">برای پخش گسترده در محله یا معرفی اولیه، تراکت سیاه و سفید بهترین گزینه است؛ چون هزینه چاپ پایینی دارد و می‌توانید با بودجه کم، تعداد زیادی تراکت پخش کنید. این گزینه <span class="highlight-text">اقتصادی‌ترین</span> راه دیده‌شدن است.</p>
+
+        <p style="margin-bottom: 12px; font-weight: 800; color: var(--text);">۴. تراکت رنگی — حرفه‌ای‌تر و تأثیرگذارتر</p>
+        <p style="margin-bottom: 12px;">وقتی می‌خواهید پیامتان جدی‌تر دیده شود، تراکت رنگی وارد می‌شود. رنگ، توجه مخاطب را جلب می‌کند و نرخ نگه‌داشتن تراکت در دست مشتری را بالا می‌برد. تراکت رنگی در دو نوع کاغذ موجود است: <strong>کاغذ تحریر</strong> (اقتصادی و مناسب پخش گسترده) و <strong>کاغذ گلاسه</strong> (شیک و براق، مناسب معرفی حرفه‌ای برند).</p>
+        <div class="info" style="margin-bottom: 12px;">
+          💡 <span class="highlight-green">نکته مشاوره‌ای مهم:</span> در تراکت رنگی، هرچه تیراژ چاپ بالاتر برود، هزینه هر عدد پایین‌تر می‌آید. ما <span class="highlight-green">تخفیف پله‌ای</span> داریم؛ یعنی با رسیدن به تیراژ ۵٬۰۰۰ عدد، قیمت هر تراکت به‌طور محسوسی کاهش پیدا می‌کند. اگر قصد پخش در چند محله یا چند مرحله را دارید، همین حالا تیراژ ۵٬۰۰۰ را انتخاب کنید تا هم هزینه واحدتان کم شود و هم برای ماه‌های بعد تراکت آماده داشته باشید. این یعنی <span class="highlight-green">صرفه‌جویی واقعی</span>، نه فقط چاپ بیشتر.
+        </div>
+
+        <p style="margin-bottom: 12px; font-weight: 800; color: var(--text);">۵. کارت ویزیت — امضای حرفه‌ای کسب‌وکار شما</p>
+        <p style="margin-bottom: 12px;">کارت ویزیت انواع مختلفی دارد (ساده، لمینت، سلفون مات و براق و...) و اولین برداشت مشتری از حرفه‌ای‌بودن شما را می‌سازد. برای هر کسب‌وکاری، یک کارت ویزیت متناسب با صنفش پیشنهاد می‌کنیم.</p>
+
+        <p style="margin-bottom: 12px; font-weight: 800; color: var(--text);">۶. مهر — ضروری‌ترین ابزار اداری</p>
+        <p style="margin-bottom: 12px;">هر کسب‌وکار تازه‌ای خیلی زود به مهر نیاز پیدا می‌کند؛ برای فاکتور، قرارداد و اسناد رسمی. مهر، نشانه رسمیت کسب‌وکار شماست و بهتر است از همان ابتدا تهیه شود.</p>
+      </div>
+
+      <div class="info" style="margin-bottom: 20px; font-weight: 600; font-size: 0.85rem;">
+        👇 <strong>پیشنهادات اختصاصی برای هر شغل (جهت مشاهده کلیک کنید):</strong>
+      </div>
+
+      <!-- Accordion: Restaurant -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>🍔 رستوران، کافه و ساندویچی</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب مشتری محلی، افزایش سفارش‌های بیرون‌بر و ساخت حس وفاداری.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>منوی رنگی لمینت‌شده:</strong> چاپ روی کاغذ گلاسه ۱۳۵ گرم با روکش <strong>سلفون مات</strong> یا <strong>لمینت براق</strong> تا در برابر لکه‌های غذا و آب کاملاً مقاوم باشد و ظاهری بسیار شیک داشته باشد.</li>
+            <li><strong>کارت وفاداری (تخفیف مشتریان ثابت):</strong> چاپ کارت ویزیت با جنس <strong>سلفون مخملی</strong> برای حس لوکس بودن (مثلاً خرید ۱۰ وعده، ۱ وعده هدیه).</li>
+            <li><strong>لیبل درب ظروف بیرون‌بر:</strong> برای برندسازی روی ظروف؛ چاپ <strong>لیبل سلفون براق</strong> که در برابر رطوبت و چربی مقاوم است.</li>
+            <li><strong>استند/بنر معرفی پیشنهاد ویژه:</strong> بنرهای کوچک با چاپ باکیفیت برای جلب توجه در ورودی.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Internet Cafe -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>💻 کافی‌نت و گیم‌نت</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب گیمرها، دانشجوها و مشتریان ثابت برای ساعات طولانی.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>تراکت A5 سیاه‌وسفید:</strong> <span class="highlight-green">مقرون‌به‌صرفه‌ترین</span> راه برای پخش در مدارس و دانشگاه‌های اطراف. (با تیراژ ۱۰۰۰ عدد).</li>
+            <li><strong>بنر تعرفه‌ها:</strong> چاپ بنر باکیفیت برای معرفی قیمت‌های ساعتی، پکیج‌های ویژه (مثلاً ۳ ساعت بازی با تخفیف).</li>
+            <li><strong>کارت ویزیت رزرو سیستم:</strong> طراحی کارت ویزیت کوچک با شماره تماس برای رزرو تلفنی سیستم‌ها.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Real Estate -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>🏠 املاک و مشاورین املاک</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> اعتمادسازی، دیده‌شدن در محله و جذب مشتری برای فایل‌های ویژه.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>کارت ویزیت لمینت مات:</strong> حس حرفه‌ای بودن و ماندگاری بالا در دست مشتری. لمینت مات باعث می‌شود کارت در برابر خط و خش مقاوم باشد.</li>
+            <li><strong>تراکت A4 رنگی معرفی فایل:</strong> چاپ روی <strong>کاغذ گلاسه</strong> با کیفیت بالا برای نمایش عکس‌های فایل‌های ملکی و جلب اعتماد.</li>
+            <li><strong>تابلو و بنر مغازه:</strong> با ابعاد بزرگ، شماره تماس درشت و لوگوی واضح روی جنس فلکس مقاوم در برابر آفتاب.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Supermarket -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>🛒 فروشگاه‌های زنجیره‌ای و سوپرمارکت‌ها</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> افزایش فروش، معرفی محصولات جدید و ایجاد ارتباط با مشتری.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>تراکت‌های تخفیفی (A5 یا A4):</strong> برای پخش در محله؛ با استفاده از رنگ‌های شاد و فونت درشت برای دیده‌شدن تخفیف‌ها.</li>
+            <li><strong>لیبل و برچسب محصول:</strong> برای محصولات محلی یا بسته‌بندی‌های خودتان. چاپ لیبل با روکش <strong>سلفون براق</strong> برای مقاومت در برابر رطوبت.</li>
+            <li><strong>کیسه‌های پارچه‌ای برندشده (چاپ سابلیمیشن):</strong> تبلیغ قدم‌به‌قدم در سطح شهر؛ مشتریان با کیسه‌های شما در شهر تردد می‌کنند.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Language School -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>🗣️ آموزشگاه زبان</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب زبان‌آموزان جدید و والدین، و ساخت حس اعتماد و تخصص.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>تراکت A4 رنگی با کاغذ گلاسه:</strong> برای معرفی دوره‌ها و اساتید، با عکس‌های باکیفیت و طراحی شیک.</li>
+            <li><strong>بنر محیطی بزرگ:</strong> برای نصب در نزدیکی مدارس یا خیابان اصلی با درج درصد قبولی یا نتایج درخشان.</li>
+            <li><strong>کارت ویزیت برای معلمان/مشاوران:</strong> با جنس <strong>سلفون مات</strong> برای ظاهری رسمی و آموزشی.</li>
+            <li><strong>لیبل برای جزوه‌ها:</strong> برچسب‌های چاپی با لوگوی آموزشگاه برای روی جزوات زبان‌آموزان.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Konkur School -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>📚 آموزشگاه کنکور و علمی</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب دانش‌آموزان مستعد و والدین آن‌ها با نشان دادن موفقیت‌های علمی.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>تراکت A4 رنگی با کاغذ گلاسه:</strong> برای معرفی رتبه‌های برتر، اساتید مجرب و برنامه کلاسی. استفاده از رنگ‌های جدی (آبی و طلایی) توصیه می‌شود.</li>
+            <li><strong>بنر بزرگ ثبت‌نام:</strong> نصب در نزدیکی مدارس با درج شرایط ثبت‌نام و تخفیف‌های ویژه.</li>
+            <li><strong>سربرگ اداری:</strong> چاپ سربرگ با کیفیت برای مکاتبات رسمی آموزشگاه با والدین.</li>
+            <li><strong>کارت ویزیت مشاوران:</strong> با جنس <strong>لمینت مات</strong> برای حس اعتماد و جدیت.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Art School -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>🎨 آموزشگاه هنر و مهارتی</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب هنرجویان خلاق و علاقه‌مندان به مهارت‌های جدید.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>تراکت رنگی A5 با کاغذ گلاسه:</strong> طراحی خلاقانه با نمایش نمونه کارهای هنرجویان.</li>
+            <li><strong>کارت ویزیت خاص (سلفون مخملی یا لمینت برجسته):</strong> برای نشان دادن حس هنری و خلاقیت آموزشگاه شما.</li>
+            <li><strong>لیبل برای تابلوهای هنرجویان:</strong> چاپ لیبل با نام هنرجو و آموزشگاه برای نمایشگاه‌های پایان دوره.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Beauty Salon -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>💇‍♂️ آرایشگاه‌ها (مردانه و زنانه)</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب مشتری جدید، معرفی خدمات جدید و پر کردن نوبت‌های خالی.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>کارت ویزیت سلفون مخملی:</strong> حس لوکس بودن و لمس دلپذیر؛ یک انتخاب بی‌نظیر برای آرایشگاه‌های لوکس.</li>
+            <li><strong>تراکت رنگی A5 با تخفیف ویژه:</strong> چاپ تراکت با طراحی شیک و تخفیف‌های درصدی برای معرفی خدمات جدید (مثل کراتین، شینیون و...).</li>
+            <li><strong>بنر تخفیف فصلی:</strong> بنر با ابعاد متوسط برای نصب در جلوی مغازه و جلب توجه عابران.</li>
+            <li><strong>لیبل برای محصولات مصرفی:</strong> اگر از محصولات برند خودتان استفاده می‌کنید، چاپ لیبل برای آن‌ها.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Cosmetics Shop -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>💅 لوازم آرایشی و بهداشتی فروشی</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب مشتری برای خرید محصولات، معرفی برندهای جدید و ساخت حس اعتماد (به‌ویژه برای فروش آنلاین).</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>کارت ویزیت با QR کد (برای فروش آنلاین):</strong> چاپ کارت ویزیت با طراحی خاص و درج QR کد برای هدایت مشتری به پیج اینستاگرام یا سایت فروشگاه. (جنس سلفون براق یا مات).</li>
+            <li><strong>لیبل برچسب محصول:</strong> چاپ لیبل با جنس <strong>سلفون براق</strong> (ضدآب) برای روی محصولات و تسترها.</li>
+            <li><strong>تراکت معرفی محصولات:</strong> تراکت رنگی با کیفیت بالا روی <strong>کاغذ گلاسه</strong> برای معرفی اورجینال بودن محصولات.</li>
+            <li><strong>کیسه‌های پارچه‌ای یا کاغذی برندشده:</strong> چاپ لوگو روی کیسه‌ها برای هدیه دادن به مشتریان.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Accordion: Repair Shop -->
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">
+          <span>🔧 تعمیرگاه و تعویض روغنی</span>
+          <span class="accordion-icon">▼</span>
+        </div>
+        <div class="accordion-content">
+          <p style="margin-bottom: 8px;"><strong>هدف:</strong> جذب رانندگان و مشتریان محلی، و یادآوری تاریخ سرویس بعدی.</p>
+          <p style="margin-bottom: 8px;"><strong>پیشنهادات چاپی فدک:</strong></p>
+          <ul class="desc-list">
+            <li><strong>برچسب یادآوری سرویس بعدی (لیبل):</strong> چاپ لیبل‌های کوچک با تاریخ سرویس بعدی (مثلاً تعویض روغنی) که روی شیشه ماشین چسبانده می‌شود. (چاپ لیبل سلفون براق مقاوم در برابر آب).</li>
+            <li><strong>تراکت سیاه‌وسفید A5:</strong> <span class="highlight-green">مقرون‌به‌صرفه</span> برای پخش در محله و معرفی تعویض روغنی با قیمت مناسب.</li>
+            <li><strong>بنر جلوی مغازه:</strong> بنر بزرگ با شماره تماس و خدمات ارائه شده.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab-consult -->
+
   <!-- ═══════════ TAB 3: SETTINGS ═══════════ -->
   <div class="tab-content" id="tab-settings">
     <div class="panel">
@@ -1187,7 +1466,7 @@
             <div style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-top:2px">تم برنامه را تاریک یا روشن کنید</div>
           </div>
         </div>
-        <button class="switch on" id="themeSwitch" onclick="toggleTheme()" aria-label="تغییر تم"></button>
+        <button class="switch" id="themeSwitch" onclick="toggleTheme()" aria-label="تغییر تم"></button>
       </div>
 
       <div class="setting-row">
@@ -1235,7 +1514,7 @@
       </div>
 
       <div style="text-align:center;margin-top:18px;color:var(--text3);font-size:0.72rem">
-        چاپ و تبلیغات فدک · نسخه ۱.۲
+        چاپ و تبلیغات فدک · نسخه ۱.۴
       </div>
     </div>
   </div><!-- /tab-settings -->
@@ -1315,6 +1594,12 @@
       </svg>
       <span class="tab-label">توضیحات</span>
     </button>
+    <button class="tab-btn" onclick="switchTab('consult',this)" id="tabbtn-consult">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      <span class="tab-label">مشاوره</span>
+    </button>
     <button class="tab-btn" onclick="switchTab('settings',this)" id="tabbtn-settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -1363,6 +1648,11 @@ function switchTab(name, btn) {
   if (tab) tab.classList.add('active');
   if (btn) btn.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── ACCORDION ──
+function toggleAccordion(element) {
+  element.classList.toggle('active');
 }
 
 // ── PRICE DATA ──
@@ -1712,10 +2002,10 @@ function calcReceipt(){
 // ── INIT ──
 window.addEventListener('load',()=>{
   const savedTheme = localStorage.getItem('fadak-theme');
-  if (savedTheme === 'light') {
-    applyTheme(false);
-  } else {
+  if (savedTheme === 'dark') {
     applyTheme(true);
+  } else {
+    applyTheme(false); // Default to light
   }
 
   const savedFont = localStorage.getItem('fadak-font-size');

@@ -553,6 +553,80 @@
     .about-feature-title { font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 3px }
     .about-feature-text { font-size: 0.75rem; color: var(--text2); line-height: 1.8 }
 
+    /* Social Buttons */
+    .social-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .social-btn {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      background: var(--glass2);
+      border: 1px solid var(--glass-border2);
+      border-radius: var(--radius-sm);
+      padding: 14px 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.75rem; font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+      overflow: hidden;
+    }
+    .social-btn::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
+    }
+    .social-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .social-btn:active {
+      transform: translateY(0) scale(0.97);
+    }
+    .social-btn span { font-size: 1.5rem; margin-bottom: 2px; }
+    .social-btn.eitaa { color: #ff8b00; border-color: rgba(255,139,0,0.3); background: rgba(255,139,0,0.08); }
+    .social-btn.eitaa:hover { background: rgba(255,139,0,0.15); }
+    .social-btn.ble { color: #3b82f6; border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.08); }
+    .social-btn.ble:hover { background: rgba(59,130,246,0.15); }
+    .social-btn.rubika { color: #8b5cf6; border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.08); }
+    .social-btn.rubika:hover { background: rgba(139,92,246,0.15); }
+    .social-btn.insta { color: #e1306c; border-color: rgba(225,48,108,0.3); background: rgba(225,48,108,0.08); }
+    .social-btn.insta:hover { background: rgba(225,48,108,0.15); }
+
+    /* Highlighted Eitaa Button */
+    .eitaa-highlight {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; margin-bottom: 12px;
+      background: linear-gradient(135deg, #ff8b00 0%, #ff6a00 100%);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: #fff;
+      font-size: 0.95rem; font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(255,139,0,0.4), inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -3px 8px rgba(0,0,0,0.15);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .eitaa-highlight::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
+    }
+    .eitaa-highlight:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 32px rgba(255,139,0,0.6), inset 0 2px 0 rgba(255,255,255,0.4);
+    }
+    .eitaa-highlight:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
     /* ── BOTTOM TAB BAR ── */
     .tabbar {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
@@ -633,6 +707,7 @@
       .tip-card { padding: 16px; }
       .tab-btn { font-size: 0.6rem; padding: 8px 2px; }
       .tab-btn svg { width: 20px; height: 20px; }
+      .social-btns { grid-template-columns: 1fr 1fr; }
     }
     @media(max-width: 380px) {
       .tab-btn span.tab-label { display: none; }
@@ -1512,9 +1587,42 @@
         </div>
         <a href="https://eitaa.com/fadakph" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none;font-size:0.8rem;font-weight:600">مشاهده</a>
       </div>
+      
+      <div class="setting-row">
+        <div class="setting-label">
+          <div class="setting-icon">💬</div>
+          <div>
+            <div>کانال بله</div>
+            <div style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-top:2px">ble.ir/fadakph</div>
+          </div>
+        </div>
+        <a href="https://ble.ir/fadakph" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none;font-size:0.8rem;font-weight:600">مشاهده</a>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <div class="setting-icon">🎥</div>
+          <div>
+            <div>کانال روبیکا</div>
+            <div style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-top:2px">rubika.ir/fadakph</div>
+          </div>
+        </div>
+        <a href="https://rubika.ir/fadakph" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none;font-size:0.8rem;font-weight:600">مشاهده</a>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <div class="setting-icon">📸</div>
+          <div>
+            <div>اینستاگرام</div>
+            <div style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-top:2px">@fadakprints</div>
+          </div>
+        </div>
+        <a href="https://www.instagram.com/fadakprints" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none;font-size:0.8rem;font-weight:600">مشاهده</a>
+      </div>
 
       <div style="text-align:center;margin-top:18px;color:var(--text3);font-size:0.72rem">
-        چاپ و تبلیغات فدک · نسخه ۱.۴
+        چاپ و تبلیغات فدک · نسخه ۱.۵
       </div>
     </div>
   </div><!-- /tab-settings -->
@@ -1560,9 +1668,29 @@
         ✅ چاپ فدک؛ کیفیتِ چاپ، سرعتِ عمل.
       </div>
 
-      <a href="https://eitaa.com/fadakph" target="_blank" rel="noopener" class="channel-btn">
-        <span>📢</span> عضویت در کانال ایتا
+      <!-- Social Buttons Grid -->
+      <div style="text-align:center; font-weight: 700; margin-bottom: 12px; font-size: 0.9rem;">ما را در شبکه‌های اجتماعی دنبال کنید:</div>
+      
+      <!-- Highlighted Eitaa -->
+      <a href="https://eitaa.com/fadakph" target="_blank" rel="noopener" class="eitaa-highlight">
+        <span style="font-size: 1.4rem;">📢</span>
+        عضویت در کانال ایتا (تخفیف‌های ویژه)
       </a>
+
+      <div class="social-btns">
+        <a href="https://ble.ir/fadakph" target="_blank" rel="noopener" class="social-btn ble">
+          <span>💬</span>
+          بله
+        </a>
+        <a href="https://rubika.ir/fadakph" target="_blank" rel="noopener" class="social-btn rubika">
+          <span>🎥</span>
+          روبیکا
+        </a>
+        <a href="https://www.instagram.com/fadakprints" target="_blank" rel="noopener" class="social-btn insta" style="grid-column: span 2;">
+          <span>📸</span>
+          پیج اینستاگرام
+        </a>
+      </div>
 
       <div style="text-align:center;margin-top:16px;color:var(--text3);font-size:0.72rem">
         طراحی شده توسط محمدرضا جباری

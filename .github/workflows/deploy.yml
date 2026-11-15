@@ -1,4 +1,4 @@
-name: Deploy combined Pages
+name: Deploy fadak and fadak-card to Pages
 on:
   push:
     branches: ["main"]
@@ -22,10 +22,8 @@ jobs:
       - name: Prepare site directory
         run: |
           mkdir -p _site
-          # کپی کردن فایل‌های سایت قدیمی (فرض بر این است که سایت قدیمی در پوشه اصلی است)
-          cp -r index.html *.css *.js _site/ 2>/dev/null || true
-          # کپی کردن پوشه جدید به عنوان زیرمسیر
-          cp -r fadak-card _site/fadak-card
+          # این خط تمام فایل‌ها و پوشه‌های مخزن (سایت‌های قبلی + پوشه جدید) را کپی می‌کند
+          rsync -av --exclude='_site' --exclude='.git' ./ _site/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

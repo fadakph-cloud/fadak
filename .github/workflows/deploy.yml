@@ -1,0 +1,40 @@
+name: Deploy combined Pages
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare site directory
+        run: |
+          mkdir -p _site
+          # کپی کردن فایل‌های سایت قدیمی (فرض بر این است که سایت قدیمی در پوشه اصلی است)
+          cp -r index.html *.css *.js _site/ 2>/dev/null || true
+          # کپی کردن پوشه جدید به عنوان زیرمسیر
+          cp -r fadak-card _site/fadak-card
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
